@@ -84,7 +84,7 @@
 import SecondaryLayout from '@/components/layouts/SecondaryLayout';
 import { View, Text } from 'react-native';
 
-export default function verifyEmailScreen() {
+export default function emailValidationScreen() {
   return (
     <SecondaryLayout>
       <View>

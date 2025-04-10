@@ -3,264 +3,295 @@ import axios from 'axios';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
-export interface RiddleList {
+// --- Interfaces ---
+
+// Interface pour les listes (peut contenir moins d'infos que le détail)
+export interface RiddleListItem {
   id: number;
   creator_id: number;
   title: string;
   is_private: boolean;
-  status: 'active' | 'draft' | 'disabled';
+  status: 'active' | 'draft' | 'disabled'; // Ou les statuts que tu utilises
   latitude: string;
   longitude: string;
   created_at: string;
-  difficulty: number;
-  rating: number;
-  stepCount: number;
+  // Champs agrégés potentiels (si l'API les fournit dans les listes)
+  stepCount?: number;
+  averageRating?: number;
+  // difficulty?: number; // La difficulté est sur la Review, pas le Riddle ?
 }
 
-export interface RiddleDetail {
-  id: number;
-  creator_id: number;
-  title: string;
+// Interface pour le détail complet d'une énigme
+export interface RiddleDetail extends RiddleListItem {
   description: string;
-  is_private: boolean;
-  password: string | null;
-  status: 'active' | 'draft' | 'disabled';
-  latitude: string;
-  longitude: string;
-  created_at: string;
+  password?: string | null; // Présent seulement si autorisé (créateur)
   updated_at: string;
+  // Peut-être des relations chargées ? (creator, etc.)
+  // creator?: { id: number; name: string; };
 }
 
-export interface DraftCreate {
+// Interface pour la création/mise à jour
+export interface RiddleFormData {
   title: string;
   description: string;
   is_private: boolean;
-  password: string | null;
-  status: 'active' | 'draft' | 'disabled';
+  password?: string | null;
+  status?: 'active' | 'draft' | 'disabled'; // Optionnel à la création/maj ?
   latitude: string;
   longitude: string;
 }
 
-export interface RiddleState {
-  riddleList: {
-    riddles: RiddleList[];
-    offset: number;
-    isLoading: boolean;
-    error: string | null;
-    hasMore: boolean;
-  }
-  riddleDetail: {
-    riddle: RiddleDetail | null;
-    isLoading: boolean;
-    error: string | null;
-  }
-  createdList: {
-    riddles: RiddleList[];
-    offset: number;
-    isLoading: boolean;
-    error: string | null;
-    hasMore: boolean;
-  }
-  draftCreate: {
-    // riddle: DraftCreate | null;
-    isLoading: boolean;
-    error: string | null;
-  }
-  fetchRiddleList: (params?: { limit?: number; offset?: number; }) => Promise<void>;
-  fetchRiddleDetail: (id: string) => Promise<void>;
-  fetchCreatedList: (params?: { limit?: number; offset?: number }) => Promise<void>;
-  createRiddle: (data: DraftCreate) => Promise<RiddleDetail | void>;
-  updateRiddle: (id: string, data: Partial<DraftCreate>) => Promise<void>;
-  deleteRiddle: (id: string) => Promise<void>;
+// Interface pour l'état d'une liste paginée
+interface RiddleListState {
+  riddles: RiddleListItem[];
+  offset: number;
+  hasMore: boolean;
+  isLoading: boolean;
+  error: string | null;
 }
 
-export const useRiddleStore = create<RiddleState>((set, get) => ({
-  riddleList: {
-    riddles: [],
-    offset: 0,
-    isLoading: false,
-    error: null,
-    hasMore: true,
-  },
-  riddleDetail: {
-    riddle: null,
-    isLoading: false,
-    error: null,
-  },
-  createdList: {
-    riddles: [],
-    offset: 0,
-    isLoading: false,
-    error: null,
-    hasMore: true,
-  },
-  draftCreate: {
-    // riddle: null,
-    isLoading: false,
-    error: null,
-  },
+// Interface pour l'état du détail
+interface RiddleDetailState {
+  riddle: RiddleDetail | null;
+  isLoading: boolean;
+  error: string | null;
+}
 
-  fetchRiddleList: async ({ limit = 20, offset = 0 } = {}) => {
+// Interface globale du store
+export interface RiddleStoreState {
+  // Liste publique/filtrée (pour la carte/recherche)
+  publicList: RiddleListState;
+  // Liste des énigmes créées par l'utilisateur
+  createdList: RiddleListState;
+  // Détail de l'énigme actuellement consultée/modifiée
+  riddleDetail: RiddleDetailState;
+
+  // Actions
+  fetchPublicList: (params?: { limit?: number; offset?: number; refresh?: boolean; /* autres filtres ? */ }) => Promise<void>;
+  fetchCreatedList: (params?: { limit?: number; offset?: number; refresh?: boolean }) => Promise<void>;
+  fetchRiddleDetail: (id: string) => Promise<RiddleDetail | null>; // Retourne le détail ou null en cas d'erreur
+  createRiddle: (data: RiddleFormData) => Promise<RiddleDetail | null>; // Retourne l'énigme créée ou null
+  updateRiddle: (id: string, data: Partial<RiddleFormData>) => Promise<RiddleDetail | null>; // Retourne l'énigme maj ou null
+  deleteRiddle: (id: string) => Promise<boolean>; // Retourne true si succès
+  clearRiddleDetail: () => void; // Pour nettoyer en quittant l'écran détail
+}
+
+// État initial pour une liste
+const initialListState: RiddleListState = {
+  riddles: [],
+  offset: 0,
+  hasMore: true,
+  isLoading: false,
+  error: null,
+};
+
+// État initial pour le détail
+const initialDetailState: RiddleDetailState = {
+  riddle: null,
+  isLoading: false,
+  error: null,
+};
+
+// --- Store ---
+export const useRiddleStore = create<RiddleStoreState>((set, get) => ({
+  publicList: { ...initialListState },
+  createdList: { ...initialListState },
+  riddleDetail: { ...initialDetailState },
+
+  // --- Fetch Liste Publique (GET /riddles) ---
+  fetchPublicList: async ({ limit = 20, offset, refresh = false, ...otherParams } = {}) => {
+    const currentState = get().publicList;
+    const currentOffset = refresh ? 0 : offset ?? currentState.offset;
+
+    if (currentState.isLoading || (!currentState.hasMore && !refresh)) {
+      return;
+    }
+
     set((state) => ({
-      riddleList: { ...state.riddleList, isLoading: true, error: null },
+      publicList: { ...state.publicList, isLoading: true, error: null },
     }));
 
     try {
-      const response = await axios.get(`${API_URL}/riddles`, {
-        params: { limit, offset }
+      const response = await axios.get<{ riddles: RiddleListItem[], meta: { total: number, hasMore?: boolean } }>(`${API_URL}/riddles`, {
+        params: { limit, offset: currentOffset, ...otherParams }, // Inclure filtres additionnels
       });
-      const data = response.data;
+      const { riddles, meta } = response.data;
 
-      set((state) => ({
-        riddleList: {
-          ...state.riddleList,
-          riddles: [...state.riddleList.riddles, ...data.riddles],
-          offset: state.riddleList.offset + data.riddles.length,
-        },
-      }));
+      set((state) => {
+        const existingRiddles = state.publicList.riddles;
+        const newRiddles = refresh || currentOffset === 0 ? riddles : [...existingRiddles, ...riddles];
+        // Simple dédoublonnage
+        const uniqueRiddles = Array.from(new Map(newRiddles.map(r => [r.id, r])).values());
 
+        return {
+          publicList: {
+            riddles: uniqueRiddles,
+            offset: currentOffset + riddles.length,
+            isLoading: false,
+            error: null,
+            hasMore: meta.hasMore ?? (riddles.length === limit),
+          },
+        };
+      });
     } catch (error: any) {
-      console.error('Erreur lors du fetch de la liste des énigmes:', error);
+      console.error('Erreur fetchPublicList:', error.response?.data || error.message);
+      const message = error.response?.data?.message || 'Erreur chargement des énigmes';
       set((state) => ({
-        riddleList: {
-          ...state.riddleList,
-          error: error.response?.data?.message || 'Erreur lors du chargement de la liste des énigmes',
-        },
-      }));
-
-    } finally {
-      set((state) => ({
-        riddleList: { ...state.riddleList, isLoading: false },
+        publicList: { ...state.publicList, isLoading: false, error: message },
       }));
     }
   },
 
-  fetchRiddleDetail: async (id) => {
-    set((state) => ({
-      riddleDetail: { ...state.riddleDetail, isLoading: true, error: null },
-    }));
+  // --- Fetch Liste Créée (GET /users/me/riddles/created) ---
+  fetchCreatedList: async ({ limit = 20, offset, refresh = false } = {}) => {
+    const currentState = get().createdList;
+    const currentOffset = refresh ? 0 : offset ?? currentState.offset;
 
-    try {
-      const response = await axios.get(`${API_URL}/riddles/${id}`);
-      const data = response.data;
-
-      set((state) => ({
-        riddleDetail: {
-          ...state.riddleDetail,
-          riddle: data.riddle,
-        },
-      }));
-
-    } catch (error: any) {
-      console.error('Erreur lors du fetch du détail de l\'énigme:', error);
-      set((state) => ({
-        riddleDetail: {
-          ...state.riddleDetail,
-          error: error.response?.data?.message || 'Erreur lors du chargement du détail de l\'énigme',
-        },
-      }));
-
-    } finally {
-      set((state) => ({
-        riddleDetail: { ...state.riddleDetail, isLoading: false },
-      }));
+    if (currentState.isLoading || (!currentState.hasMore && !refresh)) {
+      return;
     }
-  },
 
-  fetchCreatedList: async ({ limit = 20, offset = 0 } = {}) => {
     set((state) => ({
       createdList: { ...state.createdList, isLoading: true, error: null },
     }));
 
     try {
-      const response = await axios.get(`${API_URL}/riddles/created/list`, {
-        params: { limit, offset },
+      // Utilise la nouvelle route suggérée
+      const response = await axios.get<{ riddles: RiddleListItem[], meta: { total: number, hasMore?: boolean } }>(`${API_URL}/users/me/riddles/created`, {
+        params: { limit, offset: currentOffset },
       });
-      const data = response.data;
+      const { riddles, meta } = response.data;
 
-      set((state) => ({
-        createdList: {
-          ...state.createdList,
-          riddles: [...state.createdList.riddles, ...data.riddles],
-          offset: state.createdList.offset + data.riddles.length,
-          isLoading: false,
-          error: null,
-          hasMore: data.riddles.length === limit
-        },
-      }));
+      set((state) => {
+        const existingRiddles = state.createdList.riddles;
+        const newRiddles = refresh || currentOffset === 0 ? riddles : [...existingRiddles, ...riddles];
+        const uniqueRiddles = Array.from(new Map(newRiddles.map(r => [r.id, r])).values());
 
+        return {
+          createdList: {
+            riddles: uniqueRiddles,
+            offset: currentOffset + riddles.length,
+            isLoading: false,
+            error: null,
+            hasMore: meta.hasMore ?? (riddles.length === limit),
+          },
+        };
+      });
     } catch (error: any) {
-      console.error('Erreur lors du fetch des énigmes créées:', error.response?.data?.message);
+      console.error('Erreur fetchCreatedList:', error.response?.data || error.message);
+      const message = error.response?.data?.message || 'Erreur chargement des énigmes créées';
       set((state) => ({
-        createdList: {
-          ...state.createdList,
-          error: error.response?.data?.message || 'Erreur lors du chargement des énigmes créées',
-          isLoading: false
-        },
+        createdList: { ...state.createdList, isLoading: false, error: message },
       }));
     }
   },
 
-  createRiddle: async (data: DraftCreate) => {
-    set((state) => ({
-      draftCreate: { ...state.draftCreate, isLoading: true, error: null },
-    }));
+  // --- Fetch Détail (GET /riddles/{id}) ---
+  fetchRiddleDetail: async (id: string): Promise<RiddleDetail | null> => {
+    // Optionnel: Vérifier si le détail est déjà chargé et correspond à l'ID
+    // if (get().riddleDetail.riddle?.id.toString() === id && !get().riddleDetail.error) {
+    //   return get().riddleDetail.riddle;
+    // }
+
+    set({ riddleDetail: { ...initialDetailState, isLoading: true } }); // Reset avant fetch
 
     try {
-      const response = await axios.post(`${API_URL}/riddles`, data);
-      return response.data;
-
+      const response = await axios.get<RiddleDetail>(`${API_URL}/riddles/${id}`);
+      const riddleData = response.data;
+      set({ riddleDetail: { riddle: riddleData, isLoading: false, error: null } });
+      return riddleData;
     } catch (error: any) {
-      console.error('Erreur lors de la création de l\'énigme:', error);
-      set((state) => ({
-        draftCreate: {
-          ...state.draftCreate,
-          error: error.response?.data?.message || 'Erreur lors du chargement de la liste des énigmes',
-        },
-      }));
-
-    } finally {
-      set((state) => ({
-        draftCreate: { ...state.draftCreate, isLoading: false },
-      }));
+      console.error(`Erreur fetchRiddleDetail (${id}):`, error.response?.data || error.message);
+      const message = error.response?.data?.message || 'Erreur chargement du détail';
+      set({ riddleDetail: { riddle: null, isLoading: false, error: message } });
+      return null;
     }
   },
 
-  updateRiddle: async (id: string, data: Partial<DraftCreate>) => {
+  // --- Création (POST /riddles) ---
+  createRiddle: async (data: RiddleFormData): Promise<RiddleDetail | null> => {
+    // On pourrait ajouter un état isLoading spécifique à la création
     try {
-      const response = await axios.put(`${API_URL}/riddles/${id}`, data);
+      const response = await axios.post<RiddleDetail>(`${API_URL}/riddles`, data);
+      const newRiddle = response.data;
 
+      // Ajouter à la liste des énigmes créées (au début)
       set((state) => ({
         createdList: {
           ...state.createdList,
-          riddles: state.createdList.riddles!.map(riddle =>
-            riddle.id.toString() === id ? response.data : riddle
-          ),
+          riddles: [newRiddle, ...state.createdList.riddles],
+          // Optionnel: ajuster offset/hasMore si nécessaire
         },
-        riddleDetail: state.riddleDetail.riddle && state.riddleDetail.riddle.id.toString() === id ? {
-          ...state.riddleDetail,
-          riddle: response.data,
-        } : state.riddleDetail,
       }));
-
+      return newRiddle;
     } catch (error: any) {
-      console.error('Erreur lors de la mise à jour de l\'énigme:', error);
+      console.error('Erreur createRiddle:', error.response?.data || error.message);
+      // Retourner null ou lancer une erreur pour que le composant puisse la gérer
+      // throw new Error(error.response?.data?.message || 'Erreur lors de la création');
+      return null;
     }
   },
 
-  deleteRiddle: async (id: string) => {
+  // --- Mise à jour (PUT /riddles/{id}) ---
+  updateRiddle: async (id: string, data: Partial<RiddleFormData>): Promise<RiddleDetail | null> => {
+    try {
+      const response = await axios.put<RiddleDetail>(`${API_URL}/riddles/${id}`, data);
+      const updatedRiddle = response.data;
+
+      set((state) => {
+        // Fonction pour mettre à jour une liste
+        const updateList = (list: RiddleListItem[]): RiddleListItem[] =>
+          list.map(r => (r.id.toString() === id ? { ...r, ...updatedRiddle } : r)); // Mettre à jour l'item
+
+        return {
+          // Mettre à jour le détail si c'est l'énigme actuelle
+          riddleDetail: state.riddleDetail.riddle?.id.toString() === id
+            ? { ...state.riddleDetail, riddle: updatedRiddle, error: null } // Met à jour le détail chargé
+            : state.riddleDetail, // Sinon, ne touche pas au détail
+          // Mettre à jour dans les listes
+          publicList: { ...state.publicList, riddles: updateList(state.publicList.riddles) },
+          createdList: { ...state.createdList, riddles: updateList(state.createdList.riddles) },
+        };
+      });
+      return updatedRiddle;
+    } catch (error: any) {
+      console.error(`Erreur updateRiddle (${id}):`, error.response?.data || error.message);
+      // throw new Error(error.response?.data?.message || 'Erreur lors de la mise à jour');
+      return null;
+    }
+  },
+
+  // --- Suppression (DELETE /riddles/{id}) ---
+  deleteRiddle: async (id: string): Promise<boolean> => {
     try {
       await axios.delete(`${API_URL}/riddles/${id}`);
-      set((state) => ({
-        createdList: {
-          ...state.createdList,
-          riddles: state.createdList.riddles!.filter(riddle => riddle.id.toString() !== id),
-        },
-      }));
 
+      set((state) => {
+        // Fonction pour filtrer une liste
+        const filterList = (list: RiddleListItem[]): RiddleListItem[] =>
+          list.filter(r => r.id.toString() !== id);
+
+        return {
+          // Nettoyer le détail si c'est l'énigme actuelle
+          riddleDetail: state.riddleDetail.riddle?.id.toString() === id
+            ? { ...initialDetailState } // Reset le détail
+            : state.riddleDetail,
+          // Filtrer les listes
+          publicList: { ...state.publicList, riddles: filterList(state.publicList.riddles) },
+          createdList: { ...state.createdList, riddles: filterList(state.createdList.riddles) },
+        };
+      });
+      return true; // Succès
     } catch (error: any) {
-      console.error('Erreur lors de la suppression de l\'énigme:', error);
+      console.error(`Erreur deleteRiddle (${id}):`, error.response?.data || error.message);
+      // throw new Error(error.response?.data?.message || 'Erreur lors de la suppression');
+      return false; // Échec
     }
   },
-  
+
+  // --- Nettoyer le détail ---
+  clearRiddleDetail: () => {
+    set({ riddleDetail: { ...initialDetailState } });
+  },
+
 }));
