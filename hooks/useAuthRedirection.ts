@@ -10,13 +10,13 @@ export default function useAuthRedirection() {
   useEffect(() => {
     if (isLoading) return;
 
-    const inAuthSegment = segments[0] === 'auth';
+    const inAuthSegment = segments[0] === '(auth)';
 
     if (!(user || token) && !inAuthSegment) {
-      router.replace('/auth');
+      router.replace('/(auth)');
 
     } else if ((user && token) && inAuthSegment) {
-      router.replace('/(tabs)/home');
+      router.replace('/(tabs)');
     }
   }, [user, token, segments, isLoading]);
 }

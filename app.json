@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Geoquest-Front",
-    "slug": "Geoquest-Front",
+    "name": "QRiddle-Front",
+    "slug": "QRiddle-Front",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
