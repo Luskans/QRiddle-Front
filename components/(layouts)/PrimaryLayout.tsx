@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollView, View, Image } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
+import { StatusBar, StatusBarStyle } from 'expo-status-bar';
 import colors from '@/constants/colors';
 import { useThemeStore } from '@/stores/useThemeStore';
 import Constants from 'expo-constants';
@@ -13,22 +13,25 @@ type Props = {
 };
 
 export default function PrimaryLayout({ children }: Props) {
-  const [statusBarColor, setStatusBarColor] = useState<string>('transparent');
+  const [statusBarColor, setStatusBarColor] = useState<StatusBarStyle>('dark');
+  const [statusBarBackground, setStatusBarBackground] = useState<string>('transparent');
   const { isDark } = useThemeStore();
 
   const handleScroll = (event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
 
     if (offsetY >= HEADER_HEIGHT - statusBarHeight - 40) {
-      setStatusBarColor(isDark ? colors.primary.lighter : colors.primary.darker);
+      setStatusBarColor(isDark ? 'dark' : 'light');
+      setStatusBarBackground(isDark ? colors.primary.lighter : colors.primary.darker);
     } else {
-      setStatusBarColor('transparent');
+      setStatusBarColor('dark');
+      setStatusBarBackground('transparent');
     }
   };
   
   return (
     <View className='flex-1'>
-      <StatusBar style={isDark ? 'dark' : 'light'} backgroundColor={ statusBarColor } />
+      <StatusBar style={ statusBarColor } backgroundColor={ statusBarBackground } />
  
       <Image
         source={require('@/assets/images/background.webp')}

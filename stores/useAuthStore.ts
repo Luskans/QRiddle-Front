@@ -322,6 +322,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         set({
           user: response.data,
           token,
+          isLoading: false
+        });
+
+      } else {
+        set({
+          user: null,
+          token: null,
+          isLoading: false
         });
       }
 
@@ -331,10 +339,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ 
         user: null, 
         token: null, 
+        isLoading: false
       });
 
-    } finally {
-      set({ isLoading: false });
     }
   },
 

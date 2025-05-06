@@ -1,7 +1,7 @@
 import React from 'react';
 import { Stack } from 'expo-router';
 
-export default function RiddleLayout() {
+export default function RiddlesLayout() {
   return (
     <Stack
       screenOptions={{
@@ -10,7 +10,7 @@ export default function RiddleLayout() {
       }}
     >
       <Stack.Screen
-        name="[id]"
+        name="[riddleId]"
         options={{ 
           title: ''
         }}

@@ -2,23 +2,22 @@ import "@/global.css";
 import { Stack } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useFonts } from "expo-font";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { useThemeStore } from "@/stores/useThemeStore";
 import useAuthRedirection from "@/hooks/useAuthRedirection";
 import { useAssets } from "expo-asset";
+import { useAuthStore } from "@/stores/useAuthStore";
 
-// Show splashscreen during assets and fonts loading
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-
-  // Pour les conditions de colors pour le dark theme
   const { isDark } = useThemeStore();
-
-  // Load fonts
-  const [fontsLoading] = useFonts({
+  const initialize = useAuthStore(state => state.initialize);
+  const isLoading = useAuthStore(state => state.isLoading);
+  const [isAppReady, setIsAppReady] = useState(false);
+  const [fontsLoaded] = useFonts({
     'Abel': require('@/assets/fonts/Abel-Regular.ttf'),
     'Cabin': require('@/assets/fonts/Cabin-Variable.ttf'),
     'Lexend': require('@/assets/fonts/Lexend-Variable.ttf'),
@@ -26,23 +25,26 @@ export default function RootLayout() {
     'Nunito': require('@/assets/fonts/Nunito-Variable.ttf'),
     'Playfair': require('@/assets/fonts/Playfair-Variable.ttf'),
   });
-
-  // Load assets
-  const [assetsLoading] = useAssets([require('@/assets/images/logo1.png'), require('@/assets/images/test6.png')]);
-
-  // Use auth redirection for all the app
-  useAuthRedirection();
+  const [assetsLoaded] = useAssets([
+    require('@/assets/images/logo1.png'),
+    require('@/assets/images/test6.png')
+  ]);
 
   useEffect(() => {
-    if (fontsLoading || assetsLoading) {
+    initialize();
+  }, []);
+
+  useEffect(() => {
+    if (fontsLoaded && assetsLoaded && !isLoading) {
+      setIsAppReady(true);
       SplashScreen.hideAsync();
     }
-  }, [fontsLoading, assetsLoading]);
-
+  }, [fontsLoaded, assetsLoaded, isLoading]);
+  
+  useAuthRedirection(isAppReady);
 
   return (
     <ThemeProvider>
-      <StatusBar style="auto" backgroundColor="transparent" translucent />
       <Stack
         screenOptions={{
           headerShown: false,
@@ -62,6 +64,7 @@ export default function RootLayout() {
         <Stack.Screen name="settings" />
         <Stack.Screen name="steps" />
         <Stack.Screen name="users" /> */}
+        <Stack.Screen name="users/me" />
       </Stack>
     </ThemeProvider>
   );

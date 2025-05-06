@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { useColorScheme } from 'nativewind';
 import { useEffect } from 'react';
 
+
 type Props = {
   children: React.ReactNode;
 };
@@ -16,7 +17,7 @@ export const ThemeProvider = ({ children }: Props) => {
   }, [isDark]);
 
   return (
-    <View className={`flex-1 ${isDark ? 'dark' : ''} dark:bg-dark bg-light`}>
+    <View className={`flex-1 ${isDark ? 'dark' : ''} dark:bg-dark bg-white`}>
       {children}
     </View>
   );

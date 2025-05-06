@@ -35,7 +35,6 @@ export interface RiddleLeaderboard {
   error: string | null;
 }
 
-
 export interface LeaderboardState {
   globalLeaderboard: {
     week: GlobalLeaderboard;

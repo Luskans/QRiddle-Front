@@ -3,34 +3,36 @@ import { View, ActivityIndicator, FlatList, TouchableOpacity, Text } from 'react
 import { useCallback, useRef } from 'react';
 import SecondaryLayoutWithoutScrollView from '@/components/(layouts)/SecondaryLayoutWithoutScrollView';
 import CreatedCard from '@/components/(user)/CreatedCard';
-import { useRiddleStore } from '@/stores/useRiddleStore2';
+import { useRiddleStore } from '@/stores/useRiddleStore';
 import Separator from '@/components/(common)/Separator';
+import { useGameSessionStore } from '@/stores/useGameSessionStore2';
+import PlayedSessionCard from '@/components/(user)/PlayedSessionCard';
 
-export default function CreatedListScreen() {
-  const { createdList, fetchCreatedList } = useRiddleStore();
+export default function PLayedSessionsListScreen() {
+  const { playedList, fetchPlayedList } = useGameSessionStore();
 
   useFocusEffect(
     useCallback(() => {
-      if (createdList.riddles.length === 0 && !createdList.isLoading) {
-        fetchCreatedList({ limit: 20, offset: 0 });
+      if (playedList.sessions.length === 0 && !playedList.isLoading) {
+        fetchPlayedList({ limit: 20, offset: 0 });
       }
-    }, [fetchCreatedList, createdList.riddles.length, createdList.isLoading])
+    }, [fetchPlayedList, playedList.sessions.length, playedList.isLoading])
   );
 
   const handleLoadMore = async () => {
-    if (!createdList.isLoading && createdList.hasMore) {
-      await fetchCreatedList({ limit: 20, offset: createdList.offset });
+    if (!playedList.isLoading && playedList.hasMore) {
+      await fetchPlayedList({ limit: 20, offset: playedList.offset });
     }
   };
 
   const renderItem = ({ item }: { item: any }) => (
     <>
-      <CreatedCard riddle={item} />
+      <PlayedSessionCard session={item} />
       <Separator />
     </>
   );
 
-  if (createdList.isLoading && createdList.offset === 0) {
+  if (playedList.isLoading && playedList.offset === 0) {
     return (
       <SecondaryLayoutWithoutScrollView>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -40,7 +42,7 @@ export default function CreatedListScreen() {
     );
   }
 
-  if (createdList.error) {
+  if (playedList.error) {
     return (
       <SecondaryLayoutWithoutScrollView>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -50,7 +52,7 @@ export default function CreatedListScreen() {
     );
   }
 
-  if (!createdList.isLoading && createdList.riddles.length === 0 && !createdList.error) {
+  if (!playedList.isLoading && playedList.sessions.length === 0 && !playedList.error) {
     return (
       <SecondaryLayoutWithoutScrollView>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -64,13 +66,13 @@ export default function CreatedListScreen() {
     <SecondaryLayoutWithoutScrollView>
       <View className='flex-1 py-10 gap-6'>
         <FlatList
-          data={createdList.riddles}
+          data={playedList.sessions}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.5}
           ListFooterComponent={
-            createdList.isLoading ? (
+            playedList.isLoading ? (
               <ActivityIndicator size="large" color="#2563EB" className='mt-4' />
             ) : null
           }
