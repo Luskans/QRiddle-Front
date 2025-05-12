@@ -2,41 +2,17 @@ import React from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator, StyleSheet, FlatList } from 'react-native';
 import { useThemeStore } from '@/stores/useThemeStore';
 import colors from '@/constants/colors';
-import { StepState } from '@/stores/useStepStore';
 import { Ionicons } from '@expo/vector-icons';
-import QrCodeListItem from '@/components/riddleDetail/QrCodeListItem';
+import QrCodeListItem from '@/components/(riddles)/created/QrCodeListItem';
+import { Step } from '@/stores/useStepStore2';
 
-export default function QrCodeList({ stepList }: { stepList: StepState["stepList"] }) {
+export default function QrCodeList({ steps }: { steps: Step[] }) {
   const { isDark } = useThemeStore();  
-
-  if (stepList.isLoading && stepList.steps.length === 0) {
-    return (
-      <View className='px-6 flex-1 justify-center items-center'>
-        <ActivityIndicator size="large" color={isDark ? colors.primary.lighter : colors.primary.darker} />
-      </View>
-    );
-  }
-
-  if (stepList.error) {
-    return (
-      <View className='px-6'>
-        <Text className='text-red-300'>Erreur: {stepList.error}</Text>
-      </View>
-    );
-  }
-
-  if (!stepList.isLoading && stepList.steps.length === 0) {
-    return (
-      <View className='px-6'>
-        <Text className='text-dark dark:text-light'>Aucun Qr code trouvé pour cette énigme.</Text>
-      </View>
-    );
-  }
 
   return (
     <View className='px-6 gap-6'>
       <FlatList
-        data={stepList.steps}
+        data={steps}
         renderItem={({ item }) => <QrCodeListItem step={item} />}
         keyExtractor={(item) => item.id.toString()}
         scrollEnabled={false}

@@ -6,22 +6,24 @@ import { StepState } from '@/stores/useStepStore';
 import { Ionicons } from '@expo/vector-icons';
 import QrCodeListItem from '../created/QrCodeListItem';
 import { Link, useLocalSearchParams } from 'expo-router';
-import { useReviewStore } from '@/stores/useReviewStore';
-import ReviewListItem from '@/components/riddleDetail/ReviewListItem';
+import { defaultReviewsByRiddleState, useReviewStore } from '@/stores/useReviewStore2';
+import ReviewListItem from '@/components/(riddles)/common/ReviewListItem';
 
-export default function ReviewList() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+export default function ReviewList({ riddleId }: { riddleId: string }) {
   const { isDark } = useThemeStore();
-  const { reviewList, isLoading, error, fetchReviewList } = useReviewStore();
-  
-  useEffect(() => {
-    if (id) {
-      fetchReviewList(id, { limit: 5 });
-    }
-  }, [id, fetchReviewList]);
-  console.log(reviewList)
+  const { fetchReviewsByRiddle } = useReviewStore();
+  const { reviews, isLoading, error } = useReviewStore(state => state.reviewsByRiddle[riddleId] || defaultReviewsByRiddleState);
 
-  if (isLoading && reviewList.length === 0) {
+  useEffect(() => {
+    if (riddleId) {
+      // fetchReviewsByRiddle(riddleId, { limit: 5 });
+      fetchReviewsByRiddle(riddleId);
+    }
+  }, [riddleId, fetchReviewsByRiddle]);
+  console.log("reviews dans reviewlist", reviews)
+
+
+  if (isLoading && reviews.length === 0) {
     return (
       <View className='px-6 flex-1 justify-center items-center'>
         <ActivityIndicator size="large" color={isDark ? colors.primary.lighter : colors.primary.darker} />
@@ -37,7 +39,7 @@ export default function ReviewList() {
     );
   }
 
-  if (!isLoading && reviewList.length === 0) {
+  if (!isLoading && reviews.length === 0) {
     return (
       <View className='px-6'>
         <Text className='text-dark dark:text-light'>Aucun avis trouvé pour cette énigme.</Text>
@@ -48,12 +50,12 @@ export default function ReviewList() {
   return (
     <View className='px-6 gap-6'>
       <FlatList
-        data={reviewList}
+        data={reviews}
         renderItem={({ item }) => <ReviewListItem review={item} />}
         keyExtractor={(item) => item.id.toString()}
         scrollEnabled={false}
       />
-      <Link href={`/riddles/${id}/reviews`} asChild className='flex-1 justify-center'>
+      <Link href={`/reviews/riddle/${riddleId}`} asChild className='flex-1 justify-center'>
         <TouchableOpacity className='flex-row items-center gap-1'>
           <Ionicons name="arrow-forward" size={20} color={isDark ? colors.secondary.lighter : colors.secondary.darker} />
           <Text className='text-secondary-darker dark:text-secondary-lighter'>Voir plus d'avis</Text>
@@ -62,12 +64,3 @@ export default function ReviewList() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  row: {
-    flex: 1,
-    gap: 38,
-    flexWrap: 'wrap',
-    marginBottom: 15,
-  }
-});

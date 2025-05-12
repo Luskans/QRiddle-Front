@@ -110,7 +110,7 @@ export const useGameSessionStore = create<GameSessionState>((set, get) => ({
     }
   },
 
-   // --- Fetch une session pour un riddle le user connecté (GET /riddles/{riddleId}/my-session) ---
+   // --- Fetch une session pour un riddle et le user connecté (GET /riddles/{riddleId}/my-session) ---
   fetchGameSessionByRiddleAndUser: async (riddleId: string, userId: number) => {
     set((state) => ({
       riddleGameSession: { ...state.riddleGameSession, isLoading: true, error: null },

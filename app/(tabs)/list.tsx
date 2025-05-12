@@ -6,10 +6,11 @@ import { View, TouchableOpacity } from 'react-native';
 import colors from '@/constants/colors';
 import Separator from '@/components/(common)/Separator';
 import ListLink from '@/components/(common)/ListLink';
+import { useHomeStore } from '@/stores/useHomeStore';
 
 export default function ListScreen() {
   const { isDark } = useThemeStore();
-  // TODO : récupérer game-session count et riddle count des stores
+  const { createdCount, playedCount } = useHomeStore();
 
   return (
     <PrimaryLayout>
@@ -20,14 +21,14 @@ export default function ListScreen() {
             onPress={() => router.push("/users/me/played-sessions")}
             icon="puzzle-check-outline"
             title="Enigmes jouées"
-            number={5}
+            number={playedCount}
           />
 
           <ListLink
             onPress={() => router.push("/users/me/riddles/created")}
             icon="puzzle-plus-outline"
             title="Enigmes créées"
-            number={7}
+            number={createdCount}
           />
         </View>
 

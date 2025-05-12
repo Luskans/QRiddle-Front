@@ -1,15 +1,14 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator, StyleSheet, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Formik } from 'formik';
-import { FormField } from '@/components/common/FormField';
+import { FormField } from '@/components/(common)/FormField';
 import { riddleSchema } from '@/lib/validationSchemas';
 import MapView, { MapPressEvent, Marker } from 'react-native-maps';
-import GradientButton from '@/components/common/GradientButton';
+import GradientButton from '@/components/(common)/GradientButton';
 import { useThemeStore } from '@/stores/useThemeStore';
 import colors from '@/constants/colors';
 import { DESCRIPTION_MAX_LENGTH } from '@/constants/constants';
-import { DraftCreate, RiddleDetail, useRiddleStore } from '@/stores/useRiddleStore';
-import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { RiddleFormData, useRiddleStore } from '@/stores/useRiddleStore2';
 
 
 interface FormValues {
@@ -20,15 +19,10 @@ interface FormValues {
   status: string;
 }
 
-export default function UpdateForm() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+export default function UpdateForm({ riddleId }: { riddleId: string }) {
   const { isDark } = useThemeStore();
-  const { riddleDetail, updateRiddle, fetchRiddleDetail } = useRiddleStore();
-  // const { riddleDetail, updateRiddle, fetchRiddleDetail } = useRiddleStore((state) => ({
-  //   riddleDetail: state.riddleDetail,
-  //   updateRiddle: state.updateRiddle,
-  //   fetchRiddleDetail: state.fetchRiddleDetail,
-  // }));
+  const { updateRiddle } = useRiddleStore();
+  const { riddle, isLoading, error } = useRiddleStore(state => state.riddleById[riddleId]);
   const [initialValues, setInitialValues] = useState<FormValues>({
     title: '',
     description: '',
@@ -44,42 +38,28 @@ export default function UpdateForm() {
   });
 
   useEffect(() => {
-    if (id && typeof id === 'string') {
-      if (riddleDetail.riddle?.id.toString() !== id || riddleDetail.error) {
-        console.log("dans 1 useeffect")
-        fetchRiddleDetail(id);
-      }
-    }
-  }, [id]);
-
-  const initializeMapCoordinates = (riddle: RiddleDetail | null) => {
-    if (riddle?.latitude && riddle?.longitude) {
-      const lat = parseFloat(riddle.latitude);
-      const lon = parseFloat(riddle.longitude);
-      if (!isNaN(lat) && !isNaN(lon)) {
-        setMapCoordinate({
-          latitude: lat,
-          longitude: lon,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        });
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (riddleDetail.riddle && riddleDetail.riddle.id.toString() === id) {
-      console.log("dans 2 useeffect")
-      initializeMapCoordinates(riddleDetail.riddle);
+    if (riddle && riddle.id.toString() === riddleId) {
       setInitialValues({
-        title: riddleDetail.riddle.title || '',
-        description: riddleDetail.riddle.description || '',
-        is_private: riddleDetail.riddle.is_private || false,
-        password: riddleDetail.riddle.password || null,
-        status: riddleDetail.riddle.status
+        title: riddle.title || '',
+        description: riddle.description || '',
+        is_private: riddle.is_private || false,
+        password: riddle.password || null,
+        status: riddle.status || 'draft',
       });
+      if (riddle.latitude && riddle.longitude) {
+        const lat = parseFloat(riddle.latitude);
+        const lon = parseFloat(riddle.longitude);
+        if (!isNaN(lat) && !isNaN(lon)) {
+          setMapCoordinate({
+            latitude: lat,
+            longitude: lon,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          });
+        }
+      }
     }
-  }, [id, riddleDetail.riddle]);
+  }, [riddle, riddleId]);
 
   const onMapPress = (e: MapPressEvent) => {
     const { latitude, longitude } = e.nativeEvent.coordinate;
@@ -90,23 +70,29 @@ export default function UpdateForm() {
     }));
   };
 
-  const handleSubmit = async (values: any) => {
-    const data: Partial<DraftCreate> = {
+  const handleSubmit = async (values: FormValues) => {
+    const data: Partial<RiddleFormData> = {
       title: values.title,
       description: values.description,
       is_private: values.is_private,
       password: values.is_private ? values.password : null,
+      status: 'draft',
       latitude: String(mapCoordinate.latitude),
       longitude: String(mapCoordinate.longitude),
     };
-    const riddle = await updateRiddle(id, data);
 
-    // TODO : mettre un toast
-    alert('Énigme mise à jour avec succès !');
+    const updatedRiddle = await updateRiddle(riddleId, data);
+
+    if (updatedRiddle) {
+      // TODO : mettre un toast
+      alert('Énigme mise à jour avec succès !');
+    } else {
+      alert('Échec mise à jour de l\'énigme !');
+    }
   };
 
 
-  if (riddleDetail.isLoading && !riddleDetail.riddle) {
+  if (isLoading && !riddle) {
     return (
       <View>
         <ActivityIndicator size="large" color={isDark ? colors.primary.lighter : colors.primary.darker} />
@@ -115,31 +101,20 @@ export default function UpdateForm() {
     );
   }
 
-  if (riddleDetail.error && !riddleDetail.riddle) {
+  if (error && !riddle) {
     return (
       <View>
-        <Text className='text-red-300'>Erreur: {riddleDetail.error}</Text>
-        {/* Ajouter un bouton pour réessayer ? */}
-        <TouchableOpacity onPress={() => fetchRiddleDetail(id)}>
-           <Text style={{ color: colors.primary.mid, marginTop: 10 }}>Réessayer</Text>
-        </TouchableOpacity>
+        <Text className='text-dark dark:text-light'>Erreur : {error}</Text>
       </View>
     );
   }
 
-  if (!riddleDetail.riddle || riddleDetail.riddle.id.toString() !== id) {
-     if (!riddleDetail.isLoading) {
-        return (
-          <View>
-            <Text className='text-dark dark:text-light'>Aucune donnée trouvée pour cette énigme (ID: {id}).</Text>
-          </View>
-        );
-     }
-     return (
-        <View>
-          <ActivityIndicator size="large" color={isDark ? colors.primary.lighter : colors.primary.darker} />
-        </View>
-     );
+  if (!riddle) {
+    return (
+      <View>
+        <Text className='text-dark dark:text-light'>Aucune donnée trouvée pour cette énigme.</Text>
+      </View>
+    );
   }
 
   return (
@@ -152,7 +127,7 @@ export default function UpdateForm() {
       {({ handleSubmit, values, setFieldValue, isValid, isSubmitting, touched, errors, setFieldTouched }) => (
         <View className="gap-8">
 
-          {/* Privée ou publique */}
+          {/* --- Privée ou publique --- */}
           <View className="px-6 flex-1 gap-3">
             <Text className="text-dark dark:text-light font-semibold mb-1">Visibilité :</Text>
             <View className='flex-row'>
@@ -194,7 +169,6 @@ export default function UpdateForm() {
               <View className='mt-2'>
                 <FormField
                   name="password"
-                  label="Mot de passe (requis si privé) :"
                   placeholder="Entrez un mot de passe"
                   isPassword
                 />
@@ -202,7 +176,7 @@ export default function UpdateForm() {
             )}
           </View>
 
-          {/* Titre */}
+          {/* --- Titre --- */}
           <View className='px-6'>
             <FormField
               name="title"
@@ -211,7 +185,7 @@ export default function UpdateForm() {
             />
           </View>
 
-          {/* Description */}
+          {/* --- Description --- */}
           <View className='px-6'>
             <FormField
               name="description"
@@ -228,7 +202,7 @@ export default function UpdateForm() {
             </Text>
           </View>
 
-          {/* Carte */}
+          {/* --- Carte --- */}
           <View className='gap-2'>
             <Text className='px-6 text-dark dark:text-light font-semibold'>Localisation :</Text>
             <View className="h-64 overflow-hidden mx-6 rounded-lg border border-gray-300 dark:border-gray-600">
@@ -244,13 +218,13 @@ export default function UpdateForm() {
                 </MapView>
               ) : (
                 <View>
-                    {riddleDetail.isLoading ? <ActivityIndicator/> : <Text className='text-gray-500 dark:text-gray-400'>Chargement de la carte...</Text>}
+                    {isLoading ? <ActivityIndicator/> : <Text className='text-gray-500 dark:text-gray-400'>Chargement de la carte...</Text>}
                 </View>
               )}
             </View>
           </View>
 
-          {/* Bouton de soumission */}
+          {/* --- Bouton de soumission --- */}
           <View className='px-6 mt-4'>
             <GradientButton
               onPress={() => handleSubmit()}

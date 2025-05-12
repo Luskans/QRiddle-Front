@@ -2,20 +2,17 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
 import colors from "@/constants/colors";
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
 import { useThemeStore } from '@/stores/useThemeStore';
 import GradientButton from '@/components/(common)/GradientButton';
 import GhostButton from '@/components/(common)/GhostButton';
+import PrimaryLayout from '@/components/(layouts)/PrimaryLayout';
 
 
 export default function AuthScreen() {
   const { isDark } = useThemeStore();
 
   return (
-    <SafeAreaView style={{ flex: 1 }} >
-      <StatusBar style={ isDark ? 'light' : 'dark' } backgroundColor='transparent' />
-      
+    <PrimaryLayout>
       <View className="flex p-6">
         <View className='flex-col justify-center h-full gap-20'>
         
@@ -28,16 +25,6 @@ export default function AuthScreen() {
             <Text className="text-2xl font-bold text-dark dark:text-light">
               <Text className='text-primary-mid'>QR</Text>iddle
             </Text>
-          </View>
-
-          {/* Image principale */}
-          <View className="items-center">
-            {/* <Image
-              source={require('../../assets/images/auth-image.png')}
-              className="w-72 h-72"
-              resizeMode="contain"
-            /> */}
-            <View className="w-72 h-72 bg-gray-400 rounded-lg"></View>
           </View>
 
           {/* BUTTONS */}
@@ -92,6 +79,6 @@ export default function AuthScreen() {
 
         </View>
       </View>
-    </SafeAreaView>
+    </PrimaryLayout>
   );
 }

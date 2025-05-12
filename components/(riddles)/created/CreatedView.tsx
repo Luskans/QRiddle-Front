@@ -1,41 +1,37 @@
 import React, { useCallback, useEffect } from 'react';
 import { View, Text, ActivityIndicator, TextInput, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, useGlobalSearchParams, useFocusEffect } from 'expo-router';
-import SecondaryLayoutWithoutScrollView from '@/components/(layouts)/SecondaryLayoutWithoutScrollView';
 import { CollapsibleSection } from '@/components/(common)/CollapsibleSection';
 import { useThemeStore } from '@/stores/useThemeStore';
 import SecondaryLayout from '@/components/(layouts)/SecondaryLayout';
-import GradientButton from '@/components/(common)/GradientButton';
 import GhostButton from '@/components/(common)/GhostButton';
-import { useRiddleStore } from '@/stores/useRiddleStore';
-import { useStepStore } from '@/stores/useStepStore';
-import { useReviewStore } from '@/stores/useReviewStore';
-// import { useLeaderboardStore } from '@/stores/useGlobalScoreStore';
-import UpdateForm from '@/components/(riddles)/UpdateForm';
-import StepList from '@/components/(riddles)/StepList';
-import QrCodeList from '@/components/(riddles)/QrCodeList';
-import ReviewList from '@/components/(riddles)/ReviewList';
+import UpdateForm from '@/components/(riddles)/created/UpdateForm';
+import StepList from '@/components/(riddles)/created/StepList';
+import QrCodeList from '@/components/(riddles)/created/QrCodeList';
+import ReviewList from '@/components/(riddles)/common/ReviewList';
 import TopRiddleLeaderboard from '@/components/(riddles)/common/TopRiddleLeaderboard';
+import { Riddle, useRiddleStore } from '@/stores/useRiddleStore2';
+import { Ionicons } from '@expo/vector-icons';
+import colors from '@/constants/colors';
+import { getStatusColor } from '@/lib/getStatusColor';
+import { defaultStepsByRiddleState, useStepStore } from '@/stores/useStepStore2';
+import GradientButton from '@/components/(common)/GradientButton';
 
-export default function CreatedView() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  // const { riddleDetail, updateRiddle, deleteRiddle, fetchRiddleDetail } = useRiddleStore();
-  // const { stepList, fetchStepList } = useStepStore();
-  // const { reviewList, fetchReviewList } = useReviewStore();
-  // const { gameLeaderboard, fetchGameLeaderboard } = useLeaderboardStore();
+export default function CreatedView({riddle}: {riddle: Riddle}) {
   const { isDark } = useThemeStore();
+  const { fetchStepsByRiddle } = useStepStore();
+  const { updateRiddle } = useRiddleStore();
+  const { steps, isLoading: stepsLoading, error: stepsError } = useStepStore(state => state.stepsByRiddle[riddle.id] || defaultStepsByRiddleState);
 
   useFocusEffect(
     useCallback(() => {
-      if (id) {
-        // fetchRiddleDetail(id);
-        fetchStepList(id);
-        // fetchReviewList(id);
-        // fetchRiddleLeaderboard(id);
-      }
-    }, [id, fetchStepList])
+      // fetchRiddleDetail(id);
+      // fetchStepList(id);
+      // fetchReviewList(id);
+      fetchStepsByRiddle(riddle.id.toString());
+    }, [])
   );
-  console.log("step list", stepList)
+  
   // const renderMainButton = () => {
   //   const status = riddleDetail.riddle?.status;
 
@@ -69,10 +65,21 @@ export default function CreatedView() {
   //   }
   // };
 
+  const handleUpdate = () => {
+    if (riddle.status == 'draft') {
+      updateRiddle(riddle.id.toString(), { status: 'active' })
+      alert('Énigme publiée')
+
+    } else if (riddle.status == 'active') {
+      updateRiddle(riddle.id.toString(), { status: 'draft' })
+      alert('Énigme dépubliée')
+    }
+  };
+
   const handleDelete = () => {
     // Ajouter une confirmation avant de supprimer ?
     // Alert.alert("Confirmation", "Voulez-vous vraiment supprimer cette énigme ?", [ { text: "Annuler" }, { text: "Supprimer", onPress: () => deleteRiddle(riddleId) } ]);
-    console.log("Suppression de l'énigme :", id);
+    // console.log("Suppression de l'énigme :", id);
     // deleteRiddle(id);
     // Peut-être naviguer en arrière après suppression ? router.back();
   };
@@ -80,71 +87,76 @@ export default function CreatedView() {
   return (
     <SecondaryLayout>
       <View className='py-10 gap-4'>
-        {/* <View className='px-6 mb-8'>
-          <Text
-            className='text-xl text-dark dark:text-light font-semibold mb-1'
-            numberOfLines={2}
-            ellipsizeMode="tail"
-          >
-            {riddleDetail.riddle.title}
-          </Text>
-          {riddleDetail.riddle.is_private
-            ? <View className='flex-row gap-3 items-center'>
-                <TextInput
-                  className='flex-1 bg-gray-200 text-gray-600 border rounded-lg p-2 border-gray-300'
-                  value="password test"
-                  editable={false}
-                />
-                <View className='border border-dark dark:border-light p-2 border rounded-lg'>
-                  <Ionicons name="copy-outline" size={18} color={isDark ? colors.light : colors.dark } />
-                </View>
+        <View className='px-6 mb-8'>
+          {riddle.is_private && (
+            <View className='flex-row gap-3 items-center'>
+              <TextInput
+                className='flex-1 bg-gray-200 text-gray-600 border rounded-lg p-2 border-gray-300'
+                value="password test"
+                editable={false}
+              />
+              <View className='border border-dark dark:border-light p-2 border rounded-lg'>
+                <Ionicons name="copy-outline" size={18} color={isDark ? colors.light : colors.dark } />
               </View>
-            : ''
-          }
-        </View> */}
+            </View>
+          )}
+        </View>
         
         <CollapsibleSection
           title="Informations générales"
           icon="information-circle-outline"
         >
-          <UpdateForm />
+          <UpdateForm riddleId={riddle.id.toString()} />
         </CollapsibleSection>
         
         <CollapsibleSection 
           title="Etapes"
           icon="footsteps-outline"
-          number={stepList.steps.length}
+          number={steps?.length ?? 0}
         >
-          <StepList stepList={stepList} />
+          {stepsLoading && <ActivityIndicator />}
+          {stepsError && <Text style={{ color: 'red' }}>{stepsError}</Text>}
+          {!stepsLoading && !stepsError && (steps.length === 0) && <Text>Aucune étape pour cette énigme.</Text>}
+          {!stepsLoading && !stepsError && (steps.length > 0) && <StepList steps={steps} />}
         </CollapsibleSection>
         
         <CollapsibleSection 
           title="QR codes"
           icon="qr-code-outline"
         >
-          <QrCodeList stepList={stepList} />
+          {stepsLoading && <ActivityIndicator />}
+          {stepsError && <Text style={{ color: 'red' }}>{stepsError}</Text>}
+          {!stepsLoading && !stepsError && (steps.length === 0) && <Text>Aucun QR code pour cette énigme.</Text>}
+          {!stepsLoading && !stepsError && (steps.length > 0) && <QrCodeList steps={steps} />}
         </CollapsibleSection>
 
         <CollapsibleSection
           title="Avis"
           icon="chatbubble-ellipses-outline"
+          number={riddle.reviewsCount ?? 0}
         >
-          <ReviewList />
+          <ReviewList riddleId={riddle.id.toString()} />
         </CollapsibleSection>
 
-        {/* <CollapsibleSection 
+        <CollapsibleSection 
           title="Classement"
           icon="trophy-outline"
         >
-          <Leaderboard ranking={} userRank={}/>
-        </CollapsibleSection> */}
+          <TopRiddleLeaderboard riddleId={riddle.id.toString()} />
+        </CollapsibleSection>
 
-        {/* <Text className={`${getStatusColor(riddleDetail.riddle.status)} w-auto self-center text-sm py-0.5 px-2.5 rounded-full mt-8`}>
-          { riddleDetail.riddle.status }
-        </Text> */}
+        <Text className={`${getStatusColor(riddle.status)} w-auto self-center text-sm py-0.5 px-2.5 rounded-full mt-8`}>
+          { riddle.status }
+        </Text>
 
         <View className='px-6 flex-1 flex-row gap-3 items-center justify-center'>
-          {/* {renderMainButton()} */}
+          <GradientButton
+            onPress={() => handleUpdate()}
+            title={ riddle.status == "draft" ? "Publier" : "Dépublier"}
+            colors={isDark ? [colors.primary.lighter, colors.primary.lighter] : [colors.primary.darker, colors.primary.darker]}
+            textColor={isDark ? 'text-dark' : 'text-light'}
+            disabled={steps.length <= 0}
+          />
 
           <GhostButton
             onPress={handleDelete}

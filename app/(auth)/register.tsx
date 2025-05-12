@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import PrimaryLayout from '@/components/(layouts)/PrimaryLayout';
+import SecondaryLayout from '@/components/(layouts)/SecondaryLayout';
 
 
 export default function RegisterScreen() {
@@ -99,8 +99,8 @@ export default function RegisterScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       className="flex-1"
     >
-      <PrimaryLayout>
-        <View className="flex-1 p-6 justify-center">
+      <SecondaryLayout>
+        <View className="flex-1 p-6 justify-center pt-20">
 
           {/* FORM */}
           <View className="flex-col gap-4">
@@ -229,7 +229,7 @@ export default function RegisterScreen() {
           </View>
 
         </View>
-      </PrimaryLayout>
+      </SecondaryLayout>
     </KeyboardAvoidingView>
   );
 }

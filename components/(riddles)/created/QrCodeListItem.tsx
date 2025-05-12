@@ -1,16 +1,16 @@
-import { StepList } from "@/stores/useStepStore";
 import { useThemeStore } from "@/stores/useThemeStore";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import colors from '@/constants/colors';
+import { Step } from "@/stores/useStepStore2";
 
-export default function QrCodeListItem({ step }: { step: StepList }) {
+export default function QrCodeListItem({ step }: { step: Step }) {
   const { isDark } = useThemeStore();  
 
   return (
     <TouchableOpacity
-        onPress={() => router.navigate(`/riddles/created/${step.riddle_id}/steps/${step.id}/qrcode`)}
+        onPress={() => router.navigate(`/steps/${step.id}/qrcode`)}
         className="relative w-[56px] h-[56px] items-center justify-center"
         accessibilityLabel={`QR Code pour étape ${step.order_number}`}
         accessibilityRole="button"

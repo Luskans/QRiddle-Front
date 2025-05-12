@@ -1,12 +1,12 @@
-import { StepList } from "@/stores/useStepStore";
+import { Step } from "@/stores/useStepStore2";
 import { router } from "expo-router";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 
-export default function StepListItem({ step }: { step: StepList }) {
+export default function StepListItem({ step }: { step: Step }) {
 
   return (
     <TouchableOpacity
-        onPress={() => router.navigate(`/riddles/created/${step.riddle_id}/steps/${step.id}`)}
+        onPress={() => router.navigate(`/steps/${step.id}`)}
         className="border border-dark dark:border-light rounded-full px-4 py-2"
         accessibilityRole="button"
     >

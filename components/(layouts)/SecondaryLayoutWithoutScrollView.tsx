@@ -2,18 +2,24 @@ import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useThemeStore } from '@/stores/useThemeStore';
 import { useNavigation } from '@react-navigation/native';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import colors from '@/constants/colors';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect } from 'expo-router';
 
 type Props = {
   children: React.ReactNode;
 };
 
 export default function SecondaryLayoutWithoutScrollView({ children }: Props) {
-  const { isDark } = useThemeStore();
+  const { isDark, setIsPrimaryLayout } = useThemeStore();
   const navigation = useNavigation();
   const headerColor = isDark ? colors.primary.lighter : colors.primary.darker;
+
+  useFocusEffect(
+    useCallback(() => {
+      setIsPrimaryLayout(false);
+    }, [setIsPrimaryLayout])
+  );
 
   useEffect(() => {
     navigation.setOptions({
@@ -23,13 +29,10 @@ export default function SecondaryLayoutWithoutScrollView({ children }: Props) {
   }, [navigation]);
   
   return (
-    // <SafeAreaView style={{ flex: 1 }}>
     <View className='flex-1'>
-      <StatusBar style={ isDark ? 'dark' : 'light' } backgroundColor={isDark ? colors.primary.lighter : colors.primary.darker} />
       <View className='flex-1 bg-white dark:bg-dark'>
         {children}
       </View>
     </View>
-    // </SafeAreaView>
   );
 };

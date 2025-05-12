@@ -16,7 +16,7 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: isDark ? colors.gray.three : colors.gray.four,
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: 'transparent',
+          backgroundColor: isDark ? colors.dark : colors.light,
           shadowColor: 'transparent',
           borderColor: isDark ? colors.primary.lighter : colors.primary.darker,
           height: 52 + insets.bottom,

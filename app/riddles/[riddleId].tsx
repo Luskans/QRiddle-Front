@@ -271,12 +271,13 @@
 
 
 import CommonView from '@/components/(riddles)/common/CommonView';
-import CreatedView from '@/components/(riddles)/created/CreatedView2';
+import CreatedView from '@/components/(riddles)/created/CreatedView';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { useRiddleStore } from '@/stores/useRiddleStore2';
+import { useReviewStore } from '@/stores/useReviewStore2';
+import { defaultRiddleByIdState, useRiddleStore } from '@/stores/useRiddleStore2';
 import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, Text } from 'react-native';
 
 
 type ViewType = 'created' | 'common';
@@ -285,19 +286,23 @@ export default function RiddleDetailScreen() {
   const [viewType, setViewType] = useState<ViewType>('common');
   const { riddleId } = useLocalSearchParams<{ riddleId: string }>();
   const { user } = useAuthStore();
-  const { riddle, isLoading, error } = useRiddleStore(state => state.riddleDetail);
-  const { fetchRiddleDetail } = useRiddleStore();
+  const { fetchRiddleById } = useRiddleStore();
+  const { riddle, isLoading: riddleLoading, error: riddleError } = useRiddleStore(state => state.riddleById[riddleId] || defaultRiddleByIdState);
+  // const { fetchRiddleDetail } = useRiddleStore();
+  // const { riddle, isLoading: riddleLoading, error: riddleError } = useRiddleStore(state => state.riddleDetail);
+  // const { fetchReviewsByRiddle } = useReviewStore();
+  // const { reviews, isLoading: reviewLoading, error: reviewError } = useReviewStore(state => state.reviewsByRiddle);
 
-  console.log('user', user)
-  console.log('id', riddleId)
   useFocusEffect(
     useCallback(() => {
       if (riddleId && user) {
-        fetchRiddleDetail(riddleId);
+        fetchRiddleById(riddleId);
+        // fetchRiddleDetail(riddleId);
+        // fetchReviewsByRiddle(riddleId);
       }
-    }, [riddleId, user, fetchRiddleDetail])
+    }, [riddleId, user, fetchRiddleById])
   );
-
+  
   useEffect(() => {
     if (user?.id === riddle?.creator_id) {
       setViewType('created');
@@ -307,7 +312,7 @@ export default function RiddleDetailScreen() {
   }, [riddle, user]);
 
 
-  if (isLoading) {
+  if (riddleLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color="#2563EB" />
@@ -315,11 +320,19 @@ export default function RiddleDetailScreen() {
     );
   }
 
-  if (!isLoading && viewType === 'created') {
-    return <CreatedView />
+  if (!riddle) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Aucune énigme trouvée.</Text>
+      </View>
+    );
   }
 
-  if (!isLoading && viewType === 'common') {
-    return <CommonView />
+  if (!riddleLoading && viewType === 'created' || riddle) {
+    return <CreatedView riddle={riddle} />
   }
+
+  // if (!riddleLoading && viewType === 'common' || riddle) {
+  //   return <CommonView riddle={riddle} />
+  // }
 }

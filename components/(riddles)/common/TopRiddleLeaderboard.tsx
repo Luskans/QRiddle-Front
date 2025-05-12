@@ -23,7 +23,7 @@ export default function TopRiddleLeaderboard({ riddleId }: { riddleId: string })
   }, [riddleId, fetchRiddleLeaderboard]);
 
   return (
-    <View>
+    <View className='px-6'>
       {userRank && <LeaderboardUser userRank={userRank} />}
 
       <LeaderboardHeader />

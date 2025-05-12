@@ -5,9 +5,9 @@ import { FormField } from '@/components/(common)/FormField';
 import GradientButton from '@/components/(common)/GradientButton';
 import { loginSchema } from '@/lib/validationSchemas';
 import { router } from 'expo-router';
-import PrimaryLayout from '@/components/(layouts)/PrimaryLayout';
 import colors from '@/constants/colors';
 import { useThemeStore } from '@/stores/useThemeStore';
+import SecondaryLayout from '@/components/(layouts)/SecondaryLayout';
 
 interface LoginValues {
   email: string;
@@ -27,7 +27,7 @@ export default function LoginScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       className="flex-1"
     >
-      <PrimaryLayout>
+      <SecondaryLayout>
         <View className="flex-1 px-6 justify-center pt-20">
           <Formik
             initialValues={{ email: '', password: '' }}
@@ -86,7 +86,7 @@ export default function LoginScreen() {
             )}
           </Formik>
         </View>
-      </PrimaryLayout>
+      </SecondaryLayout>
     </KeyboardAvoidingView>
   );
 }

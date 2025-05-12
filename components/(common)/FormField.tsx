@@ -23,7 +23,7 @@ export function FormField({ name, label, isPassword = false, onChangeText, ...pr
   return (
     <View className="">
       {label && (
-        <Text className="text-dark dark:text-light mb-2">{label}</Text>
+        <Text className="text-dark dark:text-light mb-2 font-semibold">{label}</Text>
       )}
       <View className="relative">
         <TextInput

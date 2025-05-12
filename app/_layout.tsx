@@ -1,6 +1,5 @@
 import "@/global.css";
 import { Stack } from "expo-router";
-import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import { useFonts } from "expo-font";
@@ -9,6 +8,7 @@ import { useThemeStore } from "@/stores/useThemeStore";
 import useAuthRedirection from "@/hooks/useAuthRedirection";
 import { useAssets } from "expo-asset";
 import { useAuthStore } from "@/stores/useAuthStore";
+import colors from "@/constants/colors";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -49,12 +49,24 @@ export default function RootLayout() {
         screenOptions={{
           headerShown: false,
           // contentStyle: { backgroundColor: 'transparent' },
-          // animation: 'slide_from_right'
+          // animation: 'slide_from_right',
+          // headerStyle: { backgroundColor: isDark ? colors.primary.lighter : colors.primary.darker },
+          // headerTintColor: isDark ? colors.dark : colors.light,
         }}
       >
-        {/* <Stack.Screen name="index" /> */}
-        <Stack.Screen name="(auth)" />
-        <Stack.Screen name="(tabs)" />
+        <Stack.Screen
+          name="(auth)"
+          options={{ 
+            // title: 'test',
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="(tabs)"
+          options={{ 
+            headerShown: false,
+          }}
+        />
         {/* <Stack.Screen name="game-sessions" />
         <Stack.Screen name="hints" />
         <Stack.Screen name="leaderboards" />
@@ -64,7 +76,7 @@ export default function RootLayout() {
         <Stack.Screen name="settings" />
         <Stack.Screen name="steps" />
         <Stack.Screen name="users" /> */}
-        <Stack.Screen name="users/me" />
+        {/* <Stack.Screen name="users/me" /> */}
       </Stack>
     </ThemeProvider>
   );

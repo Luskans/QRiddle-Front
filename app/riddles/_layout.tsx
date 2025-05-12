@@ -5,7 +5,6 @@ export default function RiddlesLayout() {
   return (
     <Stack
       screenOptions={{
-        headerShadowVisible: false,
         animation: 'slide_from_right',
       }}
     >

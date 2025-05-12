@@ -1,10 +1,9 @@
-import { StepList } from "@/stores/useStepStore";
 import { useThemeStore } from "@/stores/useThemeStore";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Image, LayoutChangeEvent, Text, TouchableOpacity, View } from "react-native";
 import colors from '@/constants/colors';
-import { Review } from "@/stores/useReviewStore";
+import { Review } from "@/stores/useReviewStore2";
 import moment from "moment";
 import { useCallback, useState } from "react";
 import { REVIEW_TRUNCATE_LIMIT } from "@/constants/constants";
