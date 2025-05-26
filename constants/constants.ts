@@ -1,0 +1,9 @@
+export const DESCRIPTION_MAX_LENGTH = 1000;
+export const HEADER_HEIGHT = 220;
+export const REVIEW_TRUNCATE_LIMIT = 200;
+export const HINT_MAX_LENGTH = 3000;
+export const MAP_LATITUDE = 47;
+export const MAP_LONGITUDE = 2.5;
+export const MAP_LATITUDE_DELTA = 8.0;
+export const MAP_LONGITUDE_DELTA = 8.0;
+export const BACKEND_URL = process.env.EXPO_PUBLIC_URL;
