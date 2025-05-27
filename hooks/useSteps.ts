@@ -1,14 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { createStep, deleteStep, getStepById, getStepsByRiddle, updateStep } from '@/services/api';
+import { StepFormData } from '@/interfaces/step';
 
 
-export function useStepsByRiddle(riddleId: string) {
-  return useQuery({
-    queryKey: ['riddle-steps', riddleId],
-    queryFn: () => getStepsByRiddle(riddleId),
-    enabled: !!riddleId,
-  });
-}
+// export function useStepsByRiddle(riddleId: string) {
+//   return useQuery({
+//     queryKey: ['riddle-steps', riddleId],
+//     queryFn: () => getStepsByRiddle(riddleId),
+//     enabled: !!riddleId,
+//   });
+// }
 
 export function useStep(id: string) {
   return useQuery({
@@ -24,8 +25,9 @@ export function useCreateStep() {
   return useMutation({
     mutationFn: ({ riddleId, data }: { riddleId: string, data: StepFormData }) => createStep(riddleId, data),
     onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['riddle', variables.riddleId] });
       // queryClient.invalidateQueries({ queryKey: ['steps'] });
-      queryClient.invalidateQueries({ queryKey: ['steps', variables.riddleId] });
+      // queryClient.invalidateQueries({ queryKey: ['steps', variables.riddleId] });
     },
   });
 }
@@ -36,9 +38,11 @@ export function useUpdateStep() {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<StepFormData> }) => updateStep(id, data),
     onSuccess: (updatedStep) => {
-      queryClient.setQueryData(['step', updatedStep.id], updatedStep);
+      queryClient.refetchQueries({ queryKey: ['step', updatedStep.id.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['riddle', updatedStep.riddle_id.toString()] });
+      // queryClient.setQueryData(['step', updatedStep.id], updatedStep);
       // queryClient.invalidateQueries({ queryKey: ['steps'] });
-      queryClient.invalidateQueries({ queryKey: ['steps', updatedStep.riddleId] });
+      // queryClient.invalidateQueries({ queryKey: ['steps', data.data.riddle_id.toString()] });
     },
   });
 }
@@ -50,7 +54,7 @@ export function useDeleteStep() {
     mutationFn: (id: string) => deleteStep(id),
     onSuccess: (_, id) => {
       queryClient.removeQueries({ queryKey: ['step', id] });
-      queryClient.invalidateQueries({ queryKey: ['steps'] });
+      // queryClient.invalidateQueries({ queryKey: ['steps'] });
     },
   });
 }

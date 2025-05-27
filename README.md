@@ -51,3 +51,4 @@ ip pro : 192.168.1.56
 - mettre des policies dans controller plutot que vérifier si user est creator
 - rajouter sur tous les update et delete un check de si c'est la derniere étape/indice et donc mettre en draft; rajouter le check quand on passe en publié
 - changer les controler de home
+- télécharger les qr codes

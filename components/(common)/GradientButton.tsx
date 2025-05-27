@@ -36,7 +36,7 @@ function GradientButton({
         style={{ borderRadius: 8 }}
       >
         {isLoading ? (
-          <ActivityIndicator color="white" />
+          <ActivityIndicator color="black" />
         ) : (
           <Text className={`${textColor} font-semibold`} numberOfLines={1}>
             {title}

@@ -12,3 +12,10 @@ export interface HintFormData {
   type: 'text' | 'image' | 'audio';
   content: string;
 }
+
+export interface HintItem {
+  id: number;
+  order_number: number;
+  type: string;
+  content: string;
+}

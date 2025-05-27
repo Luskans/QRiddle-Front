@@ -28,7 +28,7 @@ export default function GhostButton({
     >
       <View className={`px-6 py-3 items-center justify-center bg-transparent border ${color} rounded-lg ${disabled ? 'opacity-50' : ''}`} >
         {isLoading ? (
-          <ActivityIndicator color="white" />
+          <ActivityIndicator color="black" />
         ) : (
           <Text className={`${textColor} font-semibold`}>
             {title}

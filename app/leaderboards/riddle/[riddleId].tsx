@@ -60,9 +60,9 @@ export default function RiddleLeaderboardScreen() {
 
   return (
     <SecondaryLayoutWithoutScrollView>
-      <View className='flex-1 pt-6 px-6'>
+      <View className='flex-1 py-6 px-6'>
 
-        {userInfos && ( <LeaderboardUser userInfos={userInfos} /> )}
+        {userInfos && userInfos.userRank && ( <LeaderboardUser userInfos={userInfos} /> )}
         
         <LeaderboardHeader />
         

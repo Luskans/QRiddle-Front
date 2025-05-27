@@ -3,39 +3,34 @@ import GradientButton from '@/components/(common)/GradientButton';
 import SecondaryLayout from '@/components/(layouts)/SecondaryLayout';
 import colors from '@/constants/colors';
 import { HINT_MAX_LENGTH } from '@/constants/constants';
+import { useCreateHint } from '@/hooks/useHints';
+import { HintFormData } from '@/interfaces/hint';
 import { hintSchema } from '@/lib/validationSchemas';
-import { HintFormData, useHintStore } from '@/stores/useHintStore2';
-import { StepFormData, useStepStore } from '@/stores/useStepStore2';
 import { useThemeStore } from '@/stores/useThemeStore';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Formik } from 'formik';
 import { useState } from 'react';
-import { View, Text, Platform, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
-import MapView, { MapPressEvent, Marker } from 'react-native-maps';
+import { View, Text, TouchableOpacity } from 'react-native';
 
 export default function HintCreateScreen() {
   const { stepId } = useLocalSearchParams<{ stepId: string }>();
   const { isDark } = useThemeStore();
-  const { createHint } = useHintStore();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const createHintMutation = useCreateHint();
   const [initialValues, setInitialValues] = useState<HintFormData>({
     type: 'text',
     content: ''
   });
 
   const handleSubmit = async (values: HintFormData) => {
-    setIsSubmitting(true);
-    const newHint = await createHint(stepId, values);
-
-    if (newHint) {
-      // TODO : mettre un toast
-      alert('Indice créé avec succès !');
-      router.dismiss();
-    } else {
-      alert('Échec création de l\'indice !');
-    }
-
-    setIsSubmitting(false);
+    createHintMutation.mutate({stepId: stepId, data: values}, {
+      onSuccess: (data) => {
+        alert(`Indice ${data.order_number} ajouté !`);
+        router.dismiss();
+      },
+      onError: (error) => {
+        alert(`Une erreur est survenue: ${error.response.data.message}`);
+      },
+    });
   };
 
   return (
@@ -130,8 +125,8 @@ export default function HintCreateScreen() {
                   title="Créer"
                   colors={isDark ? [colors.primary.mid, colors.primary.lighter] : [colors.primary.darker, colors.primary.mid]}
                   textColor={isDark ? 'text-dark' : 'text-light'}
-                  isLoading={isSubmitting}
-                  disabled={isSubmitting}
+                  isLoading={isSubmitting || createHintMutation.isPending}
+                  disabled={isSubmitting || createHintMutation.isPending}
                 />
               </View>
   

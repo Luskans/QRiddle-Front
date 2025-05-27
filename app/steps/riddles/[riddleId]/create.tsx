@@ -1,24 +1,26 @@
 import GradientButton from '@/components/(common)/GradientButton';
 import SecondaryLayout from '@/components/(layouts)/SecondaryLayout';
 import colors from '@/constants/colors';
-import { StepFormData, useStepStore } from '@/stores/useStepStore2';
+import { MAP_LATITUDE, MAP_LATITUDE_DELTA, MAP_LONGITUDE, MAP_LONGITUDE_DELTA } from '@/constants/constants';
+import { useCreateStep } from '@/hooks/useSteps';
+import { StepFormData } from '@/interfaces/step';
 import { useThemeStore } from '@/stores/useThemeStore';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { View, Text, Platform, KeyboardAvoidingView } from 'react-native';
+import { View, Text } from 'react-native';
 import MapView, { MapPressEvent, Marker } from 'react-native-maps';
 
 export default function StepCreateScreen() {
   const { riddleId } = useLocalSearchParams<{ riddleId: string }>();
   const { isDark } = useThemeStore();
-  const { createStep } = useStepStore();
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [mapCoordinate, setMapCoordinate] = useState({
-    latitude: 45.041446,
-    longitude: 3.883930,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
+    latitude: MAP_LATITUDE,
+    longitude: MAP_LONGITUDE,
+    latitudeDelta: MAP_LATITUDE_DELTA,
+    longitudeDelta: MAP_LONGITUDE_DELTA,
   });
+
+  const createStepMutation = useCreateStep();
 
   const onMapPress = (e: MapPressEvent) => {
     const { latitude, longitude } = e.nativeEvent.coordinate;
@@ -34,18 +36,16 @@ export default function StepCreateScreen() {
       latitude: String(mapCoordinate.latitude),
       longitude: String(mapCoordinate.longitude),
     };
-    
-    setIsSubmitting(true);
-    const newStep = await createStep(riddleId, data);
 
-    if (newStep) {
-      alert(`Étape ${newStep.order_number} ajoutée !`);
-      router.replace(`/steps/${newStep.id}`);
-    } else {
-      alert("Échec création de l'étape !");
-    }
-
-    setIsSubmitting(false);
+    createStepMutation.mutate({riddleId: riddleId, data}, {
+      onSuccess: (data) => {
+        alert(`Étape ${data.order_number} ajoutée !`);
+        router.replace(`/steps/${data.id}`);
+      },
+      onError: (error) => {
+        alert(`Une erreur est survenue: ${error.message}`);
+      },
+    });
   }
 
   return (
@@ -58,9 +58,12 @@ export default function StepCreateScreen() {
         <View className="h-[500px] overflow-hidden">
           <MapView
             style={{ flex: 1 }}
-            initialRegion={mapCoordinate}
+            region={mapCoordinate}
+            onRegionChangeComplete={setMapCoordinate}
             onPress={onMapPress}
             showsUserLocation={true}
+            zoomEnabled={!createStepMutation.isPending}
+            scrollEnabled={!createStepMutation.isPending}
           >
             <Marker coordinate={{ latitude: mapCoordinate.latitude, longitude: mapCoordinate.longitude }} />
           </MapView>
@@ -72,8 +75,8 @@ export default function StepCreateScreen() {
             title="Créer"
             colors={isDark ? [colors.primary.mid, colors.primary.lighter] : [colors.primary.darker, colors.primary.mid]}
             textColor={isDark ? 'text-dark' : 'text-light'}
-            isLoading={isSubmitting}
-            disabled={isSubmitting}
+            isLoading={createStepMutation.isPending}
+            disabled={createStepMutation.isPending}
           />
         </View>
       </View>

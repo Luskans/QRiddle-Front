@@ -1,8 +1,8 @@
 import { CreatedRiddle, CreateRiddleFormData, Riddle, RiddleDetail, RiddleFormData, RiddleItem } from '@/interfaces/riddle';
 import api from '../lib/axios';
 import { Auth, LoginFormData, RegisterFormData } from '@/interfaces/auth';
-import { Step, StepFormData } from '@/interfaces/step';
-import { Hint, HintFormData } from '@/interfaces/hint';
+import { Step, StepFormData, StepItem } from '@/interfaces/step';
+import { Hint, HintFormData, HintItem } from '@/interfaces/hint';
 import { Review, ReviewFormData, ReviewResponse } from '@/interfaces/review';
 import { ActiveSession, NewSessionFormData, PlayedSession, RiddleSession, UnlockHintFormData, ValidateStepFormData } from '@/interfaces/game';
 import { Home } from '@/interfaces/home';
@@ -68,66 +68,84 @@ export const getRiddleById = async (id: string): Promise<RiddleDetail> => {
 
 export const createRiddle = async (data: CreateRiddleFormData): Promise<Riddle> => {
   const response = await api.post('/riddles', data);
-  return response.data;
+  console.log('createRiddle :', response.data);
+  return response.data.data;
 };
 
 export const updateRiddle = async (id: string, data: Partial<RiddleFormData>): Promise<Riddle> => {
   const response = await api.patch(`/riddles/${id}`, data);
-  return response.data;
+  console.log('updateRiddle :', response.data);
+  return response.data.data;
 };
 
 export const deleteRiddle = async (id: string): Promise<void> => {
-  const response = await api.post(`/riddles/${id}`);
+  const response = await api.delete(`/riddles/${id}`);
+  console.log('deleteRiddle :', response.data);
   return response.data;
 };
 
 
 // --- Steps ---
-export const getStepsByRiddle = async (riddleId: string): Promise<Step[]> => {
-  const response = await api.get(`/riddles/${riddleId}/steps`);
-  return response.data;
-};
+// export const getStepsByRiddle = async (riddleId: string): Promise<Step[]> => {
+//   const response = await api.get(`/riddles/${riddleId}/steps`);
+//   console.log('getStepsByRiddle :', response.data);
+//   return response.data;
+// };
 
-export const getStepById = async (id: string): Promise<Step> => {
+export const getStepById = async (id: string): Promise<StepItem> => {
   const response = await api.get(`/steps/${id}`);
-  return response.data;
+  console.log('getStepById :', response.data);
+  return response.data.data;
 };
 
 export const createStep = async (riddleId: string, data: StepFormData): Promise<Step> => {
   const response = await api.post(`/riddles/${riddleId}/steps`, data);
-  return response.data;
+  console.log('createStep :', response.data);
+  return response.data.data;
 };
 
 export const updateStep = async (id: string, data: Partial<StepFormData>): Promise<Step> => {
   const response = await api.patch(`/steps/${id}`, data);
-  return response.data;
+  console.log('updateStep :', response.data);
+  return response.data.data;
 };
 
 export const deleteStep = async (id: string): Promise<void> => {
-  const response = await api.post(`/steps/${id}`);
+  const response = await api.delete(`/steps/${id}`);
+  console.log('deleteStep :', response.data);
   return response.data;
 };
 
 
 // --- Hints ---
-export const getHintsByStep = async (stepId: string): Promise<Hint[]> => {
-  const response = await api.get(`/steps/${stepId}/hints`);
-  return response.data;
-};
+// export const getHintsByStep = async (stepId: string): Promise<Hint[]> => {
+//   const response = await api.get(`/steps/${stepId}/hints`);
+//   console.log('getHintsByStep :', response.data);
+//   return response.data;
+// };
+
+// export const getHintById = async (id: string): Promise<HintItem> => {
+//   const response = await api.get(`/hints/${id}`);
+//   console.log('getHintById :', response.data);
+//   return response.data.data;
+// };
 
 export const createHint = async (stepId: string, data: HintFormData): Promise<Hint> => {
   const response = await api.post(`/steps/${stepId}/hints`, data);
-  return response.data;
+  console.log('createHint :', response.data);
+  return response.data.data;
 };
 
 export const updateHint = async (id: string, data: Partial<HintFormData>): Promise<Hint> => {
   const response = await api.patch(`/hints/${id}`, data);
-  return response.data;
+  console.log('updateHint :', response.data);
+  return response.data.data;
 };
 
-export const deleteHint = async (id: string): Promise<void> => {
-  const response = await api.post(`/hints/${id}`);
-  return response.data;
+export const deleteHint = async (id: string): Promise<{ data: number }> => {
+  const response = await api.delete(`/hints/${id}`);
+  console.log('deleteHint :', response.data);
+  return response.data.data;
 };
 
 
@@ -155,7 +173,7 @@ export const updateReview = async (id: string, data: Partial<ReviewFormData>): P
 };
 
 export const deleteReview = async (id: string): Promise<void> => {
-  const response = await api.post(`/reviews/${id}`);
+  const response = await api.delete(`/reviews/${id}`);
   return response.data;
 };
 

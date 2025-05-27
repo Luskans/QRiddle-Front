@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, FlatList } from 'react-native';
-import { Hint } from '@/stores/useHintStore2';
 import HintListItem from './HintListItem';
+import { HintItem } from '@/interfaces/hint';
 
-export default function HintList({ hints }: { hints: Hint[] }) {
+
+export default function HintList({ hints }: { hints: HintItem[] }) {
 
   return (
     <View className='gap-6'>

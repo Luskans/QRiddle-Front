@@ -10,7 +10,7 @@ export default function QrCodeListItem({ step }: { step: StepItem }) {
 
   return (
     <TouchableOpacity
-        onPress={() => router.navigate(`/steps/${step.id}/qrcode`)}
+        // onPress={() => router.navigate(`/steps/${step.id}/qrcode`)}
         className="relative w-[56px] h-[56px] items-center justify-center"
         accessibilityLabel={`QR Code pour étape ${step.order_number}`}
         accessibilityRole="button"

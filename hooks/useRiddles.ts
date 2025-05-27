@@ -47,12 +47,11 @@ export function useUpdateRiddle() {
   
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<RiddleFormData> }) => updateRiddle(id, data),
-    onSuccess: (data) => {
-      queryClient.refetchQueries({ queryKey: ['riddle', data.data.id.toString()] });
+    onSuccess: (updatedRiddle) => {
+      queryClient.refetchQueries({ queryKey: ['riddle', updatedRiddle.id.toString()] });
       // queryClient.setQueryData(['riddle', updatedRiddle.data.id.toString()], updatedRiddle);
       queryClient.invalidateQueries({ queryKey: ['riddles'] });
       queryClient.invalidateQueries({ queryKey: ['created-riddles'] });
-
     },
   });
 }
@@ -66,6 +65,7 @@ export function useDeleteRiddle() {
       queryClient.removeQueries({ queryKey: ['riddle', id] });
       queryClient.invalidateQueries({ queryKey: ['riddles'] });
       queryClient.invalidateQueries({ queryKey: ['created-riddles'] });
+      queryClient.invalidateQueries({ queryKey: ['home'] });
     },
   });
 }

@@ -20,7 +20,7 @@ export interface RiddleFormData {
   title: string;
   description: string;
   is_private: boolean;
-  // status: 'published' | 'draft' | 'disabled';
+  status?: 'published' | 'draft' | 'disabled';
   latitude: string;
   longitude: string;
 }

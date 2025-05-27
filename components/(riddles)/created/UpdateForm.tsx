@@ -20,6 +20,7 @@ interface FormValues {
 
 export default function RiddleUpdateForm({ riddle }: { riddle: RiddleDetail }) {
   const { isDark } = useThemeStore();
+  const updateRiddleMutation = useUpdateRiddle();
   const [initialValues, setInitialValues] = useState<FormValues>({
     title: '',
     description: '',
@@ -32,7 +33,6 @@ export default function RiddleUpdateForm({ riddle }: { riddle: RiddleDetail }) {
     longitudeDelta: MAP_LONGITUDE_DELTA,
   });
 
-  const updateRiddleMutation = useUpdateRiddle();
 
   useEffect(() => {
     if (riddle) {
@@ -73,15 +73,13 @@ export default function RiddleUpdateForm({ riddle }: { riddle: RiddleDetail }) {
       latitude: String(mapCoordinate.latitude),
       longitude: String(mapCoordinate.longitude),
     };
-    console.log("datas envoyées", data)
 
     updateRiddleMutation.mutate({id: riddle.id.toString(), data}, {
-      onSuccess: (data) => {
-        console.log("datas retournées", data);
-        alert('Énigme créée avec succès !');
+      onSuccess: () => {
+        alert('Énigme mise à jour avec succès !');
       },
       onError: (error) => {
-        alert(`Une erreur est survenue: ${error.message}`);
+        alert(`Une erreur est survenue: ${error.response.data.message}`);
       },
     });
   };
@@ -161,13 +159,13 @@ export default function RiddleUpdateForm({ riddle }: { riddle: RiddleDetail }) {
           </View>
 
           {/* --- Erreurs de mutation --- */}
-          {updateRiddleMutation.isError && (
+          {/* {updateRiddleMutation.isError && (
             <View className="mx-6 px-6 py-2 bg-red-100 rounded-md -mb-4">
               <Text className="text-red-600">
                 {updateRiddleMutation.error?.message || "Une erreur est survenue"}
               </Text>
             </View>
-          )}
+          )} */}
 
           {/* --- Bouton de soumission --- */}
           <View className='px-6 mt-4'>

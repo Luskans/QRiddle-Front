@@ -16,7 +16,6 @@ export default function ReviewListItem({ review }: { review: Review }) {
   const { isDark } = useThemeStore();
   const [isExpanded, setIsExpanded] = useState(false);
   const shouldTruncate = review.content.length > REVIEW_TRUNCATE_LIMIT;
-  console.log("review", review)
   const userName = review?.user?.name || 'Inconnu';
   const userImage = review?.user?.image || '/default/user.png';
 

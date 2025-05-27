@@ -1,8 +1,5 @@
-import { StepItem } from "@/stores/useStepStore2";
-import { router } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { CollapsibleSection } from "../(common)/CollapsibleSection";
-import { Hint, HintFormData, useHintStore } from "@/stores/useHintStore2";
 import GradientButton from "../(common)/GradientButton";
 import GhostButton from "../(common)/GhostButton";
 import colors from "@/constants/colors";
@@ -12,10 +9,14 @@ import { useEffect, useState } from "react";
 import { FormField } from "../(common)/FormField";
 import { hintSchema } from "@/lib/validationSchemas";
 import { HINT_MAX_LENGTH } from "@/constants/constants";
+import { HintFormData, HintItem } from "@/interfaces/hint";
+import { useDeleteHint, useUpdateHint } from "@/hooks/useHints";
 
-export default function HintListItem({ hint }: { hint: Hint }) {
+
+export default function HintListItem({ hint }: { hint: HintItem }) {
   const { isDark } = useThemeStore();
-  const { updateHint, deleteHint } = useHintStore();
+  const updateHintMutation = useUpdateHint();
+  const deleteHintMutation = useDeleteHint();
   const [initialValues, setInitialValues] = useState<HintFormData>({
     type: 'text',
     content: ''
@@ -24,31 +25,33 @@ export default function HintListItem({ hint }: { hint: Hint }) {
   useEffect(() => {
     if (hint) {
       setInitialValues({
-        type: hint.type || 'text',
+        type: (hint.type as 'text' | 'image' | 'audio') || 'text',
         content: hint.content || ''
       });
     }
   }, [hint]);
 
-  const handleSubmit = async (values: HintFormData) => {
-    const updatedHint = await updateHint(hint.id.toString(), values);
-
-    if (updatedHint) {
-      // TODO : mettre un toast
-      alert('Indice mis à jour avec succès !');
-    } else {
-      alert('Échec mise à jour de l\'indice !');
-    }
+  const handleUpdate = async (values: HintFormData) => {
+    updateHintMutation.mutate({id: hint.id.toString(), data: values}, {
+      onSuccess: () => {
+        alert('Indice mis à jour avec succès !');
+      },
+      onError: (error) => {
+        alert(`Une erreur est survenue: ${error.response.data.message}`);
+      },
+    });
   };
 
   const handleDelete = async () => {
-    const response = await deleteHint(hint.id.toString(), hint.step_id.toString());
-    if (response) {
-      alert('Indice supprimé')
-    } else {
-      alert('Erreur suppression de l\'indice')
-    }
-  }
+    deleteHintMutation.mutate(hint.id.toString()), {
+      onSuccess: () => {
+        alert('Indice supprimé');
+      },
+      onError: (error: any) => {
+        alert(`Une erreur est survenue: ${error.response.data.message}`);
+      },
+    };
+  };
 
   return (
     <CollapsibleSection
@@ -58,7 +61,7 @@ export default function HintListItem({ hint }: { hint: Hint }) {
       <Formik
         initialValues={initialValues}
         validationSchema={hintSchema}
-        onSubmit={handleSubmit}
+        onSubmit={handleUpdate}
         enableReinitialize
       >
         {({ handleSubmit, values, setFieldValue, isValid, isSubmitting, touched, errors, setFieldTouched }) => (
@@ -144,8 +147,8 @@ export default function HintListItem({ hint }: { hint: Hint }) {
                 title="Modifier"
                 colors={isDark ? [colors.primary.mid, colors.primary.lighter] : [colors.primary.darker, colors.primary.mid]}
                 textColor={isDark ? 'text-dark' : 'text-light'}
-                isLoading={isSubmitting}
-                disabled={isSubmitting}
+                isLoading={isSubmitting || updateHintMutation.isPending}
+                disabled={isSubmitting || updateHintMutation.isPending}
               />
 
               <GhostButton
@@ -153,6 +156,8 @@ export default function HintListItem({ hint }: { hint: Hint }) {
                 title="Supprimer"
                 color={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
                 textColor={isDark ? 'text-primary-lighter' : 'text-primary-darker'}
+                isLoading={deleteHintMutation.isPending}
+                disabled={deleteHintMutation.isPending}
               />
             </View>
 

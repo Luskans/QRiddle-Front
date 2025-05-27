@@ -17,34 +17,48 @@ import GradientButton from '@/components/(common)/GradientButton';
 import Separator from '@/components/(common)/Separator';
 import * as Clipboard from 'expo-clipboard';
 import { RiddleDetail } from '@/interfaces/riddle';
+import { useDeleteRiddle, useUpdateRiddle } from '@/hooks/useRiddles';
 
 
 export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
   const { isDark } = useThemeStore();
   const [copied, setCopied] = useState<boolean>(false);
+  const updateRiddleMutation = useUpdateRiddle();
+  const deleteRiddleMutation = useDeleteRiddle();
 
   const handleUpdate = async () => {
-    // TODO : nouveau endpoint à faire
+    if (riddle.status === 'draft') {
+      updateRiddleMutation.mutate({id: riddle.id.toString(), data: {status: 'published'}}, {
+        onSuccess: () => {
+          alert('Énigme publiée');
+        },
+        onError: (error) => {
+          alert(`Une erreur est survenue: ${error.response.data.message}`);
+        },
+      });
 
-
-    // if (riddle.status == 'draft') {
-    //   await updateRiddle(riddle.id.toString(), { status: 'published' })
-    //   alert('Énigme publiée')
-
-    // } else if (riddle.status == 'published') {
-    //   await updateRiddle(riddle.id.toString(), { status: 'draft' })
-    //   alert('Énigme dépubliée')
-    // }
+    } else if (riddle.status === 'published') {
+      updateRiddleMutation.mutate({id: riddle.id.toString(), data: {status: 'draft'}}, {
+        onSuccess: () => {
+          alert('Énigme dépubliée');
+        },
+        onError: (error) => {
+          alert(`Une erreur est survenue: ${error.response.data.message}`);
+        },
+      });
+    }
   };
 
   const handleDelete = async () => {
-    // const response = await deleteRiddle(riddle.id.toString());
-    // if (response) {
-    //   alert('Énigme supprimée')
-    //   router.dismissAll();
-    // } else {
-    //   alert('Erreur suppression de l\'énigme')
-    // }
+    deleteRiddleMutation.mutate(riddle.id.toString()), {
+      onSuccess: () => {
+        alert('Énigme supprimée');
+        router.dismissAll();
+      },
+      onError: (error: any) => {
+        alert(`Une erreur est survenue: ${error.response.data.message}`);
+      },
+    };
   };
 
   const copyToClipboard = async () => {
@@ -160,7 +174,7 @@ export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
           <Link href={`/reviews/riddle/${riddle.id.toString()}`} asChild className='flex-1 justify-center mt-6'>
             <TouchableOpacity className='flex-row items-center gap-1'>
               <Ionicons name="arrow-forward" size={20} color={isDark ? colors.secondary.lighter : colors.secondary.darker} />
-              <Text className='text-secondary-darker dark:text-secondary-lighter font-semibold'>Voir plus d'avis</Text>
+              <Text className='text-secondary-darker dark:text-secondary-lighter font-semibold'>Voir tous les avis</Text>
             </TouchableOpacity>
           </Link>
         </CollapsibleSection>
@@ -174,7 +188,7 @@ export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
           <Link href={`/leaderboards/riddle/${riddle.id.toString()}`} asChild className='flex-1 justify-center mt-6 mb-8'>
             <TouchableOpacity className='flex-row items-center gap-1'>
               <Ionicons name="arrow-forward" size={20} color={isDark ? colors.secondary.lighter : colors.secondary.darker} />
-              <Text className='text-secondary-darker dark:text-secondary-lighter font-secondary'>Voir le classement entier</Text>
+              <Text className='text-secondary-darker dark:text-secondary-lighter font-semibold'>Voir le classement complet</Text>
             </TouchableOpacity>
           </Link>
           <Separator />
@@ -190,7 +204,8 @@ export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
             title={riddle.status == "draft" ? "Publier" : "Dépublier"}
             colors={isDark ? [colors.primary.lighter, colors.primary.lighter] : [colors.primary.darker, colors.primary.darker]}
             textColor={isDark ? 'text-dark' : 'text-light'}
-            disabled={riddle.stepsCount <= 0}
+            disabled={riddle.stepsCount <= 0 || updateRiddleMutation.isPending}
+            isLoading={updateRiddleMutation.isPending}
           />
 
           <GhostButton
@@ -198,6 +213,8 @@ export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
             title="Supprimer"
             color={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
             textColor={isDark ? 'text-primary-lighter' : 'text-primary-darker'}
+            isLoading={deleteRiddleMutation.isPending}
+            disabled={deleteRiddleMutation.isPending}
           />
         </View>
 
