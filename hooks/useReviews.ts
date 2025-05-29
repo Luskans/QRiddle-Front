@@ -28,7 +28,8 @@ export function useCreateReview() {
   return useMutation({
     mutationFn: ({ riddleId, data }: { riddleId: string, data: ReviewFormData }) => createReview(riddleId, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['reviews', variables.riddleId] });
+      console.log("dans repoense review", variables.riddleId)
+      queryClient.invalidateQueries({ queryKey: ['riddle-reviews', variables.riddleId.toString()] });
     },
   });
 }

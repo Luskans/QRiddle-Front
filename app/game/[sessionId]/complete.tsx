@@ -1,13 +1,190 @@
+import ErrorView from '@/components/(common)/ErrorView';
+import GradientButton from '@/components/(common)/GradientButton';
+import LoadingView from '@/components/(common)/LoadingView';
 import SecondaryLayout from '@/components/(layouts)/SecondaryLayout';
-import { View, Text } from 'react-native';
+import colors from '@/constants/colors';
+import {  DESCRIPTION_MAX_LENGTH } from '@/constants/constants';
+import { useCompleteSession } from '@/hooks/useGame';
+import { useThemeStore } from '@/stores/useThemeStore';
+import { router, useLocalSearchParams } from 'expo-router';
+import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
+import { Formik } from 'formik';
+import { ReviewFormData } from '@/interfaces/review';
+import { useCreateReview } from '@/hooks/useReviews';
+import { reviewSchema } from '@/lib/validationSchemas';
+import { FormField } from '@/components/(common)/FormField';
+import Slider from '@react-native-community/slider';
+import moment from 'moment';
+import { getFormattedDuration } from '@/lib/getFormattedDuration';
 
-export default function Screen() {
+
+export default function CompleteScreen() {
+  const { isDark } = useThemeStore();
+  const { sessionId } = useLocalSearchParams<{ sessionId: string }>();
+  const { data, isLoading, isError, error } = useCompleteSession(sessionId);
+  const createReviewMutation = useCreateReview();
+
+  const handleSubmit = async (values: ReviewFormData) => {
+    if (!data) return;
+
+    createReviewMutation.mutate({riddleId: data.riddle_id.toString(), data: values}, {
+      onSuccess: () => {
+        alert('Avis publié !');
+        router.dismissAll();
+      },
+      onError: (error) => {
+        alert(`Une erreur est survenue: ${error.response.data.message}`);
+      },
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <SecondaryLayout>
+        <LoadingView />
+      </SecondaryLayout>
+    );
+  }
+
+  if (isError) {
+    return (
+      <SecondaryLayout>
+        <ErrorView error={ error.response.data.message } />
+      </SecondaryLayout>
+    );
+  }
+
+  if (!data) {
+    return (
+      <SecondaryLayout>
+        <ErrorView error="Aucune donnée disponible" />
+      </SecondaryLayout>
+    );
+  }
 
   return (
-    <SecondaryLayout>
-      <View>
-        <Text>Page</Text>
-      </View>
-    </SecondaryLayout>
-  );
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      className="flex-1"
+    >
+      <SecondaryLayout>
+        <View className='py-10 gap-10'>
+
+          <View className='gap-6 px-6'>
+            <Text className='text-dark dark:text-light font-bold text-4xl text-center'>Félicitations !</Text>
+            
+            <View className='gap-2'>
+              <Text className='text-dark dark:text-light'>Vous êtes arrivé au bout de l'énigme en :</Text>
+              <Text className='text-secondary-darker dark:text-secondary-lighter text-center text-2xl font-semibold'>{moment(data.duration).format("HH:mm:ss")}</Text>
+            </View>
+
+            <View className='gap-2'>
+              <Text className='text-dark dark:text-light'>Score final :</Text>
+              <Text className='text-secondary-darker dark:text-secondary-lighter text-center text-2xl font-semibold'>{data.score}</Text>
+            </View>
+          </View>
+
+          <View className='bg-gray-100 dark:bg-gray-darker px-6 py-10 gap-6'>
+            {data.session_steps.map((step, index) => (
+              <View key={index} className='flex-row justify-between items-center'>
+                <Text className='text-dark dark:text-light'>Étape {index + 1}</Text>
+                <Text className='text-secondary-darker dark:text-secondary-lighter'>{ getFormattedDuration(step.start_time, step.end_time) }</Text>
+                <Text className='text-dark dark:text-light'>
+                  Indices utilisés :
+                    <Text className='text-secondary-darker dark:text-secondary-lighter'> {step.extra_hints + 1}</Text>
+                </Text>
+              </View>
+            ))}
+          </View>
+
+          <Text className='px-6 text-dark dark:text-light font-bold text-2xl font-bold'>Laissez un avis</Text>
+          
+          <Formik
+            initialValues={{ rating: 0, difficulty: 0, content: '' }}
+            validationSchema={reviewSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ handleSubmit, setFieldValue, values, isValid, isSubmitting }) => (
+              <View className="gap-8">
+
+                {/* Rating */}
+                <View className='px-6 gap-4'>
+                  <View className='flex-row gap-3'>
+                    <Text className="text-dark dark:text-light font-semibold">Note :</Text>
+                    <Text className="text-secondary-darker dark:text-secondary-lighter font-bold">{values.rating}</Text>
+                  </View>
+                  <Slider
+                    minimumValue={1}
+                    maximumValue={5}
+                    step={1}
+                    value={values.rating}
+                    onValueChange={(value) => setFieldValue('rating', value)}
+                    minimumTrackTintColor={isDark ? colors.secondary.lighter : colors.secondary.darker}
+                    maximumTrackTintColor={isDark ? colors.gray.four : colors.gray.five}
+                    thumbTintColor={isDark ? colors.secondary.lighter : colors.secondary.darker}
+                  />
+                </View>
+
+                {/* Difficulty */}
+                <View className='px-6 gap-4'>
+                  <View className='flex-row gap-3'>
+                    <Text className="text-dark dark:text-light font-semibold">Difficulté :</Text>
+                    <Text className="text-secondary-darker dark:text-secondary-lighter font-bold">{values.difficulty}</Text>
+                  </View>
+                  <Slider
+                    minimumValue={1}
+                    maximumValue={5}
+                    step={1}
+                    value={values.difficulty}
+                    onValueChange={(value) => setFieldValue('difficulty', value)}
+                    minimumTrackTintColor={isDark ? colors.secondary.lighter : colors.secondary.darker}
+                    maximumTrackTintColor={isDark ? colors.gray.four : colors.gray.five}
+                    thumbTintColor={isDark ? colors.secondary.lighter : colors.secondary.darker}
+                  />
+                </View>
+
+                {/* --- Description --- */}
+                <View className='px-6'>
+                  <FormField
+                    name="content"
+                    label="Commentaire :"
+                    multiline
+                    numberOfLines={10}
+                    maxLength={DESCRIPTION_MAX_LENGTH}
+                    placeholder="Veuillez ne pas spoiler des parties de l'énigme..."
+                    style={{ height: 150, textAlignVertical: 'top' }}
+                  />
+                  <Text className="text-gray-500 dark:text-gray-400 text-sm mt-1 text-right">
+                    {DESCRIPTION_MAX_LENGTH - (values.content?.length || 0)} caractères restants
+                  </Text>
+                </View>
+
+                {/* --- Erreurs de mutation --- */}
+                {createReviewMutation.isError && (
+                  <View className="mx-6 px-6 py-2 bg-red-100 rounded-md">
+                    <Text className="text-red-600">
+                      {createReviewMutation.error?.message || "Une erreur est survenue"}
+                    </Text>
+                  </View>
+                )}
+
+                {/* --- Bouton de soumission --- */}
+                <View className='px-6 items-center'>
+                  <GradientButton
+                    onPress={() => handleSubmit()}
+                    title="Publier votre avis"
+                    colors={isDark ? [colors.primary.mid, colors.primary.lighter] : [colors.primary.darker, colors.primary.mid]}
+                    textColor={isDark ? 'text-dark' : 'text-light'}
+                    isLoading={isSubmitting || createReviewMutation.isPending}
+                    disabled={isSubmitting || !isValid || createReviewMutation.isPending}
+                  />
+                </View>
+              </View>
+            )}
+          </Formik>
+
+        </View>
+      </SecondaryLayout>
+    </KeyboardAvoidingView>
+  )
 }

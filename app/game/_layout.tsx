@@ -16,15 +16,15 @@ export default function GameLayout() {
         }}
       />
       <Stack.Screen
-        name="steps/[stepId]"
+        name="[sessionId]/scan"
         options={{ 
-          title: "Partie en cours"
+          title: "Scannez le QR code"
         }}
       />
       <Stack.Screen
         name="[sessionId]/complete"
         options={{ 
-          title: 'Laisser un avis'
+          title: 'Partie terminée'
         }}
       />
     </Stack>

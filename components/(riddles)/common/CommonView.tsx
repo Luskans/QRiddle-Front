@@ -13,9 +13,10 @@ import GradientButton from '@/components/(common)/GradientButton';
 import CompletedGameSessionCard from './CompletedGameSessionCard';
 import { MAP_LATITUDE, MAP_LONGITUDE, BACKEND_URL } from '@/constants/constants';
 import { RiddleDetail } from '@/interfaces/riddle';
-import { useSessionByRiddle } from '@/hooks/useGame';
+import { useAbandonSession, usePlayRiddle, useSessionByRiddle } from '@/hooks/useGame';
 import TopRiddleLeaderboard from './TopRiddleLeaderboard';
 import TopReviewList from './TopReviewsList';
+import GhostButton from '@/components/(common)/GhostButton';
 
 export default function CommonView({ riddle }: { riddle: RiddleDetail }) {
   const { isDark } = useThemeStore();
@@ -25,33 +26,55 @@ export default function CommonView({ riddle }: { riddle: RiddleDetail }) {
     latitudeDelta: 0.1,
     longitudeDelta: 0.1,
   });
-  const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [password, setPassword] = useState<string>('');
   const { data, isLoading, isError, error } = useSessionByRiddle(riddle.id.toString());
   const creatorName = riddle.creator?.name || 'Inconnu';
   const creatorImage = riddle.creator?.image || '/default/user.png';
+  const playRiddleMutation = usePlayRiddle();
+  const abandonSessionMutation = useAbandonSession();
 
   const handleStartGame = async () => {
     // TODO :mettre modal pour prévenir autre partie en cours abandonnées
-    // if (riddle.is_private && !password.trim()) {
-    //   setErrorMessage('Veuillez saisir le mot de passe pour lancer la partie');
-    //   return;
-    // }
-
+    
+    console.log("password", password)
     // let newGame;
-    // if (!data || data.status !== 'active') {
-    //   newGame = await createGame(riddle.id.toString(), password.trim());
+    if (data && data.status !== 'active') {
+      // newGame = await createGame(riddle.id.toString(), password.trim());
+      playRiddleMutation.mutate({riddleId: riddle.id.toString(), password}, {
+        onSuccess: (data) => {
+          alert('Nouvelle partie lancée !');
+          router.replace(`/game/${data.id.toString()}`);
+        },
+        onError: (error) => {
+          alert(`Une erreur est survenue: ${error.response.data.message}`);
+        },
+      });
+      // if (newGame) {
+      //   router.replace(`/game/${newGame.id.toString()}`);
 
-    //   if (newGame) {
-    //     router.replace(`/game/${newGame.id.toString()}`);
+      // } else {
+      //   alert('Impossible de démarrer la partie.');
+      // }
 
-    //   } else {
-    //     alert('Impossible de démarrer la partie.');
-    //   }
+    } else if (data && data.status === 'active') {
+      router.replace(`/game/${data.id.toString()}`);
+    }
+  };
 
-    // } else if (data && data.status === 'active') {
-    //   router.replace(`/game/${data.id.toString()}`);
-    // }
+  const handleAbandonGame = async () => {
+    // TODO :mettre modal pour confirmation
+
+    if (!data || data.status !== 'active') {
+      return;
+    }
+    abandonSessionMutation.mutate(data.id.toString(), {
+      onSuccess: (data) => {
+        alert('Partie abandonnée !');
+      },
+      onError: (error) => {
+        alert(`Une erreur est survenue: ${error.response.data.message}`);
+      },
+    });
   };
 
   return (
@@ -114,39 +137,49 @@ export default function CommonView({ riddle }: { riddle: RiddleDetail }) {
 
         {/* PASSWORD & BUTTONS */}
         {riddle.status === 'published' && (
-          <View className="px-6">
-            {riddle.is_private && (
-              <>
-                <Text className="text-dark dark:text-light mb-2">Mot de passe :</Text>
+          <View className="flex-1 px-6">
+            {riddle.is_private && !data && (
+              <View className='gap-2'>
+                <Text className="text-dark dark:text-light">Mot de passe :</Text>
                 <TextInput
-                  className={`bg-gray-50 border rounded-lg p-3 mb-8 ${errorMessage !== '' ? 'border-red-500 dark:border-red-400' : 'border-gray-300'}`}
+                  className={`bg-gray-50 border rounded-lg p-3 mb-8 'border-gray-300'`}
                   placeholder="Entrez le mot de passe"
                   placeholderTextColor={isDark ? colors.gray.lighter : colors.gray.darker}
-                  onChangeText={(text) => {
-                    setPassword(text);
-                    setErrorMessage('');
-                  }}
+                  onChangeText={(text) => {setPassword(text);}}
                   value={password}
                   autoCapitalize='none'
                 />
-                {errorMessage !== '' && (
-                  <Text style={{ color: 'red', marginBottom: 8 }}>{errorMessage}</Text>
-                )}
-              </>
+              </View>
             )}
-            <View className='flex-row items-center gap-6'>
+            {data?.status === 'active' ? (
+              <View className='flex-1 flex-row gap-3 items-center justify-center'>
+                <GradientButton
+                  onPress={handleStartGame}
+                  title={'Reprendre'}
+                  colors={isDark ? [colors.primary.mid, colors.primary.lighter] : [colors.primary.darker, colors.primary.mid]}
+                  textColor={isDark ? 'text-dark' : 'text-light'}
+                  isLoading={playRiddleMutation.isPending}
+                  disabled={playRiddleMutation.isPending || abandonSessionMutation.isPending}
+                />
+                <GhostButton
+                  onPress={handleAbandonGame}
+                  title="Abandonner"
+                  color={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+                  textColor={isDark ? 'text-primary-lighter' : 'text-primary-darker'}
+                  isLoading={abandonSessionMutation.isPending}
+                  disabled={abandonSessionMutation.isPending || playRiddleMutation.isPending}
+                />
+              </View>
+            ) : (
               <GradientButton
                 onPress={handleStartGame}
-                title={data && data.status === 'active' ? 'Reprendre' : 'Lancer la partie'}
+                title={'Nouvelle partie'}
                 colors={isDark ? [colors.primary.mid, colors.primary.lighter] : [colors.primary.darker, colors.primary.mid]}
                 textColor={isDark ? 'text-dark' : 'text-light'}
-                // isLoading={isSubmitting}
-                disabled={riddle.is_private && !password}
+                isLoading={playRiddleMutation.isPending}
+                disabled={riddle.is_private && !password && !data || playRiddleMutation.isPending || abandonSessionMutation.isPending}
               />
-              {data && data.status === 'active' && (
-                <Text className='px-6 py-3 justify-center text-dark dark:text-light underline'>Abandonner</Text>
-              )}
-            </View>
+            )}
           </View>
         )}
 

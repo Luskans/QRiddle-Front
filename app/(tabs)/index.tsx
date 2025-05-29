@@ -13,6 +13,7 @@ import Separator from '@/components/(common)/Separator';
 import { useHome } from '@/hooks/useHome';
 import LoadingView from '@/components/(common)/LoadingView';
 import ErrorView from '@/components/(common)/ErrorView';
+import GradientButton from '@/components/(common)/GradientButton';
 
 
 export default function HomeScreen() {
@@ -54,6 +55,12 @@ export default function HomeScreen() {
           />
           <Text>Vous avez 0 notifications en attente.</Text>
         </View> */}
+        <GradientButton
+          onPress={() => {router.push(`/game/2/complete`)}}
+          title={'Scanner QR code'}
+          colors={['red', 'orange']}
+          textColor={'white'}
+        />
 
         {/* ACTIVE GAME SESSION */}
         {data.activeGameSession &&

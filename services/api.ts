@@ -4,7 +4,7 @@ import { Auth, LoginFormData, RegisterFormData } from '@/interfaces/auth';
 import { Step, StepFormData, StepItem } from '@/interfaces/step';
 import { Hint, HintFormData, HintItem } from '@/interfaces/hint';
 import { Review, ReviewFormData, ReviewResponse } from '@/interfaces/review';
-import { ActiveSession, NewSessionFormData, PlayedSession, RiddleSession, UnlockHintFormData, ValidateStepFormData } from '@/interfaces/game';
+import { ActiveSession, CompleteSession, GameSession, NewSessionFormData, PlayedSession, RiddleSession, UnlockHintFormData, ValidateStepFormData, ValidateStepResponse } from '@/interfaces/game';
 import { Home } from '@/interfaces/home';
 import { GlobalLeaderboard, Leaderboard, LeaderboardResponse, RiddleLeaderboard } from '@/interfaces/leaderboard';
 import { LayoutAnimation } from 'react-native';
@@ -164,7 +164,8 @@ export const getTopReviewsByRiddle = async (riddleId: string): Promise<ReviewRes
 
 export const createReview = async (riddleId: string, data: ReviewFormData): Promise<Review> => {
   const response = await api.post(`/riddles/${riddleId}/reviews`, data);
-  return response.data;
+  console.log('createReview :', response.data);
+  return response.data.data;
 };
 
 export const updateReview = async (id: string, data: Partial<ReviewFormData>): Promise<Review> => {
@@ -193,32 +194,43 @@ export const getSessionByRiddle = async (riddleId: string): Promise<RiddleSessio
 
 export const getActiveSession = async (id: string): Promise<ActiveSession> => {
   const response = await api.get(`/game/${id}`);
-  return response.data;
+  console.log('getActiveSession :', response.data);
+  return response.data.data;
 };
 
-export const validateStep = async (id: string, data: ValidateStepFormData ): Promise<ActiveSession> => {
-  const response = await api.post(`/game/${id}/validate-step`, data);
-  return response.data;
+export const getCompleteSession = async (id: string): Promise<CompleteSession> => {
+  const response = await api.get(`/game/${id}/complete`);
+  console.log('getCompleteSession :', response.data);
+  return response.data.data;
 };
 
-export const unlockHint = async (id: string, data: UnlockHintFormData): Promise<ActiveSession> => {
-  const response = await api.post(`/game/${id}/unlock-hint`, data);
-  return response.data;
+export const validateStep = async (id: string, qr_code: string ): Promise<ValidateStepResponse> => {
+  const response = await api.post(`/game/${id}/validate-step`, { qr_code });
+  console.log('validateStep :', response.data);
+  return response.data.data;
 };
 
-export const newSession = async (riddleId: string, data: NewSessionFormData): Promise<ActiveSession> => {
-  const response = await api.post(`/riddles/${riddleId}/new-session`, data);
-  return response.data;
+export const unlockHint = async (id: string, hint_order_number: number): Promise<GameSession> => {
+  const response = await api.post(`/game/${id}/unlock-hint`, { hint_order_number });
+  console.log('unlockHint :', response.data);
+  return response.data.data;
 };
 
-export const playRiddle = async (riddleId: string, password = null): Promise<ActiveSession> => {
+// export const newSession = async (riddleId: string, data: NewSessionFormData): Promise<ActiveSession> => {
+//   const response = await api.post(`/riddles/${riddleId}/new-session`, data);
+//   return response.data;
+// };
+
+export const playRiddle = async (riddleId: string, password: string): Promise<GameSession> => {
   const response = await api.post(`/riddles/${riddleId}/play`, { password });
-  return response.data;
+  console.log('playRiddle :', response.data);
+  return response.data.data;
 };
 
-export const abandonSession = async (id: string): Promise<ActiveSession> => {
-  const response = await api.post(`/game/${id}`);
-  return response.data;
+export const abandonSession = async (id: string): Promise<GameSession> => {
+  const response = await api.patch(`/game/${id}`);
+  console.log('abandonSession :', response.data);
+  return response.data.data;
 };
 
 

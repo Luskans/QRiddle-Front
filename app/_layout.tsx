@@ -30,7 +30,9 @@ export default function RootLayout() {
   const [assetsLoaded] = useAssets([
     require('@/assets/images/logo1.png'),
     require('@/assets/images/test6.png'),
-    require('@/assets/images/default-user.png')
+    require('@/assets/images/default-user.png'),
+    require('@/assets/images/default-hint.jpg'),
+    require('@/assets/audios/default-hint.mp3')
   ]);
 
   useEffect(() => {

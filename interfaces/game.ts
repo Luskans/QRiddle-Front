@@ -1,3 +1,5 @@
+import { Hint } from "./hint";
+
 export interface PlayedSession {
   id: number;
   riddle_id: number;
@@ -24,31 +26,63 @@ export interface RiddleSession {
 }
 
 export interface ActiveSession {
-  sessionId: number;
-  currentSessionStep: {
+  session_step: {
     id: number;
     start_time: string;
-    step: {
-      id: number;
-      order_number: number;
-    }
+    extra_hints: number;
   };
+  step: {
+    id: number;
+    order_number: number;
+  }
   hints: {
     id: number;
-    type: 'text' | 'image' | 'audio';
+    order_number: number;
+    type: 'text' | 'audio' | 'image';
     content: string;
-  };
+    unlocked: boolean;
+  }[];
+  stepsCount: number;
 }
 
-export interface NewSessionFormData {
-  password: string;
+export interface CompleteSession {
+  id: number;
+  riddle_id: number;
+  score: number;
+  duration: string;
+  session_steps: {
+    id: number;
+    game_session_id: number;
+    start_time: string;
+    end_time: string;
+    extra_hints: number;
+  }[];
 }
 
-export interface ValidateStepFormData {
-  qr_code: string;
-  // TODO: rajouter localisation pour code métier ?
+export interface GameSession {
+  id: number;
+  riddle_id: number;
+  user_id: number;
+  status: 'active' | 'completed' | 'abandoned';
+  score: number;
+  created_at: string;
+  updated_at: string;
 }
 
-export interface UnlockHintFormData {
-  hintId: number;
+export interface ValidateStepResponse {
+  game_completed: boolean;
+  game_session: GameSession;
 }
+
+// export interface NewSessionFormData {
+//   password: string;
+// }
+
+// export interface ValidateStepFormData {
+//   qr_code: string;
+//   // TODO: rajouter localisation pour code métier ?
+// }
+
+// export interface UnlockHintFormData {
+//   hintId: number;
+// }

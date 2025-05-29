@@ -43,3 +43,19 @@ export const hintSchema = Yup.object().shape({
     .required('Le contenu de l\'indice est requis.')
     .max(HINT_MAX_LENGTH, `L'indice ne doit pas dépasser ${HINT_MAX_LENGTH} caractères.`),
 });
+
+export const reviewSchema = Yup.object().shape({
+  rating: Yup.number()
+    .required('La notation de l\'énigme est requise.')
+    .min(1, 'La note minimum est 1.')
+    .max(5, 'La note maximum est 5.')
+    .integer('La note doit être un nombre entier.'),
+  difficulty: Yup.number()
+    .required('La notation de la difficulté de l\'énigme est requis.')
+    .min(1, 'La difficulté minimum est 1.')
+    .max(5, 'La difficulté maximum est 5.')
+    .integer('La difficulté doit être un nombre entier.'),
+  content: Yup.string()
+    .notRequired()
+    .max(DESCRIPTION_MAX_LENGTH, `Le commentaire ne doit pas dépasser ${DESCRIPTION_MAX_LENGTH} caractères.`),
+});

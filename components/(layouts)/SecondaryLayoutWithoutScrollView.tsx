@@ -30,6 +30,7 @@ export default function SecondaryLayoutWithoutScrollView({ children }: Props) {
   
   return (
     <View className='flex-1'>
+      <StatusBar style={ isDark ? 'dark' : 'light' } />
       <View className='flex-1 bg-white dark:bg-dark'>
         {children}
       </View>
