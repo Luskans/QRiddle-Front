@@ -2,17 +2,15 @@ import { KeyboardAvoidingView, Text, TouchableOpacity, View, Platform } from 're
 import { Formik } from 'formik';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { FormField } from '@/components/(common)/FormField';
-import GradientButton from '@/components/(common)/GradientButton';
 import { loginSchema } from '@/lib/validationSchemas';
-import { router } from 'expo-router';
-import colors from '@/constants/colors';
 import { useThemeStore } from '@/stores/useThemeStore';
 import SecondaryLayout from '@/components/(layouts)/SecondaryLayout';
 import { LoginFormData } from '@/interfaces/auth';
+import FullButton from '@/components/(common)/FullButton';
 
 
 export default function LoginScreen() {
-  const { login, error, setError } = useAuthStore();
+  const { login, isLoading, error } = useAuthStore();
   const { isDark } = useThemeStore();
 
   const handleSubmit = async (values: LoginFormData) => {
@@ -33,13 +31,6 @@ export default function LoginScreen() {
           >
             {({ handleSubmit, isSubmitting, isValid }) => (
               <View className='gap-6'>
-                {error && (
-                  <View className="p-4 rounded-lg mb-8 bg-red-50 border dark:border-red-400 border-red-500">
-                    <Text className="text-red-400 text-center">
-                      {error}
-                    </Text>
-                  </View>
-                )}
 
                 <FormField
                   name="email"
@@ -47,9 +38,6 @@ export default function LoginScreen() {
                   placeholder="Votre email"
                   keyboardType="email-address"
                   autoCapitalize="none"
-                  onChangeText={() => {
-                    setError(null);
-                  }}
                 />
 
                 <FormField
@@ -57,27 +45,34 @@ export default function LoginScreen() {
                   label="Mot de passe"
                   placeholder="Votre mot de passe"
                   isPassword
-                  onChangeText={() => {
-                    setError(null);
-                  }}
+                  autoCapitalize="none"
                 />
 
                 <TouchableOpacity
-                  onPress={() => router.push('/(auth)/forgot-password')}
+                  // onPress={() => router.push('/(auth)/forgot-password')}
                   className="self-end mb-4"
                 >
-                  <Text className="text-gray-700 dark:text-gray-100">
+                  <Text className="text-gray-600 dark:text-gray-200 underline">
                     Mot de passe oublié ?
                   </Text>
                 </TouchableOpacity>
 
-                <GradientButton
-                  onPress={() => handleSubmit()}
+                {error && (
+                  <View className="px-6 py-2 bg-red-100 border border-red-500 rounded-lg">
+                    <Text className="text-red-600">
+                      {error || "Une erreur est survenue"}
+                    </Text>
+                  </View>
+                )}
+
+                <FullButton
+                  onPress={handleSubmit}
                   title="Se connecter"
-                  colors={isDark ? [colors.primary.mid, colors.primary.lighter] : [colors.primary.darker, colors.primary.mid]}
+                  border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+                  color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
                   textColor={isDark ? 'text-dark' : 'text-light'}
-                  isLoading={isSubmitting}
-                  disabled={isSubmitting || !isValid}
+                  isLoading={isSubmitting || isLoading}
+                  disabled={isSubmitting || isLoading || !isValid}
                 />
               </View>
             )}

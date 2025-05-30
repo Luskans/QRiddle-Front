@@ -6,6 +6,7 @@ import { useThemeStore } from '@/stores/useThemeStore';
 import GradientButton from '@/components/(common)/GradientButton';
 import GhostButton from '@/components/(common)/GhostButton';
 import PrimaryLayout from '@/components/(layouts)/PrimaryLayout';
+import FullButton from '@/components/(common)/FullButton';
 
 
 export default function AuthScreen() {
@@ -16,64 +17,66 @@ export default function AuthScreen() {
       <View className="flex p-6">
         <View className='flex-col justify-center h-full gap-20'>
         
-          {/* Header avec Logo et Nom */}
-          <View className="flex-row items-center justify-center gap-2">
+          {/* LOGO */}
+          <View className="items-center justify-center gap-6">
             <Image
               source={require('@/assets/images/logo.png')}
-              className="w-10 h-10"
+              className="w-40 h-40"
             />
-            <Text className="text-2xl font-bold text-dark dark:text-light">
-              <Text className='text-primary-mid'>QR</Text>iddle
+            <Text className="text-4xl font-h  text-dark dark:text-light">
+              <Text className='text-primary-darker dark:text-primary-lighter'>QR</Text>iddle
             </Text>
           </View>
 
-          {/* BUTTONS */}
+          {/* OAUTH */}
           <View className="flex gap-4">
-            {/* Button google */}
             <TouchableOpacity 
-              className="flex-row bg-white dark:bg-transparent items-center justify-center border border-gray-400 dark:border-gray-300 rounded-xl py-3 px-6"
+              className="flex-row bg-transparent items-center justify-center border border-gray-400 dark:border-gray-300 rounded-xl py-3 px-6"
               onPress={() => {/* Handle Google OAuth */}}
             >
-              <AntDesign name="google" size={24} color={`${colors.primary.mid}`} />
+              <AntDesign name="google" size={24} color={`${isDark ? colors.primary.lighter : colors.primary.darker}`} />
               <Text className="ml-2 font-semibold text-dark dark:text-light">
                 Continuer avec Google
               </Text>
             </TouchableOpacity>
 
-            {/* Button apple */}
             <TouchableOpacity 
-              className="flex-row bg-white dark:bg-transparent items-center justify-center border border-gray-400 dark:border-gray-300 rounded-xl py-3 px-6"
+              className="flex-row bg-transparent items-center justify-center border border-gray-400 dark:border-gray-300 rounded-xl py-3 px-6"
               onPress={() => {/* Handle Apple OAuth */}}
             >
-              <AntDesign name="apple1" size={24} color={`${colors.primary.mid}`} />
+              <AntDesign name="apple1" size={24} color={`${isDark ? colors.primary.lighter : colors.primary.darker}`} />
               <Text className="ml-2 font-semibold text-dark dark:text-light">
                 Continuer avec Apple
               </Text>
             </TouchableOpacity>
 
-            {/* Separator */}
+            {/* SEPARATOR*/}
             <View className="flex-row items-center">
               <View className="flex-1 h-[1px] bg-gray-300" />
               <Text className="mx-4 text-gray-400 dark:text-gray-300">ou</Text>
               <View className="flex-1 h-[1px] bg-gray-300" />
             </View>
 
-            <View className="flex-row gap-4">
-              {/* Button register */}
-              <GradientButton
-                onPress={() => router.push("/(auth)/register")}
-                title="Inscription"
-                colors={isDark ? [colors.primary.lighter, colors.primary.lighter] : [colors.primary.darker, colors.primary.darker]}
-                textColor={isDark ? 'text-dark' : 'text-light'}
-              />
+            {/* BUTTONS */}
+            <View className="flex-row glex-grow gap-4">
+              <View className='flex-grow'>
+                <FullButton
+                  onPress={() => router.push("/(auth)/register")}
+                  title="Inscription"
+                  color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
+                  border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+                  textColor={isDark ? 'text-dark' : 'text-light'}
+                />
+              </View>
 
-              {/* Button login */}
-              <GhostButton
-                onPress={() => router.push("/(auth)/login")}
-                title="Connexion"
-                color={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
-                textColor={isDark ? 'text-primary-lighter' : 'text-primary-darker'}
-              />
+              <View className='flex-grow'>
+                <GhostButton
+                  onPress={() => router.push("/(auth)/login")}
+                  title="Connexion"
+                  color={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+                  textColor={isDark ? 'text-primary-lighter' : 'text-primary-darker'}
+                />
+              </View>
             </View>
           </View>
 

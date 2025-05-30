@@ -15,9 +15,9 @@ export default function ProfileScreen() {
         <ThemeToggle />
         <GhostButton 
           title="Déconnexion" 
-          color={isDark ? 'border-secondary-lighter' : 'border-secondary-darker'} 
-          textColor={isDark ? 'text-secondary-lighter' : 'text-secondary-darker'} 
-          onPress={() => {logout()}}
+          color={isDark ? 'border-primary-lighter' : 'border-primary-darker'} 
+          textColor={isDark ? 'text-primary-lighter' : 'text-primary-darker'} 
+          onPress={logout}
         />
       </View>
     </PrimaryLayout>

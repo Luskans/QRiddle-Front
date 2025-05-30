@@ -11,6 +11,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import colors from "@/constants/colors";
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
+import { AuthProvider } from "@/providers/AuthProvider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -92,10 +93,11 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-    <ThemeProvider>
-      <Stack screenOptions={{ headerShown: false }} >
-      </Stack>
-    </ThemeProvider>
+      <ThemeProvider>
+        {/* <AuthProvider> */}
+          <Stack screenOptions={{ headerShown: false }} />
+        {/* </AuthProvider> */}
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

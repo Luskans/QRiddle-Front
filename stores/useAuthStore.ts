@@ -277,16 +277,8 @@ import { create } from 'zustand';
 import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
 import api from '@/lib/axios';
+import { User } from '@/interfaces/auth';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
-
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  email_verified_at: string | null;
-  image: string;
-}
 
 interface AuthState {
   user: User | null;
@@ -296,9 +288,8 @@ interface AuthState {
   setError: (error: string | null) => void;
   initialize: () => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
-  register: (username: string, email: string, password: string, password_confirmation: string) => Promise<void>;
+  register: (name: string, email: string, password: string, password_confirmation: string) => Promise<void>;
   logout: () => Promise<void>;
-  // checkEmailVerification: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({

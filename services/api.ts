@@ -1,6 +1,6 @@
 import { CreatedRiddle, CreateRiddleFormData, Riddle, RiddleDetail, RiddleFormData, RiddleItem } from '@/interfaces/riddle';
 import api from '../lib/axios';
-import { Auth, LoginFormData, RegisterFormData } from '@/interfaces/auth';
+import { Auth, LoginFormData, RegisterFormData, User } from '@/interfaces/auth';
 import { Step, StepFormData, StepItem } from '@/interfaces/step';
 import { Hint, HintFormData, HintItem } from '@/interfaces/hint';
 import { Review, ReviewFormData, ReviewResponse } from '@/interfaces/review';
@@ -31,19 +31,28 @@ export interface DataResponse<T> {
 }
 
 // --- Auth ---
+export const getUser = async (): Promise<User> => {
+  const response = await api.get('/user');
+  console.log('getUser :', response.data);
+  return response.data.data;
+};
+
 export const login = async (data: LoginFormData): Promise<Auth> => {
   const response = await api.post('/login', data);
-  return response.data;
+  console.log('login :', response.data);
+  return response.data.data;
 };
 
 export const register = async (data: RegisterFormData): Promise<Auth> => {
   const response = await api.post('/register', data);
-  return response.data;
+  console.log('register :', response.data);
+  return response.data.data;
 };
 
 export const logout = async (): Promise<void> => {
-  const response = await api.get(`/logout`);
-  return response.data;
+  const response = await api.post(`/logout`);
+  console.log('logout :', response.data);
+  return response.data.data;
 };
 
 
