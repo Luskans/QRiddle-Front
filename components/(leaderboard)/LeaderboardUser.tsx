@@ -1,9 +1,11 @@
 import { UserInfos } from '@/interfaces/leaderboard';
-import { UserRank } from '@/stores/useLeaderboardStore';
 import React from 'react';
 import { View, Text } from 'react-native';
 
+
 export default function LeaderboardUser({ userInfos }: { userInfos: UserInfos }) {
+  // TODO : utiliser useMemo
+
   return (
     <View className="mb-6 flex-row justify-center gap-8">
       <Text className="text-lg text-center text-dark dark:text-light">

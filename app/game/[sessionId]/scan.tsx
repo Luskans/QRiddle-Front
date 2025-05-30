@@ -1,7 +1,6 @@
-import GradientButton from '@/components/(common)/GradientButton';
+import FullButton from '@/components/(common)/FullButton';
 import LoadingView from '@/components/(common)/LoadingView';
 import SecondaryLayoutWithoutScrollView from '@/components/(layouts)/SecondaryLayoutWithoutScrollView';
-import colors from '@/constants/colors';
 import { useValidateStep } from '@/hooks/useGame';
 import { useThemeStore } from '@/stores/useThemeStore';
 import { CameraView, useCameraPermissions } from 'expo-camera';
@@ -33,7 +32,7 @@ export default function ScanScreen() {
           router.dismiss();
         }
       },
-      onError: (error) => {
+      onError: (error: any) => {
         alert(`Une erreur est survenue: ${error.response.data.message}`);
         setTimeout(() => setIsScanning(true), 2000);
       },
@@ -51,10 +50,11 @@ export default function ScanScreen() {
       <SecondaryLayoutWithoutScrollView>
         <View className='flex-1 py-10 px-6 gap-10 justify-center items-center'>
           <Text className='text-dark dark:text-light text-center'>Veuillez accorder les permissions nécessaires pour afficher la caméra.</Text>
-          <GradientButton
+          <FullButton
             onPress={requestPermission}
-            title={'Donner les permissions'}
-            colors={isDark ? [colors.primary.mid, colors.primary.lighter] : [colors.primary.darker, colors.primary.mid]}
+            title='Donner les permissions'
+            border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+            color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
             textColor={isDark ? 'text-dark' : 'text-light'}
           />
         </View>

@@ -1,16 +1,15 @@
 import { Text, TouchableOpacity, View } from "react-native";
-import { CollapsibleSection } from "../(common)/CollapsibleSection";
-import GradientButton from "../(common)/GradientButton";
-import GhostButton from "../(common)/GhostButton";
-import colors from "@/constants/colors";
+import { CollapsibleSection } from "@/components/(common)/CollapsibleSection";
+import GhostButton from "@/components/(common)/GhostButton";
 import { useThemeStore } from "@/stores/useThemeStore";
 import { Formik } from "formik";
 import { useEffect, useState } from "react";
-import { FormField } from "../(common)/FormField";
+import FormField from "@/components/(common)/FormField";
 import { hintSchema } from "@/lib/validationSchemas";
 import { HINT_MAX_LENGTH } from "@/constants/constants";
 import { HintFormData, HintItem } from "@/interfaces/hint";
 import { useDeleteHint, useUpdateHint } from "@/hooks/useHints";
+import FullButton from "../(common)/FullButton";
 
 
 export default function HintListItem({ hint }: { hint: HintItem }) {
@@ -36,7 +35,7 @@ export default function HintListItem({ hint }: { hint: HintItem }) {
       onSuccess: () => {
         alert('Indice mis à jour avec succès !');
       },
-      onError: (error) => {
+      onError: (error: any) => {
         alert(`Une erreur est survenue: ${error.response.data.message}`);
       },
     });
@@ -142,10 +141,11 @@ export default function HintListItem({ hint }: { hint: HintItem }) {
 
             {/* --- Bouton de soumission --- */}
             <View className='px-6 flex-1 flex-row gap-3 items-center justify-center'>
-              <GradientButton
-                onPress={() => handleSubmit()}
+              <FullButton
+                onPress={handleSubmit}
                 title="Modifier"
-                colors={isDark ? [colors.primary.mid, colors.primary.lighter] : [colors.primary.darker, colors.primary.mid]}
+                border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+                color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
                 textColor={isDark ? 'text-dark' : 'text-light'}
                 isLoading={isSubmitting || updateHintMutation.isPending}
                 disabled={isSubmitting || updateHintMutation.isPending}

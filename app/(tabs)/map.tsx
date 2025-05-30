@@ -1,5 +1,6 @@
 import ErrorView from '@/components/(common)/ErrorView';
 import LoadingView from '@/components/(common)/LoadingView';
+import SecondaryLayoutWithoutScrollView from '@/components/(layouts)/SecondaryLayoutWithoutScrollView';
 import colors from '@/constants/colors';
 import { MAP_LATITUDE, MAP_LATITUDE_DELTA, MAP_LONGITUDE, MAP_LONGITUDE_DELTA } from '@/constants/constants';
 import { useRiddles } from '@/hooks/useRiddles';
@@ -38,25 +39,25 @@ export default function MapScreen() {
 
   if (isLoading) {
     return (
-      <View className='flex-1'>
+      <SecondaryLayoutWithoutScrollView>
         <LoadingView />
-      </View>
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
   if (isError) {
     return (
-      <View className='flex-1'>
+      <SecondaryLayoutWithoutScrollView>
         <ErrorView error={ error.message } />
-      </View>
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
   if (!data) {
     return (
-      <View className='flex-1'>
+      <SecondaryLayoutWithoutScrollView>
         <ErrorView error="Aucune donnée disponible" />
-      </View>
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
@@ -100,7 +101,12 @@ export default function MapScreen() {
                         </Text>
                       </View>
 
-                      <Text className='text-gray-400 text-sm mb-1'>{moment(selectedRiddle.updated_at).format('DD-MM-YYYY')}</Text>
+                      <Text className='text-gray-400 text-sm mb-1'>
+                        {moment(selectedRiddle.updated_at).isSame(moment(), 'day')
+                          ? moment(selectedRiddle.updated_at).fromNow()
+                          : moment(selectedRiddle.updated_at).format('DD-MM-YYYY')}
+                      </Text>
+                      
 
                       <View className='flex-row gap-6'>
                         <View className='flex-row gap-1'>

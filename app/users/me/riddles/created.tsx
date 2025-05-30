@@ -9,6 +9,7 @@ import LoadingView from '@/components/(common)/LoadingView';
 import ErrorView from '@/components/(common)/ErrorView';
 import colors from '@/constants/colors';
 
+
 export default function CreatedRiddlesScreen() {
   const { isDark } = useThemeStore();
   const { 
@@ -20,6 +21,7 @@ export default function CreatedRiddlesScreen() {
     hasNextPage,
     isFetchingNextPage
   } = useCreatedRiddles(20);
+  // TODO : use memo
 
   const list = data?.pages.flatMap(page => page.items) || [];
 
@@ -31,25 +33,26 @@ export default function CreatedRiddlesScreen() {
 
   if (isLoading) {
     return (
-      <SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
         <LoadingView />
-      </SecondaryLayout>
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
   if (isError) {
     return (
-      <SecondaryLayout>
-        <ErrorView error={ error.message } />
-      </SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
+        {/* @ts-ignore */}
+        <ErrorView error={ error.response.data.message } />
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
   if (!data) {
     return (
-      <SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
         <ErrorView error="Aucune donnée disponible" />
-      </SecondaryLayout>
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 

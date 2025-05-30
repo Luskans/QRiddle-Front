@@ -1,5 +1,6 @@
 import moment from "moment";
 
+
 export const getFormattedDuration = (startTime: string, endTime: string) => {
   const start = moment(startTime);
   const end = moment(endTime);

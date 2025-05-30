@@ -18,12 +18,9 @@ export interface StepFormData {
 
 export interface StepItem {
   id: number;
-  // riddle_id: number;
   order_number: number;
   qr_code: string;
   latitude: string;
   longitude: string;
-  // created_at: string;
-  // updated_at: string;
   hints: HintItem[]
 }

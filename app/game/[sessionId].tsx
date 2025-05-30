@@ -15,6 +15,7 @@ import { useAudioPlayer } from 'expo-audio';
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import QRCode from 'react-native-qrcode-svg';
+import SecondaryLayoutWithoutScrollView from '@/components/(layouts)/SecondaryLayoutWithoutScrollView';
 
 
 export default function GameScreen() {
@@ -30,7 +31,7 @@ export default function GameScreen() {
       onSuccess: () => {
         alert('Indice dévérouillé !');
       },
-      onError: (error) => {
+      onError: (error: any) => {
         alert(`Une erreur est survenue: ${error.response.data.message}`);
       },
     });
@@ -39,25 +40,26 @@ export default function GameScreen() {
 
   if (isLoading) {
     return (
-      <SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
         <LoadingView />
-      </SecondaryLayout>
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
   if (isError) {
     return (
-      <SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
+        {/* @ts-ignore */}
         <ErrorView error={ error.response.data.message } />
-      </SecondaryLayout>
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
   if (!data) {
     return (
-      <SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
         <ErrorView error="Aucune donnée disponible" />
-      </SecondaryLayout>
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 

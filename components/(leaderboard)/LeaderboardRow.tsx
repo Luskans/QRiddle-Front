@@ -13,6 +13,7 @@ const rankColors: Record<number, string> = {
 export default function LeaderboardRow({ data, index }: { data: Leaderboard, index: number }) {
   const userName = data?.user?.name || 'Inconnu';
   const userImage = data?.user?.image || '/default/user.png';
+  // TODO : utiliser useMemo
 
   return (
     <View className="flex-row items-center py-3">

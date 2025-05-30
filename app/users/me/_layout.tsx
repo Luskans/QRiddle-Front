@@ -1,10 +1,8 @@
-import "@/global.css";
+import React from 'react';
 import { Stack } from "expo-router";
-import { useThemeStore } from "@/stores/useThemeStore";
 
 
 export default function RootLayout() {
-  const { isDark } = useThemeStore();
 
   return (
     <Stack

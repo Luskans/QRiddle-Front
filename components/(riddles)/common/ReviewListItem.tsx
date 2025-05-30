@@ -1,18 +1,15 @@
 import { useThemeStore } from "@/stores/useThemeStore";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import { Image, LayoutChangeEvent, Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import colors from '@/constants/colors';
 import moment from "moment";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { REVIEW_TRUNCATE_LIMIT } from "@/constants/constants";
-import { Review } from "@/interfaces/review";
+import { ReviewItem } from "@/interfaces/review";
 import { BACKEND_URL } from '@/constants/constants';
 
 
-// const URL = process.env.EXPO_PUBLIC_API_URL?.replace('/api', '');
-
-export default function ReviewListItem({ review }: { review: Review }) {
+export default function ReviewListItem({ review }: { review: ReviewItem }) {
   const { isDark } = useThemeStore();
   const [isExpanded, setIsExpanded] = useState(false);
   const shouldTruncate = review.content.length > REVIEW_TRUNCATE_LIMIT;
@@ -38,7 +35,11 @@ export default function ReviewListItem({ review }: { review: Review }) {
         />
         <View className="">
           <Text className="font-semibold text-dark dark:text-light">{userName}</Text>
-          <Text className="text-sm text-gray-400 dark:text-gray-400">{ moment(review.updated_at).isSame(moment(), 'day') ? moment(review.updated_at).fromNow() : moment(review.updated_at).format('DD-MM-YYYY')}</Text>
+          <Text className="text-sm text-gray-400 dark:text-gray-400">
+            {moment(review.updated_at).isSame(moment(), 'day')
+              ? moment(review.updated_at).fromNow()
+              : moment(review.updated_at).format('DD-MM-YYYY')}
+          </Text>
         </View>
       </View>
 

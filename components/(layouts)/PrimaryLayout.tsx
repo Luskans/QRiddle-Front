@@ -12,6 +12,7 @@ const statusBarHeight = Constants.statusBarHeight;
 export default function PrimaryLayout({ children }: { children: React.ReactNode}) {
   const { isDark, setIsPrimaryLayout } = useThemeStore();
   const [isScrolled, setIsScrolled] = useState(false);
+  // TODO : utiliser useMemo
 
   useFocusEffect(
     useCallback(() => {
@@ -26,7 +27,6 @@ export default function PrimaryLayout({ children }: { children: React.ReactNode}
   
   return (
     <View className='flex-1'>
-      {/* <StatusBar style={isScrolled ? (isDark ? 'dark' : 'light') : 'dark'} /> */}
       <StatusBar style={isDark ? 'dark' : 'light'} />
 
       <View className={`absolute top-0 left-0 right-0 ${isScrolled ? (isDark ? 'bg-primary-lighter' : 'bg-primary-darker') : 'bg-transparent'}`} style={{height: statusBarHeight, zIndex: 1}}/>

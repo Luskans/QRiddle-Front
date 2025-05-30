@@ -5,8 +5,10 @@ import { useTopReviewsByRiddle } from '@/hooks/useReviews';
 import LoadingView from '@/components/(common)/LoadingView';
 import ErrorView from '@/components/(common)/ErrorView';
 
+
 export default function TopReviewsList({ riddleId }: { riddleId: string }) {
   const { data, isLoading, isError, error } = useTopReviewsByRiddle(riddleId);
+  // TODO : use memo
 
   if (isLoading) {
     return (
@@ -16,7 +18,8 @@ export default function TopReviewsList({ riddleId }: { riddleId: string }) {
 
   if (isError) {
     return (
-      <ErrorView error={ error.message } />
+      // @ts-ignore
+      <ErrorView error={ error.response.data.message } />
     );
   }
 
@@ -28,9 +31,9 @@ export default function TopReviewsList({ riddleId }: { riddleId: string }) {
 
   return (
     <View className='px-6 gap-6'>
-      {data.items.length > 0 ? (
+      {data && data.length > 0 ? (
         <FlatList
-          data={data.items}
+          data={data}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <ReviewListItem review={item} />

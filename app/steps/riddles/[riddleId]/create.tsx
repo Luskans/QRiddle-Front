@@ -1,6 +1,5 @@
-import GradientButton from '@/components/(common)/GradientButton';
+import FullButton from '@/components/(common)/FullButton';
 import SecondaryLayout from '@/components/(layouts)/SecondaryLayout';
-import colors from '@/constants/colors';
 import { MAP_LATITUDE, MAP_LATITUDE_DELTA, MAP_LONGITUDE, MAP_LONGITUDE_DELTA } from '@/constants/constants';
 import { useCreateStep } from '@/hooks/useSteps';
 import { StepFormData } from '@/interfaces/step';
@@ -9,6 +8,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { View, Text } from 'react-native';
 import MapView, { MapPressEvent, Marker } from 'react-native-maps';
+
 
 export default function StepCreateScreen() {
   const { riddleId } = useLocalSearchParams<{ riddleId: string }>();
@@ -70,10 +70,11 @@ export default function StepCreateScreen() {
         </View>
 
         <View className='px-6'>
-          <GradientButton
-            onPress={() => handleSubmit()}
+          <FullButton
+            onPress={handleSubmit}
             title="Créer"
-            colors={isDark ? [colors.primary.mid, colors.primary.lighter] : [colors.primary.darker, colors.primary.mid]}
+            border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+            color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
             textColor={isDark ? 'text-dark' : 'text-light'}
             isLoading={createStepMutation.isPending}
             disabled={createStepMutation.isPending}

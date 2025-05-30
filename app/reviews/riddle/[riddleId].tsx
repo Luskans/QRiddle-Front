@@ -5,7 +5,6 @@ import ReviewListItem from '@/components/(riddles)/common/ReviewListItem';
 import { useThemeStore } from '@/stores/useThemeStore';
 import colors from '@/constants/colors';
 import { useReviewsByRiddle } from '@/hooks/useReviews';
-import SecondaryLayout from '@/components/(layouts)/SecondaryLayout';
 import LoadingView from '@/components/(common)/LoadingView';
 import ErrorView from '@/components/(common)/ErrorView';
 
@@ -34,25 +33,26 @@ export default function ReviewsScreen() {
 
   if (isLoading) {
     return (
-      <SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
         <LoadingView />
-      </SecondaryLayout>
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
   if (isError) {
     return (
-      <SecondaryLayout>
-        <ErrorView error={ error.message } />
-      </SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
+        {/* @ts-ignore */}
+        <ErrorView error={ error.response.data.message } />
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
   if (!data) {
     return (
-      <SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
         <ErrorView error="Aucune donnée disponible" />
-      </SecondaryLayout>
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 

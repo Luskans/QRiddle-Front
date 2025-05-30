@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
-import { abandonRiddle, abandonSession, getActiveSession, getCompleteSession, getPlayedSessions, getSessionByRiddle, newSession, playRiddle, unlockHint, validateStep } from '@/services/api';
+import { abandonSession, getActiveSession, getCompleteSession, getPlayedSessions, getSessionByRiddle, playRiddle, unlockHint, validateStep } from '@/services/api';
 
 
 export function usePlayedSessions(limit: number) {
@@ -42,9 +42,9 @@ export function useValidateStep() {
 
   return useMutation({
     mutationFn: ({ id, qr_code }: { id: string, qr_code: string }) => validateStep(id, qr_code),
-    onSuccess: (validateStepResponse) => {
-      queryClient.refetchQueries({ queryKey: ['active-session', validateStepResponse.game_session.id.toString()] });
-      queryClient.invalidateQueries({ queryKey: ['riddle-session', validateStepResponse.game_session.riddle_id.toString()] });
+    onSuccess: (data) => {
+      queryClient.refetchQueries({ queryKey: ['active-session', data.game_session.id.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['riddle-session', data.game_session.riddle_id.toString()] });
       queryClient.invalidateQueries({ queryKey: ['home'] });
     },
   });
@@ -66,9 +66,9 @@ export function usePlayRiddle() {
 
   return useMutation({
     mutationFn: ({ riddleId, password }: { riddleId: string, password: string }) => playRiddle(riddleId, password),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['active-session'] });
-      queryClient.invalidateQueries({ queryKey: ['riddle-session'] });
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['active-session', data.id.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['riddle-session', data.riddle_id.toString()] });
       queryClient.invalidateQueries({ queryKey: ['played-sessions'] });
       queryClient.invalidateQueries({ queryKey: ['home'] });
     },
@@ -81,8 +81,8 @@ export function useAbandonSession() {
   return useMutation({
     mutationFn: (id: string) => abandonSession(id),
     onSuccess: (updatedSession) => {
-      queryClient.invalidateQueries({ queryKey: ['active-session'] });
-      queryClient.invalidateQueries({ queryKey: ['riddle-session'] });
+      queryClient.invalidateQueries({ queryKey: ['active-session', updatedSession.id.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['riddle-session', updatedSession.riddle_id.toString()] });
       queryClient.invalidateQueries({ queryKey: ['played-sessions'] });
       queryClient.invalidateQueries({ queryKey: ['home'] });
     },

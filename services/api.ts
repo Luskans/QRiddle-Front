@@ -1,13 +1,11 @@
-import { CreatedRiddle, CreateRiddleFormData, Riddle, RiddleDetail, RiddleFormData, RiddleItem } from '@/interfaces/riddle';
-import api from '../lib/axios';
-import { Auth, LoginFormData, RegisterFormData, User } from '@/interfaces/auth';
+import { CreatedRiddle, Riddle, RiddleDetail, RiddleFormData, RiddleItem } from '@/interfaces/riddle';
+import api from '@/lib/axios';
 import { Step, StepFormData, StepItem } from '@/interfaces/step';
-import { Hint, HintFormData, HintItem } from '@/interfaces/hint';
-import { Review, ReviewFormData, ReviewResponse } from '@/interfaces/review';
-import { ActiveSession, CompleteSession, GameSession, NewSessionFormData, PlayedSession, RiddleSession, UnlockHintFormData, ValidateStepFormData, ValidateStepResponse } from '@/interfaces/game';
+import { Hint, HintFormData } from '@/interfaces/hint';
+import { Review, ReviewFormData, ReviewItem, ReviewResponse } from '@/interfaces/review';
+import { ActiveSession, CompleteSession, GameSession, PlayedSession, RiddleSession, ValidateStepResponse } from '@/interfaces/game';
 import { Home } from '@/interfaces/home';
-import { GlobalLeaderboard, Leaderboard, LeaderboardResponse, RiddleLeaderboard } from '@/interfaces/leaderboard';
-import { LayoutAnimation } from 'react-native';
+import { Leaderboard, LeaderboardResponse } from '@/interfaces/leaderboard';
 
 
 export interface PaginatedListResponse<T> {
@@ -19,42 +17,6 @@ export interface PaginatedListResponse<T> {
   totalPages: number;
   hasMore: boolean;
 }
-
-export interface ListResponse<T> {
-  items: T[];
-  message: string;
-}
-
-export interface DataResponse<T> {
-  data: T;
-  message: string;
-}
-
-// --- Auth ---
-export const getUser = async (): Promise<User> => {
-  const response = await api.get('/user');
-  console.log('getUser :', response.data);
-  return response.data.data;
-};
-
-export const login = async (data: LoginFormData): Promise<Auth> => {
-  const response = await api.post('/login', data);
-  console.log('login :', response.data);
-  return response.data.data;
-};
-
-export const register = async (data: RegisterFormData): Promise<Auth> => {
-  const response = await api.post('/register', data);
-  console.log('register :', response.data);
-  return response.data.data;
-};
-
-export const logout = async (): Promise<void> => {
-  const response = await api.post(`/logout`);
-  console.log('logout :', response.data);
-  return response.data.data;
-};
-
 
 // --- Riddles ---
 export const getRiddles = async (): Promise<RiddleItem[]> => {
@@ -75,7 +37,7 @@ export const getRiddleById = async (id: string): Promise<RiddleDetail> => {
   return response.data.data;
 };
 
-export const createRiddle = async (data: CreateRiddleFormData): Promise<Riddle> => {
+export const createRiddle = async (data: RiddleFormData): Promise<Riddle> => {
   const response = await api.post('/riddles', data);
   console.log('createRiddle :', response.data);
   return response.data.data;
@@ -95,12 +57,6 @@ export const deleteRiddle = async (id: string): Promise<void> => {
 
 
 // --- Steps ---
-// export const getStepsByRiddle = async (riddleId: string): Promise<Step[]> => {
-//   const response = await api.get(`/riddles/${riddleId}/steps`);
-//   console.log('getStepsByRiddle :', response.data);
-//   return response.data;
-// };
-
 export const getStepById = async (id: string): Promise<StepItem> => {
   const response = await api.get(`/steps/${id}`);
   console.log('getStepById :', response.data);
@@ -127,18 +83,6 @@ export const deleteStep = async (id: string): Promise<void> => {
 
 
 // --- Hints ---
-// export const getHintsByStep = async (stepId: string): Promise<Hint[]> => {
-//   const response = await api.get(`/steps/${stepId}/hints`);
-//   console.log('getHintsByStep :', response.data);
-//   return response.data;
-// };
-
-// export const getHintById = async (id: string): Promise<HintItem> => {
-//   const response = await api.get(`/hints/${id}`);
-//   console.log('getHintById :', response.data);
-//   return response.data.data;
-// };
-
 export const createHint = async (stepId: string, data: HintFormData): Promise<Hint> => {
   const response = await api.post(`/steps/${stepId}/hints`, data);
   console.log('createHint :', response.data);
@@ -159,16 +103,16 @@ export const deleteHint = async (id: string): Promise<{ data: number }> => {
 
 
 // --- Reviews ---
-export const getReviewsByRiddle = async (riddleId: string, page: number = 1, limit: number): Promise<PaginatedListResponse<Review>> => {
+export const getReviewsByRiddle = async (riddleId: string, page: number = 1, limit: number): Promise<PaginatedListResponse<ReviewItem>> => {
   const response = await api.get(`/riddles/${riddleId}/reviews`, { params: { page, limit }});
   console.log('getReviewsByRiddle :', response.data);
   return response.data;
 };
 
-export const getTopReviewsByRiddle = async (riddleId: string): Promise<ReviewResponse> => {
+export const getTopReviewsByRiddle = async (riddleId: string): Promise<ReviewItem[]> => {
   const response = await api.get(`/riddles/${riddleId}/reviews/top`);
   console.log('getTopReviewsByRiddle :', response.data);
-  return response.data;
+  return response.data.items;
 };
 
 export const createReview = async (riddleId: string, data: ReviewFormData): Promise<Review> => {
@@ -179,12 +123,14 @@ export const createReview = async (riddleId: string, data: ReviewFormData): Prom
 
 export const updateReview = async (id: string, data: Partial<ReviewFormData>): Promise<Review> => {
   const response = await api.patch(`/reviews/${id}`, data);
-  return response.data;
+  console.log('updateReview :', response.data);
+  return response.data.data;
 };
 
-export const deleteReview = async (id: string): Promise<void> => {
+export const deleteReview = async (id: string): Promise<{ data: number }> => {
   const response = await api.delete(`/reviews/${id}`);
-  return response.data;
+  console.log('deleteReview :', response.data);
+  return response.data.data;
 };
 
 
@@ -224,11 +170,6 @@ export const unlockHint = async (id: string, hint_order_number: number): Promise
   console.log('unlockHint :', response.data);
   return response.data.data;
 };
-
-// export const newSession = async (riddleId: string, data: NewSessionFormData): Promise<ActiveSession> => {
-//   const response = await api.post(`/riddles/${riddleId}/new-session`, data);
-//   return response.data;
-// };
 
 export const playRiddle = async (riddleId: string, password: string): Promise<GameSession> => {
   const response = await api.post(`/riddles/${riddleId}/play`, { password });

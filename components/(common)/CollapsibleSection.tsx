@@ -4,6 +4,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useThemeStore } from '@/stores/useThemeStore';
 import colors from "@/constants/colors";
 
+
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
@@ -44,7 +45,7 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
 
   return (
     <View className='flex-1'>
-      <TouchableOpacity onPress={toggleExpanded} className='bg-gray-100 dark:bg-gray-darker p-6'>
+      <TouchableOpacity onPress={toggleExpanded} className='bg-gray-200 dark:bg-gray-darker p-6'>
         <View className='flex-row items-center justify-between'>
           <View className='flex-row gap-3'>
             {icon ? (
@@ -68,4 +69,4 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
       )}
     </View>
   );
-};
+}

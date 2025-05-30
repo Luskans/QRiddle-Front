@@ -1,7 +1,6 @@
-import { FormField } from '@/components/(common)/FormField';
-import GradientButton from '@/components/(common)/GradientButton';
+import FormField from '@/components/(common)/FormField';
+import FullButton from '@/components/(common)/FullButton';
 import SecondaryLayout from '@/components/(layouts)/SecondaryLayout';
-import colors from '@/constants/colors';
 import { HINT_MAX_LENGTH } from '@/constants/constants';
 import { useCreateHint } from '@/hooks/useHints';
 import { HintFormData } from '@/interfaces/hint';
@@ -11,6 +10,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Formik } from 'formik';
 import { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+
 
 export default function HintCreateScreen() {
   const { stepId } = useLocalSearchParams<{ stepId: string }>();
@@ -27,7 +27,7 @@ export default function HintCreateScreen() {
         alert(`Indice ${data.order_number} ajouté !`);
         router.dismiss();
       },
-      onError: (error) => {
+      onError: (error: any) => {
         alert(`Une erreur est survenue: ${error.response.data.message}`);
       },
     });
@@ -120,10 +120,11 @@ export default function HintCreateScreen() {
   
               {/* --- Bouton de soumission --- */}
               <View className='px-6'>
-                <GradientButton
-                  onPress={() => handleSubmit()}
+                <FullButton
+                  onPress={handleSubmit}
                   title="Créer"
-                  colors={isDark ? [colors.primary.mid, colors.primary.lighter] : [colors.primary.darker, colors.primary.mid]}
+                  border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+                  color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
                   textColor={isDark ? 'text-dark' : 'text-light'}
                   isLoading={isSubmitting || createHintMutation.isPending}
                   disabled={isSubmitting || createHintMutation.isPending}

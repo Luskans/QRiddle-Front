@@ -6,14 +6,12 @@ import { useCallback, useEffect } from 'react';
 import colors from '@/constants/colors';
 import { useFocusEffect } from 'expo-router';
 
-type Props = {
-  children: React.ReactNode;
-};
 
-export default function SecondaryLayoutWithoutScrollView({ children }: Props) {
+export default function SecondaryLayoutWithoutScrollView({ children }: { children: React.ReactNode}) {
   const { isDark, setIsPrimaryLayout } = useThemeStore();
   const navigation = useNavigation();
   const headerColor = isDark ? colors.primary.lighter : colors.primary.darker;
+  // TODO : utiliser useMemo
 
   useFocusEffect(
     useCallback(() => {

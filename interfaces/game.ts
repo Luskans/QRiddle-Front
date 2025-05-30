@@ -1,5 +1,3 @@
-import { Hint } from "./hint";
-
 export interface PlayedSession {
   id: number;
   riddle_id: number;
@@ -73,16 +71,3 @@ export interface ValidateStepResponse {
   game_completed: boolean;
   game_session: GameSession;
 }
-
-// export interface NewSessionFormData {
-//   password: string;
-// }
-
-// export interface ValidateStepFormData {
-//   qr_code: string;
-//   // TODO: rajouter localisation pour code métier ?
-// }
-
-// export interface UnlockHintFormData {
-//   hintId: number;
-// }

@@ -5,7 +5,7 @@ import { CollapsibleSection } from '@/components/(common)/CollapsibleSection';
 import { useThemeStore } from '@/stores/useThemeStore';
 import SecondaryLayout from '@/components/(layouts)/SecondaryLayout';
 import GhostButton from '@/components/(common)/GhostButton';
-import RiddleUpdateForm from '@/components/(riddles)/created/UpdateForm';
+import UpdateRiddleForm from '@/components/(riddles)/created/UpdateRiddleForm';
 import StepList from '@/components/(riddles)/created/StepList';
 import QrCodeList from '@/components/(riddles)/created/QrCodeList';
 import TopReviewList from '@/components/(riddles)/common/TopReviewsList';
@@ -13,7 +13,6 @@ import TopRiddleLeaderboard from '@/components/(riddles)/common/TopRiddleLeaderb
 import { Ionicons } from '@expo/vector-icons';
 import colors from '@/constants/colors';
 import { getStatusColor, getStatusName } from '@/lib/getStatusColor';
-import GradientButton from '@/components/(common)/GradientButton';
 import Separator from '@/components/(common)/Separator';
 import * as Clipboard from 'expo-clipboard';
 import { RiddleDetail } from '@/interfaces/riddle';
@@ -34,7 +33,7 @@ export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
         onSuccess: () => {
           alert('Énigme publiée');
         },
-        onError: (error) => {
+        onError: (error: any) => {
           alert(`Une erreur est survenue: ${error.response.data.message}`);
         },
       });
@@ -44,7 +43,7 @@ export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
         onSuccess: () => {
           alert('Énigme dépubliée');
         },
-        onError: (error) => {
+        onError: (error: any) => {
           alert(`Une erreur est survenue: ${error.response.data.message}`);
         },
       });
@@ -64,7 +63,7 @@ export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
   };
 
   const copyToClipboard = async () => {
-    if (!riddle.password) {
+    if (!riddle.password || copied) {
       return;
     }
 
@@ -103,7 +102,7 @@ export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
           title="Informations générales"
           icon="information-circle-outline"
         >
-          <RiddleUpdateForm riddle={riddle} />
+          <UpdateRiddleForm riddle={riddle} />
         </CollapsibleSection>
 
         <CollapsibleSection
@@ -111,7 +110,7 @@ export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
           icon="footsteps-outline"
           number={riddle.stepsCount}
         >
-          {riddle.steps.length > 0 ? (
+          {riddle.steps && riddle.steps.length > 0 ? (
             <StepList steps={riddle.steps}></StepList>
           ) : (
             <Text className='px-6 text-dark dark:text-light'>Aucune étape pour le moment.</Text>
@@ -129,7 +128,7 @@ export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
           title="QR codes"
           icon="qr-code-outline"
         >
-          {riddle.steps.length > 0 ? (
+          {riddle.steps && riddle.steps.length > 0 ? (
             <>
               <QrCodeList steps={riddle.steps} />
 
@@ -184,7 +183,7 @@ export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
         >
           <TopRiddleLeaderboard riddleId={riddle.id.toString()} />
 
-          <Link href={`/leaderboards/riddle/${riddle.id.toString()}`} asChild className='flex-1 justify-center mt-6 mb-8'>
+          <Link href={`/leaderboards/riddle/${riddle.id.toString()}`} asChild className='flex-1 justify-center mt-10 mb-8'>
             <TouchableOpacity className='flex-row items-center gap-1'>
               <Ionicons name="arrow-forward" size={20} color={isDark ? colors.secondary.lighter : colors.secondary.darker} />
               <Text className='text-secondary-darker dark:text-secondary-lighter font-semibold'>Voir le classement complet</Text>
@@ -197,34 +196,29 @@ export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
           {getStatusName(riddle.status)}
         </Text>
 
-        <View className='px-6 flex-1 flex-row gap-3 items-center justify-center'>
-          <GradientButton
-            onPress={handleUpdate}
-            title={riddle.status == "draft" ? "Publier" : "Dépublier"}
-            colors={isDark ? [colors.primary.lighter, colors.primary.lighter] : [colors.primary.darker, colors.primary.darker]}
-            textColor={isDark ? 'text-dark' : 'text-light'}
-            disabled={riddle.stepsCount <= 0 || updateRiddleMutation.isPending}
-            isLoading={updateRiddleMutation.isPending}
-          />
+        <View className='px-6 flex-row gap-4'>
+          <View className='flex-grow'>
+            <FullButton
+              onPress={handleUpdate}
+              title={riddle.status == "draft" ? "Publier" : "Dépublier"}
+              border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+              color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
+              textColor={isDark ? 'text-dark' : 'text-light'}
+              disabled={riddle.stepsCount <= 0 || updateRiddleMutation.isPending}
+              isLoading={updateRiddleMutation.isPending}
+            />
+          </View>
 
-          <FullButton
-            onPress={handleUpdate}
-            title={riddle.status == "draft" ? "Publier" : "Dépublier"}
-            border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
-            color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
-            textColor={isDark ? 'text-dark' : 'text-light'}
-            disabled={riddle.stepsCount <= 0 || updateRiddleMutation.isPending}
-            isLoading={updateRiddleMutation.isPending}
-          />
-
-          <GhostButton
-            onPress={handleDelete}
-            title="Supprimer"
-            color={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
-            textColor={isDark ? 'text-primary-lighter' : 'text-primary-darker'}
-            isLoading={deleteRiddleMutation.isPending}
-            disabled={deleteRiddleMutation.isPending}
-          />
+          <View className='flex-grow'>
+            <GhostButton
+              onPress={handleDelete}
+              title="Supprimer"
+              color={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+              textColor={isDark ? 'text-primary-lighter' : 'text-primary-darker'}
+              isLoading={deleteRiddleMutation.isPending}
+              disabled={deleteRiddleMutation.isPending}
+            />
+          </View>
         </View>
 
         {(riddle.stepsCount <= 0) && <Text className='px-6 text-sm text-gray-500 dark:text-gray-400 text-center'>Ajoutez une étape avec un indice pour publier l'énigme</Text>}

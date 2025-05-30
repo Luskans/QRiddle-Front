@@ -8,10 +8,12 @@ import LoadingView from '@/components/(common)/LoadingView';
 import ErrorView from '@/components/(common)/ErrorView';
 import LeaderboardRow from '@/components/(leaderboard)/LeaderboardRow';
 
+
 export default function TopGlobalLeaderboard() {
   const [period, setPeriod] = useState<'week' | 'month' | 'all'>('week');
   const { data, isLoading, isError, error } = useTopGlobalLeaderboard(period);
   const userInfos = data?.data;
+  // TODO : utiliser useMemo
 
   if (isLoading) {
     return (
@@ -21,7 +23,8 @@ export default function TopGlobalLeaderboard() {
 
   if (isError) {
     return (
-      <ErrorView error={ error.message } />
+      // @ts-ignore
+      <ErrorView error={ error.response.data.message } />
     );
   }
 

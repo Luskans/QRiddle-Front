@@ -5,18 +5,10 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import colors from '@/constants/colors';
 import { useThemeStore } from '@/stores/useThemeStore';
+import { StepItem } from '@/interfaces/riddle';
 
 
-interface QrCodeDownloaderProps {
-  steps: {
-    id: number;
-    order_number: number;
-    qr_code: string;
-  }[];
-  riddleTitle: string;
-}
-
-export default function QrCodeDownloader({ steps, riddleTitle }: QrCodeDownloaderProps) {
+export default function QrCodeDownloader({ steps, riddleTitle }: {steps: StepItem[], riddleTitle: string}) {
   const { isDark } = useThemeStore();
   const [isLoading, setIsLoading] = useState(false);
 

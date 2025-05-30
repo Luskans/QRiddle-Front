@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import QrCodeListItem from '@/components/(riddles)/created/QrCodeListItem';
-import { StepItem } from '@/stores/useStepStore2';
+import { StepItem } from '@/interfaces/riddle';
+
 
 export default function QrCodeList({ steps }: { steps: StepItem[] }) {
-
+  // TODO : use memo
   return (
     <View className='px-6 gap-6'>
       <FlatList

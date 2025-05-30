@@ -8,7 +8,7 @@ import { Link } from 'expo-router';
 import { CreatedRiddle } from '@/interfaces/riddle';
 
 
-export default function CreatedListCard({ riddle }: {riddle: CreatedRiddle}) {
+export default function CreatedCard({ riddle }: {riddle: CreatedRiddle}) {
     const { isDark } = useThemeStore();
 
     return (
@@ -30,7 +30,11 @@ export default function CreatedListCard({ riddle }: {riddle: CreatedRiddle}) {
             </View>
 
             <View className=''>
-              <Text className='text-gray-400 dark:text-gray-400 text-sm'>{ moment(riddle.updated_at).format('DD-MM-YYYY') }</Text>
+              <Text className='text-gray-400 dark:text-gray-400 text-sm'>
+                {moment(riddle.updated_at).isSame(moment(), 'day')
+                  ? moment(riddle.updated_at).fromNow()
+                  : moment(riddle.updated_at).format('DD-MM-YYYY')}
+              </Text>
             </View>
 
             <View className=''>

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { getRiddles, getCreatedRiddles, getRiddleById, createRiddle, updateRiddle, deleteRiddle } from '@/services/api';
-import { CreateRiddleFormData, RiddleFormData } from '@/interfaces/riddle';
+import { RiddleFormData } from '@/interfaces/riddle';
 
 
 export function useRiddles() {
@@ -49,7 +49,6 @@ export function useUpdateRiddle() {
     mutationFn: ({ id, data }: { id: string; data: Partial<RiddleFormData> }) => updateRiddle(id, data),
     onSuccess: (updatedRiddle) => {
       queryClient.refetchQueries({ queryKey: ['riddle', updatedRiddle.id.toString()] });
-      // queryClient.setQueryData(['riddle', updatedRiddle.data.id.toString()], updatedRiddle);
       queryClient.invalidateQueries({ queryKey: ['riddles'] });
       queryClient.invalidateQueries({ queryKey: ['created-riddles'] });
     },

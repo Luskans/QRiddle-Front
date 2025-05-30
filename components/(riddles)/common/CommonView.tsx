@@ -9,7 +9,6 @@ import SectionLink from '@/components/(common)/SectionLink';
 import { router } from 'expo-router';
 import moment from 'moment';
 import MapView, { Marker } from 'react-native-maps';
-import GradientButton from '@/components/(common)/GradientButton';
 import CompletedGameSessionCard from './CompletedGameSessionCard';
 import { MAP_LATITUDE, MAP_LONGITUDE, BACKEND_URL } from '@/constants/constants';
 import { RiddleDetail } from '@/interfaces/riddle';
@@ -17,6 +16,8 @@ import { useAbandonSession, usePlayRiddle, useSessionByRiddle } from '@/hooks/us
 import TopRiddleLeaderboard from './TopRiddleLeaderboard';
 import TopReviewList from './TopReviewsList';
 import GhostButton from '@/components/(common)/GhostButton';
+import FullButton from '@/components/(common)/FullButton';
+
 
 export default function CommonView({ riddle }: { riddle: RiddleDetail }) {
   const { isDark } = useThemeStore();
@@ -27,7 +28,7 @@ export default function CommonView({ riddle }: { riddle: RiddleDetail }) {
     longitudeDelta: 0.1,
   });
   const [password, setPassword] = useState<string>('');
-  const { data, isLoading, isError, error } = useSessionByRiddle(riddle.id.toString());
+  const { data, isLoading } = useSessionByRiddle(riddle.id.toString());
   const creatorName = riddle.creator?.name || 'Inconnu';
   const creatorImage = riddle.creator?.image || '/default/user.png';
   const playRiddleMutation = usePlayRiddle();
@@ -42,7 +43,7 @@ export default function CommonView({ riddle }: { riddle: RiddleDetail }) {
           alert('Nouvelle partie lancée !');
           router.replace(`/game/${data.id.toString()}`);
         },
-        onError: (error) => {
+        onError: (error: any) => {
           alert(`Une erreur est survenue: ${error.response.data.message}`);
         },
       });
@@ -62,7 +63,7 @@ export default function CommonView({ riddle }: { riddle: RiddleDetail }) {
       onSuccess: (data) => {
         alert('Partie abandonnée !');
       },
-      onError: (error) => {
+      onError: (error: any) => {
         alert(`Une erreur est survenue: ${error.response.data.message}`);
       },
     });
@@ -144,10 +145,11 @@ export default function CommonView({ riddle }: { riddle: RiddleDetail }) {
             )}
             {data?.status === 'active' ? (
               <View className='flex-1 flex-row gap-3 items-center justify-center'>
-                <GradientButton
+                <FullButton
                   onPress={handleStartGame}
                   title={'Reprendre'}
-                  colors={isDark ? [colors.primary.mid, colors.primary.lighter] : [colors.primary.darker, colors.primary.mid]}
+                  border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+                  color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
                   textColor={isDark ? 'text-dark' : 'text-light'}
                   isLoading={playRiddleMutation.isPending}
                   disabled={playRiddleMutation.isPending || abandonSessionMutation.isPending}
@@ -162,10 +164,11 @@ export default function CommonView({ riddle }: { riddle: RiddleDetail }) {
                 />
               </View>
             ) : (
-              <GradientButton
+              <FullButton
                 onPress={handleStartGame}
                 title={'Nouvelle partie'}
-                colors={isDark ? [colors.primary.mid, colors.primary.lighter] : [colors.primary.darker, colors.primary.mid]}
+                border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+                color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
                 textColor={isDark ? 'text-dark' : 'text-light'}
                 isLoading={playRiddleMutation.isPending}
                 disabled={riddle.is_private && !password && !data || playRiddleMutation.isPending || abandonSessionMutation.isPending}
@@ -176,17 +179,13 @@ export default function CommonView({ riddle }: { riddle: RiddleDetail }) {
 
         {/* PLAYED SESSION */}
         {isLoading && (
-          <View className='bg-gray-100 dark:bg-gray-darker px-6 py-10'>
+          <View className='bg-gray-200 dark:bg-gray-darker px-6 py-10'>
             <ActivityIndicator size="large" color={isDark ? colors.primary.lighter : colors.primary.darker} />
           </View>
         )}
-        {/* {isError && (
-          <View className='bg-gray-100 dark:bg-gray-darker px-6 py-10'>
-            <Text className='text-dark dark:text-light'>{error.response.data.message}</Text>
-          </View>
-        )} */}
+
         {data && (
-          <View className='bg-gray-100 dark:bg-gray-darker px-6'>
+          <View className='bg-gray-200 dark:bg-gray-darker px-6'>
             <CompletedGameSessionCard session={data} />
           </View>
         )}

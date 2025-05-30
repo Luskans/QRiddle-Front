@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Text } from 'react-native';
 import moment from 'moment';
 
+
 export default function Chronometer({ startTime }: { startTime: string }) {
   const [elapsedTime, setElapsedTime] = useState('00:00:00');
   

@@ -1,6 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, View, Text } from 'react-native';
 
+
 interface TabButtonProps {
   title: string;
   isActive: boolean;
@@ -8,6 +9,8 @@ interface TabButtonProps {
 }
 
 export default function TabButton({ title, isActive, onPress }: TabButtonProps) {
+  // TODO : utiliser useMemo
+
   return (
     <TouchableOpacity onPress={onPress} className="flex-1 px-4">
       <View className="items-center">

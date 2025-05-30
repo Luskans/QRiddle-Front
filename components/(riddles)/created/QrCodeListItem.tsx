@@ -1,9 +1,9 @@
 import { useThemeStore } from "@/stores/useThemeStore";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import colors from '@/constants/colors';
-import { Step, StepItem } from "@/stores/useStepStore2";
+import { StepItem } from "@/interfaces/riddle";
+
 
 export default function QrCodeListItem({ step }: { step: StepItem }) {
   const { isDark } = useThemeStore();  

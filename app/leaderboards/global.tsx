@@ -1,6 +1,5 @@
 import ErrorView from '@/components/(common)/ErrorView';
 import LoadingView from '@/components/(common)/LoadingView';
-import SecondaryLayout from '@/components/(layouts)/SecondaryLayout';
 import SecondaryLayoutWithoutScrollView from '@/components/(layouts)/SecondaryLayoutWithoutScrollView';
 import LeaderboardHeader from '@/components/(leaderboard)/LeaderboardHeader';
 import LeaderboardRow from '@/components/(leaderboard)/LeaderboardRow';
@@ -11,6 +10,7 @@ import { useGlobalLeaderboard } from '@/hooks/useLeaderboards';
 import { useThemeStore } from '@/stores/useThemeStore';
 import { useState } from 'react';
 import { View, Text, ActivityIndicator, FlatList } from 'react-native';
+
 
 export default function GlobalLeaderboardScreen() {
   const { isDark } = useThemeStore();
@@ -37,25 +37,26 @@ export default function GlobalLeaderboardScreen() {
 
   if (isLoading) {
     return (
-      <SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
         <LoadingView />
-      </SecondaryLayout>
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
   if (isError) {
     return (
-      <SecondaryLayout>
-        <ErrorView error={ error.message } />
-      </SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
+        {/* @ts-ignore */}
+        <ErrorView error={ error.response.data.message } />
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
   if (!data) {
     return (
-      <SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
         <ErrorView error="Aucune donnée disponible" />
-      </SecondaryLayout>
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 

@@ -2,16 +2,15 @@ import SecondaryLayout from '@/components/(layouts)/SecondaryLayout';
 import { useState } from 'react';
 import { View, Text, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
 import { Formik } from 'formik';
-import { FormField } from '@/components/(common)/FormField';
+import FormField from '@/components/(common)/FormField';
 import { riddleSchema } from '@/lib/validationSchemas';
 import MapView, { MapPressEvent, Marker } from 'react-native-maps';
-import GradientButton from '@/components/(common)/GradientButton';
 import { useThemeStore } from '@/stores/useThemeStore';
-import colors from '@/constants/colors';
 import { DESCRIPTION_MAX_LENGTH, MAP_LATITUDE, MAP_LATITUDE_DELTA, MAP_LONGITUDE, MAP_LONGITUDE_DELTA } from '@/constants/constants';
 import { router } from 'expo-router';
 import { RiddleFormData } from '@/interfaces/riddle';
 import { useCreateRiddle } from '@/hooks/useRiddles';
+import FullButton from '@/components/(common)/FullButton';
 
 
 interface FormValues {
@@ -22,11 +21,6 @@ interface FormValues {
 
 export default function RiddleCreateScreen() {
   const { isDark } = useThemeStore();
-  const [initialValues, setInitialValues] = useState<FormValues>({
-    title: '',
-    description: '',
-    is_private: false,
-  });
   const [mapCoordinate, setMapCoordinate] = useState({
     latitude: MAP_LATITUDE,
     longitude: MAP_LONGITUDE,
@@ -73,13 +67,14 @@ export default function RiddleCreateScreen() {
       <SecondaryLayout>
         <View className='py-10'>
           <Formik
-            initialValues={initialValues}
+            initialValues={{title: '', description: '', is_private: false}}
             validationSchema={riddleSchema}
             onSubmit={handleSubmit}
             enableReinitialize
           >
             {({ handleSubmit, values, setFieldValue, isValid, isSubmitting, errors, touched, setFieldTouched }) => (
               <View className="gap-8">
+
                 {/* --- Privée ou publique --- */}
                 <View className="px-6 flex-1 gap-3">
                   <Text className="text-dark dark:text-light font-semibold">Visibilité :</Text>
@@ -155,10 +150,11 @@ export default function RiddleCreateScreen() {
 
                 {/* --- Bouton de soumission --- */}
                 <View className='px-6'>
-                  <GradientButton
-                    onPress={() => handleSubmit()}
+                  <FullButton
+                    onPress={handleSubmit}
                     title="Créer l'énigme"
-                    colors={isDark ? [colors.primary.mid, colors.primary.lighter] : [colors.primary.darker, colors.primary.mid]}
+                    border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+                    color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
                     textColor={isDark ? 'text-dark' : 'text-light'}
                     isLoading={isSubmitting || createRiddleMutation.isPending}
                     disabled={isSubmitting || !isValid || createRiddleMutation.isPending}

@@ -1,9 +1,10 @@
 import ErrorView from '@/components/(common)/ErrorView';
+import FullButton from '@/components/(common)/FullButton';
 import GhostButton from '@/components/(common)/GhostButton';
-import GradientButton from '@/components/(common)/GradientButton';
 import LoadingView from '@/components/(common)/LoadingView';
 import Separator from '@/components/(common)/Separator';
 import SecondaryLayout from '@/components/(layouts)/SecondaryLayout';
+import SecondaryLayoutWithoutScrollView from '@/components/(layouts)/SecondaryLayoutWithoutScrollView';
 import HintList from '@/components/(steps)/HintList';
 import colors from '@/constants/colors';
 import { MAP_LATITUDE, MAP_LATITUDE_DELTA, MAP_LONGITUDE, MAP_LONGITUDE_DELTA } from '@/constants/constants';
@@ -15,6 +16,7 @@ import { Link, router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import MapView, { MapPressEvent, Marker } from 'react-native-maps';
+
 
 export default function StepDetailScreen() {
   const { isDark } = useThemeStore();
@@ -65,7 +67,7 @@ export default function StepDetailScreen() {
       onSuccess: () => {
         alert('Étape mise à jour avec succès !');
       },
-      onError: (error) => {
+      onError: (error: any) => {
         alert(`Une erreur est survenue: ${error.response.data.message}`);
       },
     });
@@ -85,25 +87,26 @@ export default function StepDetailScreen() {
 
   if (isLoading) {
     return (
-      <SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
         <LoadingView />
-      </SecondaryLayout>
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
   if (isError) {
     return (
-      <SecondaryLayout>
-        <ErrorView error={ error.message } />
-      </SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
+        {/* @ts-ignore */}
+        <ErrorView error={ error.response.data.message } />
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
   if (!data) {
     return (
-      <SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
         <ErrorView error="Aucune donnée disponible" />
-      </SecondaryLayout>
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
@@ -126,10 +129,11 @@ export default function StepDetailScreen() {
         </View>
 
         <View className='px-6 flex-1 flex-row gap-3 items-center justify-center'>
-          <GradientButton
-            onPress={() => handleUpdate()}
+          <FullButton
+            onPress={handleUpdate}
             title="Modifier"
-            colors={isDark ? [colors.primary.mid, colors.primary.lighter] : [colors.primary.darker, colors.primary.mid]}
+            border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+            color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
             textColor={isDark ? 'text-dark' : 'text-light'}
             isLoading={updateStepMutation.isPending}
             disabled={updateStepMutation.isPending}

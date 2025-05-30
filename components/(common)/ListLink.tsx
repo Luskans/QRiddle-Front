@@ -3,6 +3,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useThemeStore } from '@/stores/useThemeStore';
 import colors from "@/constants/colors";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { memo } from 'react';
 
 
 interface ListLinkProps {

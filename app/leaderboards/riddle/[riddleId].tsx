@@ -1,6 +1,5 @@
 import ErrorView from '@/components/(common)/ErrorView';
 import LoadingView from '@/components/(common)/LoadingView';
-import SecondaryLayout from '@/components/(layouts)/SecondaryLayout';
 import SecondaryLayoutWithoutScrollView from '@/components/(layouts)/SecondaryLayoutWithoutScrollView';
 import LeaderboardHeader from '@/components/(leaderboard)/LeaderboardHeader';
 import LeaderboardRow from '@/components/(leaderboard)/LeaderboardRow';
@@ -10,6 +9,7 @@ import { useRiddleLeaderboard } from '@/hooks/useLeaderboards';
 import { useThemeStore } from '@/stores/useThemeStore';
 import { useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, FlatList, Text, View } from 'react-native';
+
 
 export default function RiddleLeaderboardScreen() {
   const { riddleId } = useLocalSearchParams<{ riddleId: string }>();
@@ -36,25 +36,26 @@ export default function RiddleLeaderboardScreen() {
 
   if (isLoading) {
     return (
-      <SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
         <LoadingView />
-      </SecondaryLayout>
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
   if (isError) {
     return (
-      <SecondaryLayout>
-        <ErrorView error={ error.message } />
-      </SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
+        {/* @ts-ignore */}
+        <ErrorView error={ error.response.data.message } />
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
   if (!data) {
     return (
-      <SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
         <ErrorView error="Aucune donnée disponible" />
-      </SecondaryLayout>
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 

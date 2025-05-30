@@ -1,10 +1,6 @@
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { router } from 'expo-router';
 import ActiveGameSessionCard from '@/components/(home)/ActiveGameSessionCard';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import Entypo from '@expo/vector-icons/Entypo';
 import PrimaryLayout from '@/components/(layouts)/PrimaryLayout';
 import TopGlobalLeaderboard from '@/components/(home)/TopGlobalLeaderboard';
 import ListLink from '@/components/(common)/ListLink';

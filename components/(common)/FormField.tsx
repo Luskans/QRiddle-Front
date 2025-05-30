@@ -1,7 +1,8 @@
 import { View, Text, TextInput, TextInputProps, TouchableOpacity } from 'react-native';
 import { useField } from 'formik';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
+
 
 interface FormFieldProps extends TextInputProps {
   name: string;
@@ -9,7 +10,7 @@ interface FormFieldProps extends TextInputProps {
   isPassword?: boolean;
 }
 
-export function FormField({ name, label, isPassword = false, onChangeText, ...props }: FormFieldProps) {
+export default function FormField({ name, label, isPassword = false, onChangeText, ...props }: FormFieldProps) {
   const [field, meta] = useField(name);
   const [showPassword, setShowPassword] = useState(false);
 

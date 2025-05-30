@@ -6,14 +6,12 @@ import { useCallback, useEffect } from 'react';
 import colors from '@/constants/colors';
 import { useFocusEffect } from 'expo-router';
 
-type Props = {
-  children: React.ReactNode;
-};
 
-export default function SecondaryLayout({ children }: Props) {
+export default function SecondaryLayout({ children }: { children: React.ReactNode}) {
   const { isDark, setIsPrimaryLayout } = useThemeStore();
   const navigation = useNavigation();
   const headerColor = isDark ? colors.primary.lighter : colors.primary.darker;
+  // TODO : utiliser useMemo
 
   useFocusEffect(
     useCallback(() => {
@@ -30,7 +28,6 @@ export default function SecondaryLayout({ children }: Props) {
   
   return (
     <View className='flex-1'>
-      {/* <StatusBar style={ isDark ? 'dark' : 'light' } backgroundColor={isDark ? colors.primary.lighter : colors.primary.darker} /> */}
       <StatusBar style={ isDark ? 'dark' : 'light' } />
       <ScrollView className='flex-1 bg-white dark:bg-dark'>
         {children}

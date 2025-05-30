@@ -3,7 +3,6 @@ import { router } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
 import colors from "@/constants/colors";
 import { useThemeStore } from '@/stores/useThemeStore';
-import GradientButton from '@/components/(common)/GradientButton';
 import GhostButton from '@/components/(common)/GhostButton';
 import PrimaryLayout from '@/components/(layouts)/PrimaryLayout';
 import FullButton from '@/components/(common)/FullButton';
@@ -58,7 +57,7 @@ export default function AuthScreen() {
             </View>
 
             {/* BUTTONS */}
-            <View className="flex-row glex-grow gap-4">
+            <View className="flex-row gap-4">
               <View className='flex-grow'>
                 <FullButton
                   onPress={() => router.push("/(auth)/register")}

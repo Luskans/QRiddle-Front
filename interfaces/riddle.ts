@@ -1,21 +1,3 @@
-// export interface RiddleDetail {
-//   id: number;
-//   creator_id: number;
-//   title: string;
-//   description: string;
-//   is_private: boolean;
-//   password?: string;
-//   latitude: string;
-//   longitude: string;
-//   status: 'published' | 'draft' | 'disabled';
-//   created_at: string;
-//   updated_at: string;
-//   stepsCount: number;
-//   reviewsCount: number;
-//   averageRating: number;
-//   averageDifficulty: number;
-// }
-
 export interface RiddleFormData {
   title: string;
   description: string;
@@ -69,9 +51,25 @@ export interface RiddleDetail {
     name: string;
     image: string;
   }
-  steps: {
-    id: number;
-    order_number: number;
-    qr_code: string;
-  }[]
+  steps: StepItem[]
+}
+
+export interface Riddle {
+  id: number;
+  riddle_id: number;
+  creator_id: number;
+  title: string;
+  description: string;
+  is_private: boolean;
+  status: 'published' | 'draft' | 'disabled';
+  latitude: string;
+  longitude: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface StepItem {
+  id: number;
+  order_number: number;
+  qr_code: string;
 }

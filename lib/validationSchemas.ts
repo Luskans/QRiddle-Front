@@ -1,6 +1,7 @@
 import * as Yup from 'yup';
 import { DESCRIPTION_MAX_LENGTH, HINT_MAX_LENGTH } from '@/constants/constants';
 
+
 export const loginSchema = Yup.object().shape({
   email: Yup.string()
     .email('Email invalide')

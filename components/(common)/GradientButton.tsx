@@ -2,6 +2,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React, { memo } from 'react';
 import { TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 
+
 interface GradientButtonProps {
   onPress: () => void;
   title: string;
@@ -11,7 +12,7 @@ interface GradientButtonProps {
   disabled?: boolean;
 }
 
-function GradientButton({
+export default function GradientButton({
   onPress,
   title,
   colors,
@@ -46,5 +47,3 @@ function GradientButton({
     </TouchableOpacity>
   );
 }
-
-export default memo(GradientButton);

@@ -10,6 +10,7 @@ import LeaderboardRow from '@/components/(leaderboard)/LeaderboardRow';
 export default function TopRiddleLeaderboard({ riddleId }: { riddleId: string }) {
   const { data, isLoading, isError, error } = useTopRiddleLeaderboard(riddleId);
   const userInfos = data?.data;
+  // TODO : use memo
 
   if (isLoading) {
     return (
@@ -19,7 +20,8 @@ export default function TopRiddleLeaderboard({ riddleId }: { riddleId: string })
 
   if (isError) {
     return (
-      <ErrorView error={ error.message } />
+      // @ts-ignore
+      <ErrorView error={ error.response.data.message } />
     );
   }
 
@@ -35,7 +37,7 @@ export default function TopRiddleLeaderboard({ riddleId }: { riddleId: string })
 
       <LeaderboardHeader />
 
-      {data.items.length > 0 ? (
+      {data.items && data.items.length > 0 ? (
         <FlatList
           data={data.items}
           keyExtractor={(item) => item.id.toString()}

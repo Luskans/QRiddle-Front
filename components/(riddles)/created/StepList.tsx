@@ -1,9 +1,11 @@
 import React from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import StepListItem from '@/components/(riddles)/created/StepListItem';
+import { StepItem } from '@/interfaces/riddle';
 
 
-export default function StepList({ steps }: { steps: {id: number, order_number: number, qr_code: string}[] }) {
+export default function StepList({ steps }: { steps: StepItem[] }) {
+  // TODO : utiliser useMemo
 
   return (
     <View className='px-6 gap-6'>

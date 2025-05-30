@@ -1,6 +1,6 @@
 import ErrorView from '@/components/(common)/ErrorView';
 import LoadingView from '@/components/(common)/LoadingView';
-import SecondaryLayout from '@/components/(layouts)/SecondaryLayout';
+import SecondaryLayoutWithoutScrollView from '@/components/(layouts)/SecondaryLayoutWithoutScrollView';
 import CommonView from '@/components/(riddles)/common/CommonView';
 import CreatedView from '@/components/(riddles)/created/CreatedView';
 import { useRiddle } from '@/hooks/useRiddles';
@@ -10,48 +10,49 @@ import { useEffect, useState } from 'react';
 
 
 export default function RiddleDetailScreen() {
-  const [viewType, setViewType] = useState<'created' | 'common'>('common');
+  const [viewType, setViewType] = useState<'created' | 'common' | null>(null);
   const { riddleId } = useLocalSearchParams<{ riddleId: string }>();
   const { user } = useAuthStore();
   const { data, isLoading, isError, error } = useRiddle(riddleId);
   
   useEffect(() => {
-    if (user?.id === data?.creator.id) {
+    if (isLoading) return;
+    console.log("id du createur", data?.creator.id)
+    console.log("id du user", user?.user?.id)
+    console.log("user du store", user)
+    if (user?.id === data?.creator?.id) {
       setViewType('created');
     } else {
       setViewType('common');
     }
   }, [data, user]);
 
-  if (isLoading) {
+  if (isLoading || viewType === null) {
     return (
-      <SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
         <LoadingView />
-      </SecondaryLayout>
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
   if (isError) {
     return (
-      <SecondaryLayout>
-        <ErrorView error={ error.message } />
-      </SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
+        {/* @ts-ignore */}
+        <ErrorView error={ error.response.data.message } />
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
-  if (!data) {
+  if (!data || !user) {
     return (
-      <SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
         <ErrorView error="Aucune donnée disponible" />
-      </SecondaryLayout>
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
-  if (viewType === 'created') {
-    return <CreatedView riddle={data} />
-  }
-
-  if (viewType === 'common') {
-    return <CommonView riddle={data} />
-  }
+  return viewType === 'created'
+    ? <CreatedView riddle={data} /> 
+    : <CommonView riddle={data} />;
 }

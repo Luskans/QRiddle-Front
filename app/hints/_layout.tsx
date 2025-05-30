@@ -14,12 +14,6 @@ export default function HintsLayout() {
           title: 'Nouvel indice'
         }}
       />
-      <Stack.Screen
-        name="[hintId]"
-        options={{ 
-          title: ''
-        }}
-      />
     </Stack>
   );
 }

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { createReview, deleteReview, getReviewsByRiddle, getTopReviewsByRiddle, updateReview } from '@/services/api';
+import { ReviewFormData } from '@/interfaces/review';
 
 
 export function useReviewsByRiddle(riddleId: string, limit: number) {
@@ -28,7 +29,7 @@ export function useCreateReview() {
   return useMutation({
     mutationFn: ({ riddleId, data }: { riddleId: string, data: ReviewFormData }) => createReview(riddleId, data),
     onSuccess: (_, variables) => {
-      console.log("dans repoense review", variables.riddleId)
+      queryClient.invalidateQueries({ queryKey: ['top-riddle-reviews', variables.riddleId.toString()] });
       queryClient.invalidateQueries({ queryKey: ['riddle-reviews', variables.riddleId.toString()] });
     },
   });
@@ -40,7 +41,8 @@ export function useUpdateReview() {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<ReviewFormData> }) => updateReview(id, data),
     onSuccess: (updatedReview) => {
-      queryClient.invalidateQueries({ queryKey: ['reviews', updatedReview.stepId] });
+      queryClient.invalidateQueries({ queryKey: ['top-riddle-reviews', updatedReview.riddle_id.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['riddle-reviews', updatedReview.riddle_id.toString()] });
     },
   });
 }
@@ -50,8 +52,9 @@ export function useDeleteReview() {
   
   return useMutation({
     mutationFn: (id: string) => deleteReview(id),
-    onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: ['reviews'] });
+    onSuccess: (riddleId) => {
+      queryClient.invalidateQueries({ queryKey: ['top-riddle-reviews', riddleId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['riddle-reviews', riddleId.toString()] });
     },
   });
 }

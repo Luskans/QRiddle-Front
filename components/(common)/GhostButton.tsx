@@ -1,4 +1,6 @@
+import { memo } from 'react';
 import { TouchableOpacity, Text, ActivityIndicator, View } from 'react-native';
+
 
 interface GhostButtonProps {
   onPress: () => void;

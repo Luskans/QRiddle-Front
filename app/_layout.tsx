@@ -4,19 +4,17 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import { useFonts } from "expo-font";
 import { ThemeProvider } from "@/providers/ThemeProvider";
-import { useThemeStore } from "@/stores/useThemeStore";
 import useAuthRedirection from "@/hooks/useAuthRedirection";
 import { useAssets } from "expo-asset";
 import { useAuthStore } from "@/stores/useAuthStore";
-import colors from "@/constants/colors";
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
-import { AuthProvider } from "@/providers/AuthProvider";
+import useTheme from "@/hooks/useTheme";
+
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const { isDark } = useThemeStore();
   const initialize = useAuthStore(state => state.initialize);
   const isLoading = useAuthStore(state => state.isLoading);
   const [isAppReady, setIsAppReady] = useState(false);
@@ -52,52 +50,13 @@ export default function RootLayout() {
   }, [fontsLoaded, assetsLoaded, isLoading]);
   
   useAuthRedirection(isAppReady);
-
-  // return (
-  //   <ThemeProvider>
-  //     <Stack
-  //       screenOptions={{
-  //         headerShown: false,
-  //         // contentStyle: { backgroundColor: 'transparent' },
-  //         // animation: 'slide_from_right',
-  //         // headerStyle: { backgroundColor: isDark ? colors.primary.lighter : colors.primary.darker },
-  //         // headerTintColor: isDark ? colors.dark : colors.light,
-  //       }}
-  //     >
-  //       <Stack.Screen
-  //         name="(auth)"
-  //         options={{ 
-  //           // title: 'test',
-  //           headerShown: false,
-  //         }}
-  //       />
-  //       <Stack.Screen
-  //         name="(tabs)"
-  //         options={{ 
-  //           headerShown: false,
-  //         }}
-  //       />
-  //       {/* <Stack.Screen name="game-sessions" />
-  //       <Stack.Screen name="hints" />
-  //       <Stack.Screen name="leaderboards" />
-  //       <Stack.Screen name="notifications" />
-  //       <Stack.Screen name="reviews" />
-  //       <Stack.Screen name="riddles" />
-  //       <Stack.Screen name="settings" />
-  //       <Stack.Screen name="steps" />
-  //       <Stack.Screen name="users" /> */}
-  //       {/* <Stack.Screen name="users/me" /> */}
-  //     </Stack>
-  //   </ThemeProvider>
-  // );
+  useTheme();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        {/* <AuthProvider> */}
+      {/* <ThemeProvider> */}
           <Stack screenOptions={{ headerShown: false }} />
-        {/* </AuthProvider> */}
-      </ThemeProvider>
+      {/* </ThemeProvider> */}
     </QueryClientProvider>
   );
 }

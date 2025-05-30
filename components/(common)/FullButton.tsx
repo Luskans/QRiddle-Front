@@ -1,6 +1,6 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import React, { memo } from 'react';
 import { TouchableOpacity, Text, ActivityIndicator, View } from 'react-native';
+
 
 interface GradientButtonProps {
   onPress: () => void;
@@ -12,7 +12,7 @@ interface GradientButtonProps {
   disabled?: boolean;
 }
 
-function FullButton({
+export default function FullButton({
   onPress,
   title,
   border,
@@ -42,5 +42,3 @@ function FullButton({
     </TouchableOpacity>
   );
 }
-
-export default memo(FullButton);

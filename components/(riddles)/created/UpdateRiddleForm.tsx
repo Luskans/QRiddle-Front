@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Formik } from 'formik';
-import { FormField } from '@/components/(common)/FormField';
+import FormField from '@/components/(common)/FormField';
 import { riddleSchema } from '@/lib/validationSchemas';
 import MapView, { MapPressEvent, Marker } from 'react-native-maps';
-import GradientButton from '@/components/(common)/GradientButton';
 import { useThemeStore } from '@/stores/useThemeStore';
-import colors from '@/constants/colors';
 import { DESCRIPTION_MAX_LENGTH, MAP_LATITUDE, MAP_LATITUDE_DELTA, MAP_LONGITUDE, MAP_LONGITUDE_DELTA } from '@/constants/constants';
 import { useUpdateRiddle } from '@/hooks/useRiddles';
 import { RiddleDetail, RiddleFormData } from '@/interfaces/riddle';
+import FullButton from '@/components/(common)/FullButton';
 
 
 interface FormValues {
@@ -18,7 +17,7 @@ interface FormValues {
   is_private: boolean;
 }
 
-export default function RiddleUpdateForm({ riddle }: { riddle: RiddleDetail }) {
+export default function UpdateRiddleForm({ riddle }: { riddle: RiddleDetail }) {
   const { isDark } = useThemeStore();
   const updateRiddleMutation = useUpdateRiddle();
   const [initialValues, setInitialValues] = useState<FormValues>({
@@ -32,7 +31,6 @@ export default function RiddleUpdateForm({ riddle }: { riddle: RiddleDetail }) {
     latitudeDelta: MAP_LATITUDE_DELTA,
     longitudeDelta: MAP_LONGITUDE_DELTA,
   });
-
 
   useEffect(() => {
     if (riddle) {
@@ -78,7 +76,7 @@ export default function RiddleUpdateForm({ riddle }: { riddle: RiddleDetail }) {
       onSuccess: () => {
         alert('Énigme mise à jour avec succès !');
       },
-      onError: (error) => {
+      onError: (error: any) => {
         alert(`Une erreur est survenue: ${error.response.data.message}`);
       },
     });
@@ -93,6 +91,7 @@ export default function RiddleUpdateForm({ riddle }: { riddle: RiddleDetail }) {
     >
       {({ handleSubmit, values, setFieldValue, isValid, isSubmitting, touched, errors, setFieldTouched }) => (
         <View className="gap-8">
+
           {/* --- Privée ou publique --- */}
           <View className="px-6 flex-1 gap-3">
             <Text className="text-dark dark:text-light font-semibold mb-1">Visibilité :</Text>
@@ -159,20 +158,21 @@ export default function RiddleUpdateForm({ riddle }: { riddle: RiddleDetail }) {
           </View>
 
           {/* --- Erreurs de mutation --- */}
-          {/* {updateRiddleMutation.isError && (
-            <View className="mx-6 px-6 py-2 bg-red-100 rounded-md -mb-4">
+          {updateRiddleMutation.isError && (
+            <View className="mx-6 px-6 py-2 bg-red-100 rounded-md">
               <Text className="text-red-600">
                 {updateRiddleMutation.error?.message || "Une erreur est survenue"}
               </Text>
             </View>
-          )} */}
+          )}
 
           {/* --- Bouton de soumission --- */}
           <View className='px-6 mt-4'>
-            <GradientButton
-              onPress={() => handleSubmit()}
+            <FullButton
+              onPress={handleSubmit}
               title="Modifier"
-              colors={isDark ? [colors.primary.mid, colors.primary.lighter] : [colors.primary.darker, colors.primary.mid]}
+              border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+              color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
               textColor={isDark ? 'text-dark' : 'text-light'}
               isLoading={isSubmitting || updateRiddleMutation.isPending}
               disabled={!isValid || isSubmitting || updateRiddleMutation.isPending}

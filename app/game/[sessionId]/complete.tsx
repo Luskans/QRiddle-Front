@@ -1,5 +1,4 @@
 import ErrorView from '@/components/(common)/ErrorView';
-import GradientButton from '@/components/(common)/GradientButton';
 import LoadingView from '@/components/(common)/LoadingView';
 import SecondaryLayout from '@/components/(layouts)/SecondaryLayout';
 import colors from '@/constants/colors';
@@ -12,10 +11,12 @@ import { Formik } from 'formik';
 import { ReviewFormData } from '@/interfaces/review';
 import { useCreateReview } from '@/hooks/useReviews';
 import { reviewSchema } from '@/lib/validationSchemas';
-import { FormField } from '@/components/(common)/FormField';
+import FormField from '@/components/(common)/FormField';
 import Slider from '@react-native-community/slider';
 import moment from 'moment';
 import { getFormattedDuration } from '@/lib/getFormattedDuration';
+import FullButton from '@/components/(common)/FullButton';
+import SecondaryLayoutWithoutScrollView from '@/components/(layouts)/SecondaryLayoutWithoutScrollView';
 
 
 export default function CompleteScreen() {
@@ -32,7 +33,7 @@ export default function CompleteScreen() {
         alert('Avis publié !');
         router.dismissAll();
       },
-      onError: (error) => {
+      onError: (error: any) => {
         alert(`Une erreur est survenue: ${error.response.data.message}`);
       },
     });
@@ -40,25 +41,26 @@ export default function CompleteScreen() {
 
   if (isLoading) {
     return (
-      <SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
         <LoadingView />
-      </SecondaryLayout>
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
   if (isError) {
     return (
-      <SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
+        {/* @ts-ignore */}
         <ErrorView error={ error.response.data.message } />
-      </SecondaryLayout>
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
   if (!data) {
     return (
-      <SecondaryLayout>
+      <SecondaryLayoutWithoutScrollView>
         <ErrorView error="Aucune donnée disponible" />
-      </SecondaryLayout>
+      </SecondaryLayoutWithoutScrollView>
     );
   }
 
@@ -170,10 +172,11 @@ export default function CompleteScreen() {
 
                 {/* --- Bouton de soumission --- */}
                 <View className='px-6 items-center'>
-                  <GradientButton
-                    onPress={() => handleSubmit()}
+                  <FullButton
+                    onPress={handleSubmit}
                     title="Publier votre avis"
-                    colors={isDark ? [colors.primary.mid, colors.primary.lighter] : [colors.primary.darker, colors.primary.mid]}
+                    border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+                    color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
                     textColor={isDark ? 'text-dark' : 'text-light'}
                     isLoading={isSubmitting || createReviewMutation.isPending}
                     disabled={isSubmitting || !isValid || createReviewMutation.isPending}

@@ -1,7 +1,7 @@
 import { KeyboardAvoidingView, Text, TouchableOpacity, View, Platform } from 'react-native';
 import { Formik } from 'formik';
 import { useAuthStore } from '@/stores/useAuthStore';
-import { FormField } from '@/components/(common)/FormField';
+import FormField from '@/components/(common)/FormField';
 import { loginSchema } from '@/lib/validationSchemas';
 import { useThemeStore } from '@/stores/useThemeStore';
 import SecondaryLayout from '@/components/(layouts)/SecondaryLayout';

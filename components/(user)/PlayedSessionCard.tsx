@@ -24,7 +24,11 @@ export default function PlayedSessionCard({ session }: { session: PlayedSession 
             </Text>
 
             <View className=''>
-              <Text className='text-gray-400 dark:text-gray-400 text-sm'>{ moment(session.created_at).format('DD-MM-YYYY') }</Text>
+              <Text className='text-gray-400 dark:text-gray-400 text-sm'>
+                {moment(session.created_at).isSame(moment(), 'day')
+                  ? moment(session.created_at).fromNow()
+                  : moment(session.created_at).format('DD-MM-YYYY')}
+              </Text>
             </View>
 
             <View className=''>
