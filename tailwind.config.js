@@ -32,8 +32,11 @@ module.exports = {
         mulish: ['Mulish'],
         nunito: ['Nunito'],
         playfair: ['Playfair'],
-        p: ['Cabin'],
-        h: ['Playfair'],
+        rubikdirt: ['RubikDirt'],
+        satisfy: ['Satisfy'],
+        synemono: ['SyneMono'],
+        sub: ['Synemono'],
+        h: ['RubikDirt'],
       },
       fontSize: {
         'h1': ['32px', { lineHeight: '40px', fontWeight: '400' }],
@@ -44,16 +47,16 @@ module.exports = {
       colors: {
         primary: {
           mid: '#ebad7f',
-          lighter: '#cda88e',
-          darker: '#9c5f32' //#7e5226
+          lighter: '#ffcfa0', //#cda88e
+          darker: '#8E684D' //#7e5226 #ab8763 #9c5f32
         },
         secondary: {
           mid: '#6d65ba',
           lighter: '#c2bdff',
-          darker: '#574fab'
+          darker: '#6960CB' //#584EC3 #574fab
         },
         white: "#ffffff",
-        light: "#f5f2e9",
+        light: "#f9f9f9",
         dark: "#333333", //1b1b1b
         gray: {
           mid: '#828282',

@@ -80,7 +80,7 @@ export default function GameScreen() {
               size={200}
               color="black"
               backgroundColor="white"
-              logo={require('@/assets/images/logo1.png')} // Ajouter un logo au centre
+              logo={require('@/assets/images/logo.png')} // Ajouter un logo au centre
               logoSize={50}
               logoBackgroundColor="white"
               logoBorderRadius={10}

@@ -19,6 +19,7 @@ import * as Clipboard from 'expo-clipboard';
 import { RiddleDetail } from '@/interfaces/riddle';
 import { useDeleteRiddle, useUpdateRiddle } from '@/hooks/useRiddles';
 import QrCodeDownloader from './QrCodeDownloader';
+import FullButton from '@/components/(common)/FullButton';
 
 
 export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
@@ -133,10 +134,6 @@ export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
               <QrCodeList steps={riddle.steps} />
 
               <View className='flex-row justify-center mt-6'>
-                {/* <TouchableOpacity className='flex-row items-center gap-1'>
-                  <Ionicons name="download-outline" size={20} color={isDark ? colors.secondary.lighter : colors.secondary.darker} />
-                  <Text className='text-secondary-darker dark:text-secondary-lighter font-semibold'>Télécharger les QR codes</Text>
-                </TouchableOpacity> */}
                 <QrCodeDownloader steps={riddle.steps} riddleTitle={riddle.title} />
               </View>
             </>
@@ -205,6 +202,16 @@ export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
             onPress={handleUpdate}
             title={riddle.status == "draft" ? "Publier" : "Dépublier"}
             colors={isDark ? [colors.primary.lighter, colors.primary.lighter] : [colors.primary.darker, colors.primary.darker]}
+            textColor={isDark ? 'text-dark' : 'text-light'}
+            disabled={riddle.stepsCount <= 0 || updateRiddleMutation.isPending}
+            isLoading={updateRiddleMutation.isPending}
+          />
+
+          <FullButton
+            onPress={handleUpdate}
+            title={riddle.status == "draft" ? "Publier" : "Dépublier"}
+            border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+            color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
             textColor={isDark ? 'text-dark' : 'text-light'}
             disabled={riddle.stepsCount <= 0 || updateRiddleMutation.isPending}
             isLoading={updateRiddleMutation.isPending}

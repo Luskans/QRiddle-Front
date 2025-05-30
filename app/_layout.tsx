@@ -26,10 +26,14 @@ export default function RootLayout() {
     'Mulish': require('@/assets/fonts/Mulish-Variable.ttf'),
     'Nunito': require('@/assets/fonts/Nunito-Variable.ttf'),
     'Playfair': require('@/assets/fonts/Playfair-Variable.ttf'),
+    'RubikDirt': require('@/assets/fonts/RubikDirt-Regular.ttf'),
+    'Satisfy': require('@/assets/fonts/Satisfy-Regular.ttf'),
+    'SyneMono': require('@/assets/fonts/SyneMono-Regular.ttf'),
   });
   const [assetsLoaded] = useAssets([
-    require('@/assets/images/logo1.png'),
-    require('@/assets/images/test6.png'),
+    require('@/assets/images/logo.png'),
+    require('@/assets/images/background.webp'),
+    require('@/assets/images/background2.webp'),
     require('@/assets/images/default-user.png'),
     require('@/assets/images/default-hint.jpg'),
     require('@/assets/audios/default-hint.mp3')

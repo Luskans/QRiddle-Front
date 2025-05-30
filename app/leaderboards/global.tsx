@@ -85,22 +85,26 @@ export default function GlobalLeaderboardScreen() {
         
         <LeaderboardHeader />
         
-        <FlatList
-          data={rankings}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item, index }) => (
-            <LeaderboardRow data={item} index={index} />
-          )}
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={() => (
-            isFetchingNextPage ? (
-              <View className="py-4 flex justify-center items-center">
-                <ActivityIndicator size="small" color={isDark ? colors.secondary.lighter : colors.secondary.darker} />
-              </View>
-            ) : null
-          )}
-        />
+        {rankings.length > 0 ? (
+          <FlatList
+            data={rankings}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item, index }) => (
+              <LeaderboardRow data={item} index={index} />
+            )}
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={() => (
+              isFetchingNextPage ? (
+                <View className="py-4 flex justify-center items-center">
+                  <ActivityIndicator size="small" color={isDark ? colors.secondary.lighter : colors.secondary.darker} />
+                </View>
+              ) : null
+            )}
+          />
+        ) : (
+          <Text className='text-dark dark:text-light mt-6'>Il n'y a aucun classement pour le moment.</Text>
+        )}
 
       </View>
     </SecondaryLayoutWithoutScrollView>

@@ -8,12 +8,10 @@ import { View, Text } from 'react-native';
 export default function ProfileScreen() {
   const { isDark } = useThemeStore();
   const { logout } = useAuthStore();
-  // TODO : fetch les infos users de authstore, mettre les formulaires d'update
   
   return (
     <PrimaryLayout>
       <View className='py-20 px-6 gap-10'>
-        <Text className='text-green-400 dark:text-blue-400'>Page Profil avec: photo, membre depuis, badges, statistiques?, pages, deconnexion </Text>
         <ThemeToggle />
         <GhostButton 
           title="Déconnexion" 

@@ -36,10 +36,7 @@ export default function CommonView({ riddle }: { riddle: RiddleDetail }) {
   const handleStartGame = async () => {
     // TODO :mettre modal pour prévenir autre partie en cours abandonnées
     
-    console.log("password", password)
-    // let newGame;
     if (data && data.status !== 'active') {
-      // newGame = await createGame(riddle.id.toString(), password.trim());
       playRiddleMutation.mutate({riddleId: riddle.id.toString(), password}, {
         onSuccess: (data) => {
           alert('Nouvelle partie lancée !');
@@ -49,12 +46,6 @@ export default function CommonView({ riddle }: { riddle: RiddleDetail }) {
           alert(`Une erreur est survenue: ${error.response.data.message}`);
         },
       });
-      // if (newGame) {
-      //   router.replace(`/game/${newGame.id.toString()}`);
-
-      // } else {
-      //   alert('Impossible de démarrer la partie.');
-      // }
 
     } else if (data && data.status === 'active') {
       router.replace(`/game/${data.id.toString()}`);
@@ -83,7 +74,7 @@ export default function CommonView({ riddle }: { riddle: RiddleDetail }) {
 
         {/* GENERAL */}
         <View className="px-6 gap-8">
-          <Text className='text-dark dark:text-light font-bold text-2xl text-center'>{riddle.title}</Text>
+          <Text className='text-dark dark:text-light font-semibold text-2xl text-center'>{riddle.title}</Text>
 
           <View className="flex-row justify-center items-center gap-2">
             <View className="h-[36px] w-[36px] rounded-full">

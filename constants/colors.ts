@@ -1,18 +1,16 @@
-// Add this constant because some components do not have access of tailwind classes in tailwind.config
-
 export default {
   primary: {
-    mid: '#ebad7f',
-    lighter: '#cda88e',
-    darker: '#9c5f32'
+    mid: '#ebad7f', //
+    lighter: '#ffcfa0', //#cda88e
+    darker: '#8E684D' //#9c5f32 #6C471B #7e5226
   },
   secondary: {
     mid: '#e6a87c',
     lighter: '#c2bdff',
-    darker: '#574fab'
+    darker: '#6960CB' // #584EC3
   },
   white: "#ffffff",
-  light: "#f5f2e9",
+  light: "#f9f9f9",
   dark: "#333333",
   gray: {
     one: '#f3f4f6',

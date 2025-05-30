@@ -46,21 +46,15 @@ export default function HomeScreen() {
   return (
     <PrimaryLayout>
       <View className='py-20 gap-12'>
-        {/* NOTIFICATIONS */}
-        {/* <View className='flex gap-2 px-6'>
-          <SectionLink
-            onPress={() => router.push("/notifications")}
-            icon="notifications-outline"
-            title="Notifications"
+
+        <View className='px-6'>
+          <GradientButton
+            onPress={() => {router.push(`/game/2/complete`)}}
+            title={'Scanner QR code'}
+            colors={['red', 'orange']}
+            textColor={'white'}
           />
-          <Text>Vous avez 0 notifications en attente.</Text>
-        </View> */}
-        <GradientButton
-          onPress={() => {router.push(`/game/2/complete`)}}
-          title={'Scanner QR code'}
-          colors={['red', 'orange']}
-          textColor={'white'}
-        />
+        </View>
 
         {/* ACTIVE GAME SESSION */}
         {data.activeGameSession &&
@@ -98,60 +92,6 @@ export default function HomeScreen() {
           <TopGlobalLeaderboard />
         </View>
 
-        <Text>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is
-          that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing
-          packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy.
-          Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</Text>
-
-        <Ionicons name="footsteps-outline" size={24} color="black" />
-        <Ionicons name="qr-code-outline" size={24} color="black" />
-        <Ionicons name="trophy-outline" size={24} color="black" />
-        <MaterialIcons name="sports-score" size={24} color="black" />
-        <AntDesign name="enviromento" size={24} color="black" />
-        <AntDesign name="rocket1" size={24} color="black" />
-        <Ionicons name="bulb-outline" size={24} color="black" />
-        <Ionicons name="construct-outline" size={24} color="black" />
-        <Ionicons name="contrast-outline" size={24} color="black" />
-        <Ionicons name="dice-outline" size={24} color="black" />
-        <Ionicons name="ellipsis-horizontal" size={24} color="black" />
-        <Ionicons name="ellipsis-vertical" size={24} color="black" />
-        <Ionicons name="ellipsis-vertical" size={24} color="black" />
-        <Ionicons name="finger-print" size={24} color="black" />
-        <Ionicons name="flag-outline" size={24} color="black" />
-        <Ionicons name="flashlight-outline" size={24} color="black" />
-        <Ionicons name="hourglass-outline" size={24} color="black" />
-        <Ionicons name="information-circle-outline" size={24} color="black" />
-        <Ionicons name="journal-outline" size={24} color="black" />
-        <Ionicons name="location-outline" size={24} color="black" />
-        <Ionicons name="log-out-outline" size={24} color="black" />
-        <Ionicons name="log-in-outline" size={24} color="black" />
-        <Ionicons name="mail-outline" size={24} color="black" />
-        <Ionicons name="mail-unread-outline" size={24} color="black" />
-        <Ionicons name="medal-outline" size={24} color="black" />
-        <Ionicons name="navigate-circle-outline" size={24} color="black" />
-        <Ionicons name="notifications-outline" size={24} color="black" />
-        <Ionicons name="podium-outline" size={24} color="black" />
-        <Ionicons name="ribbon-outline" size={24} color="black" />
-        <Ionicons name="scan" size={24} color="black" />
-        <Ionicons name="school-outline" size={24} color="black" />
-        <Ionicons name="settings-outline" size={24} color="black" />
-        <Ionicons name="time-outline" size={24} color="black" />
-        <Ionicons name="timer-outline" size={24} color="black" />
-        <Ionicons name="trail-sign-outline" size={24} color="black" />
-        <Ionicons name="trash-outline" size={24} color="black" />
-        <Ionicons name="warning-outline" size={24} color="black" />
-        <Entypo name="price-ribbon" size={24} color="black" />
-        <Ionicons name="happy-outline" size={24} color="black" />
-        <Ionicons name="heart-circle-outline" size={24} color="black" />
-        <Ionicons name="heart-outline" size={24} color="black" />
-        <Ionicons name="people-outline" size={24} color="black" />
-        <Ionicons name="star-outline" size={24} color="black" />
-        <Ionicons name="thumbs-up-outline" size={24} color="black" />
-        <Ionicons name="chatbubble-ellipses-outline" size={24} color="black" />
-        <Ionicons name="information-circle-outline" size={24} color="black" />
-        <Text>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is
-          that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here. It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is
-          that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here.</Text>
       </View>
     </PrimaryLayout>
   );

@@ -33,7 +33,7 @@ export default function TopGlobalLeaderboard() {
 
   return (
     <View>
-      <View className="flex-row justify-between bg-gray-100 dark:bg-gray-darker rounded-full mb-6">
+      <View className="flex-row justify-between bg-gray-200 dark:bg-gray-darker rounded-full mb-6">
         <TabButton
           title="Semaine"
           isActive={period === 'week'}

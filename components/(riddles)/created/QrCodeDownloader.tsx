@@ -1,14 +1,11 @@
-// components/(riddles)/created/QrCodeDownloader.tsx
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import QRCode from 'react-native-qrcode-svg';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
-import * as FileSystem from 'expo-file-system';
 import colors from '@/constants/colors';
 import { useThemeStore } from '@/stores/useThemeStore';
-import { Step } from '@/interfaces/step';
+
 
 interface QrCodeDownloaderProps {
   steps: {
@@ -24,7 +21,6 @@ export default function QrCodeDownloader({ steps, riddleTitle }: QrCodeDownloade
   const [isLoading, setIsLoading] = useState(false);
 
   const generateQrCodeHtml = () => {
-    // Créer le HTML pour le PDF
     let html = `
       <html>
         <head>
@@ -76,9 +72,7 @@ export default function QrCodeDownloader({ steps, riddleTitle }: QrCodeDownloade
           <div class="qr-container">
     `;
 
-    // Ajouter chaque QR code
     steps.forEach((step) => {
-      // Utiliser une API en ligne pour générer les QR codes dans le PDF
       const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(step.qr_code)}`;
       
       html += `
@@ -103,27 +97,23 @@ export default function QrCodeDownloader({ steps, riddleTitle }: QrCodeDownloade
     try {
       setIsLoading(true);
       
-      // Générer le HTML pour le PDF
       const html = generateQrCodeHtml();
       
-      // Créer le PDF
       const { uri } = await Print.printToFileAsync({ 
         html,
         base64: false
       });
       
-      // Vérifier si le partage est disponible
       const isAvailable = await Sharing.isAvailableAsync();
       
       if (isAvailable) {
-        // Partager le fichier
         await Sharing.shareAsync(uri, {
           mimeType: 'application/pdf',
           dialogTitle: 'Télécharger les QR codes',
           UTI: 'com.adobe.pdf'
         });
+        
       } else {
-        // Fallback si le partage n'est pas disponible
         alert('Le partage n\'est pas disponible sur cet appareil');
       }
 

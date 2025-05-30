@@ -19,7 +19,7 @@ export default function AuthScreen() {
           {/* Header avec Logo et Nom */}
           <View className="flex-row items-center justify-center gap-2">
             <Image
-              source={require('@/assets/images/logo1.png')}
+              source={require('@/assets/images/logo.png')}
               className="w-10 h-10"
             />
             <Text className="text-2xl font-bold text-dark dark:text-light">

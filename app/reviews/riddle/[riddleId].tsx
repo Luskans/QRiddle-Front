@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from 'expo-router';
-import { View, ActivityIndicator, FlatList } from 'react-native';
+import { View, ActivityIndicator, FlatList, Text } from 'react-native';
 import SecondaryLayoutWithoutScrollView from '@/components/(layouts)/SecondaryLayoutWithoutScrollView';
 import ReviewListItem from '@/components/(riddles)/common/ReviewListItem';
 import { useThemeStore } from '@/stores/useThemeStore';
@@ -59,22 +59,26 @@ export default function ReviewsScreen() {
   return (
     <SecondaryLayoutWithoutScrollView>
       <View className='py-10 px-6'>
-        <FlatList
-          data={reviews}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <ReviewListItem review={item} />
-          )}
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={() => (
-            isFetchingNextPage ? (
-              <View className="py-4 flex justify-center items-center">
-                <ActivityIndicator size="small" color={isDark ? colors.secondary.lighter : colors.secondary.darker} />
-              </View>
-            ) : null
-          )}
-        />
+        {reviews.length > 0 ? (
+          <FlatList
+            data={reviews}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <ReviewListItem review={item} />
+            )}
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={() => (
+              isFetchingNextPage ? (
+                <View className="py-4 flex justify-center items-center">
+                  <ActivityIndicator size="small" color={isDark ? colors.secondary.lighter : colors.secondary.darker} />
+                </View>
+              ) : null
+            )}
+          />
+        ) : (
+          <Text className='text-dark dark:text-light mt-6'>L'énigme n'a aucun avis pour le moment.</Text>
+        )}
       </View>
     </SecondaryLayoutWithoutScrollView>
   );
