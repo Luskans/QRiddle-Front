@@ -17,6 +17,8 @@ import TopRiddleLeaderboard from './TopRiddleLeaderboard';
 import TopReviewList from './TopReviewsList';
 import GhostButton from '@/components/(common)/GhostButton';
 import FullButton from '@/components/(common)/FullButton';
+import Toast from 'react-native-toast-message';
+import ConfirmationModal from '@/components/(common)/ConfirmationModal';
 
 
 export default function CommonView({ riddle }: { riddle: RiddleDetail }) {
@@ -33,40 +35,72 @@ export default function CommonView({ riddle }: { riddle: RiddleDetail }) {
   const creatorImage = riddle.creator?.image || '/default/user.png';
   const playRiddleMutation = usePlayRiddle();
   const abandonSessionMutation = useAbandonSession();
+  const [showStartModal, setShowStartModal] = useState(false);
+  const [showAbandonModal, setShowAbandonModal] = useState(false);
 
-  const handleStartGame = async () => {
-    // TODO :mettre modal pour prévenir autre partie en cours abandonnées
-    
-    if (data && data.status !== 'active') {
+  const confirmStartGame = async () => {  
+    console.log("nouvelle partie", data)
+    if (data && data.status === 'active') {
+      router.replace(`/game/${data.id.toString()}`);
+      
+    } else {
       playRiddleMutation.mutate({riddleId: riddle.id.toString(), password}, {
         onSuccess: (data) => {
-          alert('Nouvelle partie lancée !');
+          Toast.show({
+            type: 'success',
+            text2: `Nouvelle partie lancée !`
+          });
           router.replace(`/game/${data.id.toString()}`);
         },
         onError: (error: any) => {
-          alert(`Une erreur est survenue: ${error.response.data.message}`);
+          Toast.show({
+            type: 'error',
+            text1: 'Erreur',
+            text2: `${error.response.data.message}`
+          });
         },
       });
-
-    } else if (data && data.status === 'active') {
-      router.replace(`/game/${data.id.toString()}`);
     }
+
+    setShowStartModal(false);
   };
 
-  const handleAbandonGame = async () => {
-    // TODO :mettre modal pour confirmation
-
+  const confirmAbandonGame = async () => {
     if (!data || data.status !== 'active') {
       return;
     }
     abandonSessionMutation.mutate(data.id.toString(), {
       onSuccess: (data) => {
-        alert('Partie abandonnée !');
+        Toast.show({
+          type: 'info',
+          text2: `Partie abandonnée.`
+        });
       },
       onError: (error: any) => {
-        alert(`Une erreur est survenue: ${error.response.data.message}`);
+        Toast.show({
+          type: 'error',
+          text1: 'Erreur',
+          text2: `${error.response.data.message}`
+        });
       },
     });
+    setShowAbandonModal(false);
+  };
+
+  const openStartModal = () => {
+    setShowStartModal(true);
+  };
+
+  const closeStartModal = () => {
+    setShowStartModal(false);
+  };
+
+  const openAbandonModal = () => {
+    setShowAbandonModal(true);
+  };
+
+  const closeAbandonModal = () => {
+    setShowAbandonModal(false);
   };
 
   return (
@@ -145,27 +179,31 @@ export default function CommonView({ riddle }: { riddle: RiddleDetail }) {
             )}
             {data?.status === 'active' ? (
               <View className='flex-1 flex-row gap-3 items-center justify-center'>
-                <FullButton
-                  onPress={handleStartGame}
-                  title={'Reprendre'}
-                  border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
-                  color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
-                  textColor={isDark ? 'text-dark' : 'text-light'}
-                  isLoading={playRiddleMutation.isPending}
-                  disabled={playRiddleMutation.isPending || abandonSessionMutation.isPending}
-                />
-                <GhostButton
-                  onPress={handleAbandonGame}
-                  title="Abandonner"
-                  color={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
-                  textColor={isDark ? 'text-primary-lighter' : 'text-primary-darker'}
-                  isLoading={abandonSessionMutation.isPending}
-                  disabled={abandonSessionMutation.isPending || playRiddleMutation.isPending}
-                />
+                <View className='flex-grow'>
+                  <GhostButton
+                    onPress={openAbandonModal}
+                    title="Abandonner"
+                    color={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+                    textColor={isDark ? 'text-primary-lighter' : 'text-primary-darker'}
+                    isLoading={abandonSessionMutation.isPending}
+                    disabled={abandonSessionMutation.isPending || playRiddleMutation.isPending}
+                  />
+                </View>
+                <View className='flex-grow'>
+                  <FullButton
+                    onPress={confirmStartGame}
+                    title={'Reprendre'}
+                    border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+                    color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
+                    textColor={isDark ? 'text-dark' : 'text-light'}
+                    isLoading={playRiddleMutation.isPending}
+                    disabled={playRiddleMutation.isPending || abandonSessionMutation.isPending}
+                  />
+                </View>
               </View>
             ) : (
               <FullButton
-                onPress={handleStartGame}
+                onPress={openStartModal}
                 title={'Nouvelle partie'}
                 border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
                 color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
@@ -218,6 +256,30 @@ export default function CommonView({ riddle }: { riddle: RiddleDetail }) {
           <TopReviewList riddleId={riddle.id.toString()} />
         </View>
       </View>
+
+      <ConfirmationModal
+        visible={showStartModal}
+        title="Attention"
+        message={`Commencer une nouvelle partie abandonnera la partie en cours. Êtes-vous sûr de vouloir continuer ?`}
+        confirmText="Confirmer"
+        cancelText="Annuler"
+        onConfirm={confirmStartGame}
+        onCancel={closeStartModal}
+        isLoading={playRiddleMutation.isPending}
+        isDanger={true}
+      />
+
+      <ConfirmationModal
+        visible={showAbandonModal}
+        title="Abandonner l'énigme"
+        message={`Êtes-vous sûr de vouloir abandonner l'énigme en cours ? Vous ne pourrez pas reprendre la partie et devrez en recommencer une nouvelle.`}
+        confirmText="Abandonner"
+        cancelText="Annuler"
+        onConfirm={confirmAbandonGame}
+        onCancel={closeAbandonModal}
+        isLoading={abandonSessionMutation.isPending}
+        isDanger={true}
+      />
     </SecondaryLayout>
   );
 };

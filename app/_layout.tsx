@@ -10,6 +10,8 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
 import useTheme from "@/hooks/useTheme";
+import Toast from 'react-native-toast-message';
+import { toastConfig } from "@/lib/toastConfig";
 
 
 SplashScreen.preventAutoHideAsync();
@@ -56,6 +58,7 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       {/* <ThemeProvider> */}
           <Stack screenOptions={{ headerShown: false }} />
+          <Toast config={toastConfig} />
       {/* </ThemeProvider> */}
     </QueryClientProvider>
   );

@@ -83,7 +83,11 @@ export default function MapScreen() {
         >
           <TouchableWithoutFeedback onPress={closeModal}>
             <View className='flex-1 justify-end items-center px-6 pb-20' >
-              <TouchableOpacity onPress={() => router.push(`/riddles/${selectedRiddle?.id}`)} style={{height: 100}} className='w-full bg-light dark:bg-dark p-4 z-2'>
+              <TouchableOpacity 
+                onPress={() => router.push(`/riddles/${selectedRiddle?.id}`)}
+                style={{height: 100}}
+                className='w-full bg-light dark:bg-dark border border-gray-300 dark:border-gray-600 rounded-lg z-2'
+              >
                 {selectedRiddle && (
                   <View className='flex-1 flex-row justify-between items-center px-6 gap-8'>
                     <View className='flex-1 flex-col'>
@@ -111,22 +115,22 @@ export default function MapScreen() {
                       <View className='flex-row gap-6'>
                         <View className='flex-row gap-1'>
                           <Ionicons name="footsteps-outline" size={18} color={isDark ? colors.secondary.lighter : colors.secondary.darker } />
-                          <Text className='text-gray-400'>{ selectedRiddle.steps_count }</Text>
+                          <Text className='text-dark dark:text-light'>{ selectedRiddle.steps_count }</Text>
                         </View>
 
                         <View className='flex-row gap-1'>
                           <Ionicons name="star-outline" size={18} color={isDark ? colors.secondary.lighter : colors.secondary.darker } />
-                          <Text className='text-gray-400'>{ Math.round(selectedRiddle.reviews_avg_rating * 10) / 10 }</Text>
+                          <Text className='text-dark dark:text-light'>{ Math.round(selectedRiddle.reviews_avg_rating * 10) / 10 }</Text>
                         </View>
 
                         <View className='flex-row gap-1'>
                           <Ionicons name="trending-up-sharp" size={22} color={isDark ? colors.secondary.lighter : colors.secondary.darker } />
-                          <Text className='text-gray-400'>{ Math.round(selectedRiddle.reviews_avg_difficulty * 10) / 10 }</Text>
+                          <Text className='text-dark dark:text-light'>{ Math.round(selectedRiddle.reviews_avg_difficulty * 10) / 10 }</Text>
                         </View>
 
                         <View className='flex-row gap-1'>
                           <Ionicons name="chatbubble-ellipses-outline" size={18} color={isDark ? colors.secondary.lighter : colors.secondary.darker } />
-                          <Text className='text-gray-400'>{ selectedRiddle.reviews_count }</Text>
+                          <Text className='text-dark dark:text-light'>{ selectedRiddle.reviews_count }</Text>
                         </View>
                       </View>
                     </View>

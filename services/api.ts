@@ -1,7 +1,7 @@
 import { CreatedRiddle, Riddle, RiddleDetail, RiddleFormData, RiddleItem } from '@/interfaces/riddle';
 import api from '@/lib/axios';
 import { Step, StepFormData, StepItem } from '@/interfaces/step';
-import { Hint, HintFormData } from '@/interfaces/hint';
+import { Hint, HintFormData, UploadFormData } from '@/interfaces/hint';
 import { Review, ReviewFormData, ReviewItem, ReviewResponse } from '@/interfaces/review';
 import { ActiveSession, CompleteSession, GameSession, PlayedSession, RiddleSession, ValidateStepResponse } from '@/interfaces/game';
 import { Home } from '@/interfaces/home';
@@ -98,6 +98,12 @@ export const updateHint = async (id: string, data: Partial<HintFormData>): Promi
 export const deleteHint = async (id: string): Promise<{ data: number }> => {
   const response = await api.delete(`/hints/${id}`);
   console.log('deleteHint :', response.data);
+  return response.data.data;
+};
+
+export const uploadHintImage = async (id: string, data: any): Promise<Hint> => {
+  const response = await api.post(`/hints/${id}/upload-image`, data);
+  console.log('uploadHintImage :', response.data);
   return response.data.data;
 };
 

@@ -29,7 +29,7 @@ export default function SecondaryLayout({ children }: { children: React.ReactNod
   return (
     <View className='flex-1'>
       <StatusBar style={ isDark ? 'dark' : 'light' } />
-      <ScrollView className='flex-1 bg-white dark:bg-dark'>
+      <ScrollView className='flex-1 bg-light dark:bg-dark'>
         {children}
       </ScrollView>
     </View>

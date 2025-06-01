@@ -19,6 +19,8 @@ import { RiddleDetail } from '@/interfaces/riddle';
 import { useDeleteRiddle, useUpdateRiddle } from '@/hooks/useRiddles';
 import QrCodeDownloader from './QrCodeDownloader';
 import FullButton from '@/components/(common)/FullButton';
+import Toast from 'react-native-toast-message';
+import ConfirmationModal from '@/components/(common)/ConfirmationModal';
 
 
 export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
@@ -26,40 +28,71 @@ export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
   const [copied, setCopied] = useState<boolean>(false);
   const updateRiddleMutation = useUpdateRiddle();
   const deleteRiddleMutation = useDeleteRiddle();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handleUpdate = async () => {
     if (riddle.status === 'draft') {
       updateRiddleMutation.mutate({id: riddle.id.toString(), data: {status: 'published'}}, {
         onSuccess: () => {
-          alert('Énigme publiée');
+          Toast.show({
+            type: 'success',
+            text2: `Énigme publiée !`
+          });
         },
         onError: (error: any) => {
-          alert(`Une erreur est survenue: ${error.response.data.message}`);
+          Toast.show({
+            type: 'error',
+            text1: 'Erreur',
+            text2: `${error.response.data.message}`
+          });
         },
       });
 
     } else if (riddle.status === 'published') {
       updateRiddleMutation.mutate({id: riddle.id.toString(), data: {status: 'draft'}}, {
         onSuccess: () => {
-          alert('Énigme dépubliée');
+          Toast.show({
+            type: 'success',
+            text2: `Énigme dépubliée.`
+          });
         },
         onError: (error: any) => {
-          alert(`Une erreur est survenue: ${error.response.data.message}`);
+          Toast.show({
+            type: 'error',
+            text1: 'Erreur',
+            text2: `${error.response.data.message}`
+          });
         },
       });
     }
   };
 
-  const handleDelete = async () => {
+  const confirmDelete = async () => {
     deleteRiddleMutation.mutate(riddle.id.toString()), {
       onSuccess: () => {
-        alert('Énigme supprimée');
+        Toast.show({
+          type: 'success',
+          text2: `Énigme supprimée.`
+        });
         router.dismissAll();
       },
       onError: (error: any) => {
-        alert(`Une erreur est survenue: ${error.response.data.message}`);
+        Toast.show({
+          type: 'error',
+          text1: 'Erreur',
+          text2: `${error.response.data.message}`
+        });
       },
     };
+    setShowDeleteModal(false);
+  };
+
+  const openDeleteModal = () => {
+    setShowDeleteModal(true);
+  };
+
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
   };
 
   const copyToClipboard = async () => {
@@ -70,13 +103,18 @@ export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
     try {
       await Clipboard.setStringAsync(riddle.password);
       setCopied(true);
-      // TODO : toast Mot de passe copié !  
-      alert('Mot de passe copié !');
+      Toast.show({
+        type: 'info',
+        text2: `Mot de passe copié.`
+      });
       setTimeout(() => setCopied(false), 2000);
 
     } catch (error) {
-      // TODO : toast Mot de passe copié !  
-      alert('Impossible de copier le mot de passe');
+      Toast.show({
+        type: 'error',
+        text1: 'Erreur',
+        text2: 'Impossible de copier le mot de passe.'
+      });
     }
   };
 
@@ -198,20 +236,8 @@ export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
 
         <View className='px-6 flex-row gap-4'>
           <View className='flex-grow'>
-            <FullButton
-              onPress={handleUpdate}
-              title={riddle.status == "draft" ? "Publier" : "Dépublier"}
-              border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
-              color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
-              textColor={isDark ? 'text-dark' : 'text-light'}
-              disabled={riddle.stepsCount <= 0 || updateRiddleMutation.isPending}
-              isLoading={updateRiddleMutation.isPending}
-            />
-          </View>
-
-          <View className='flex-grow'>
             <GhostButton
-              onPress={handleDelete}
+              onPress={openDeleteModal}
               title="Supprimer"
               color={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
               textColor={isDark ? 'text-primary-lighter' : 'text-primary-darker'}
@@ -219,11 +245,34 @@ export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
               disabled={deleteRiddleMutation.isPending}
             />
           </View>
+
+          <View className='flex-grow'>
+            <FullButton
+              onPress={handleUpdate}
+              title={riddle.status == "published" ? "Dépublier" : "Publier"}
+              border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+              color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
+              textColor={isDark ? 'text-dark' : 'text-light'}
+              disabled={riddle.stepsCount <= 0 || updateRiddleMutation.isPending || riddle.status == "disabled"}
+              isLoading={updateRiddleMutation.isPending}
+            />
+          </View>
         </View>
 
         {(riddle.stepsCount <= 0) && <Text className='px-6 text-sm text-gray-500 dark:text-gray-400 text-center'>Ajoutez une étape avec un indice pour publier l'énigme</Text>}
       </View>
 
+      <ConfirmationModal
+        visible={showDeleteModal}
+        title="Supprimer l'énigme"
+        message={`Êtes-vous sûr de vouloir supprimer l'énigme ? Cette action est irréversible.`}
+        confirmText="Supprimer"
+        cancelText="Annuler"
+        onConfirm={confirmDelete}
+        onCancel={closeDeleteModal}
+        isLoading={deleteRiddleMutation.isPending}
+        isDanger={true}
+      />
     </SecondaryLayout>
   );
 }

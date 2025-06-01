@@ -1,6 +1,5 @@
 import ErrorView from '@/components/(common)/ErrorView';
 import GhostButton from '@/components/(common)/GhostButton';
-import GradientButton from '@/components/(common)/GradientButton';
 import LoadingView from '@/components/(common)/LoadingView';
 import Separator from '@/components/(common)/Separator';
 import Chronometer from '@/components/(gameplay)/Chronometer';
@@ -10,16 +9,19 @@ import { BACKEND_URL } from '@/constants/constants';
 import { useActiveSession, useUnlockHint } from '@/hooks/useGame';
 import { useThemeStore } from '@/stores/useThemeStore';
 import { router, useLocalSearchParams } from 'expo-router';
-import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
 import { useAudioPlayer } from 'expo-audio';
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import QRCode from 'react-native-qrcode-svg';
 import SecondaryLayoutWithoutScrollView from '@/components/(layouts)/SecondaryLayoutWithoutScrollView';
+import Toast from 'react-native-toast-message';
+import FullButton from '@/components/(common)/FullButton';
 
 
 export default function GameScreen() {
   const { isDark } = useThemeStore();
+  const SCREEN_WIDTH = Dimensions.get('window').width - 24;
   const { sessionId } = useLocalSearchParams<{ sessionId: string }>();
   const { data, isLoading, isError, error } = useActiveSession(sessionId);
   const unlockHintMutation = useUnlockHint();
@@ -29,10 +31,17 @@ export default function GameScreen() {
   const handleUnlock = async (hint_order_number: number) => {
     unlockHintMutation.mutate({id: sessionId, hint_order_number: hint_order_number}, {
       onSuccess: () => {
-        alert('Indice dévérouillé !');
+        Toast.show({
+          type: 'info',
+          text2: 'Indice dévérouillé !'
+        });
       },
       onError: (error: any) => {
-        alert(`Une erreur est survenue: ${error.response.data.message}`);
+        Toast.show({
+          type: 'erreur',
+          text1: 'Erreur',
+          text2: `${error.response.data.message}`
+        });
       },
     });
   };
@@ -65,9 +74,9 @@ export default function GameScreen() {
 
   return (
     <SecondaryLayout>
-      <View className='py-10 gap-10'>
+      <View className='pb-10 gap-10'>
 
-        <View className='gap-6'>
+        <View className='py-10 gap-6 bg-gray-200'>
           <View className='gap-2'>
             <Text className='text-dark dark:text-light font-bold text-2xl text-center'>
               Étape
@@ -77,32 +86,34 @@ export default function GameScreen() {
 
             <Chronometer startTime={data.session_step.start_time} />
 
-            <QRCode
-              value={qrValue}
-              size={200}
-              color="black"
-              backgroundColor="white"
-              logo={require('@/assets/images/logo.png')} // Ajouter un logo au centre
-              logoSize={50}
-              logoBackgroundColor="white"
-              logoBorderRadius={10}
-              quietZone={10} // Marge autour du QR code
-              enableLinearGradient={true}
-              linearGradient={['rgb(255,0,0)', 'rgb(0,255,255)']}
-            />
           </View>
 
           <View className='items-center'>
-            <GradientButton
+            <FullButton
               onPress={() => {router.push(`/game/${sessionId}/scan`)}}
               title={'Scanner QR code'}
-              colors={isDark ? [colors.primary.mid, colors.primary.lighter] : [colors.primary.darker, colors.primary.mid]}
+              border={isDark ? 'border-secondary-lighter' : 'border-secondary-darker'}
+              color={isDark ? 'bg-secondary-lighter' : 'bg-secondary-darker'}
               textColor={isDark ? 'text-dark' : 'text-light'}
               isLoading={unlockHintMutation.isPending}
               disabled={unlockHintMutation.isPending}
             />
           </View>
         </View>
+
+        <QRCode
+          value={qrValue}
+          size={200}
+          color="black"
+          backgroundColor="white"
+          logo={require('@/assets/images/logo.png')} // Ajouter un logo au centre
+          logoSize={50}
+          logoBackgroundColor="white"
+          logoBorderRadius={10}
+          quietZone={10} // Marge autour du QR code
+          enableLinearGradient={true}
+          linearGradient={['rgb(255,0,0)', 'rgb(0,255,255)']}
+        />
 
         {data.hints && data.hints.map((hint) => (
           <View key={hint.id} className=''>
@@ -122,7 +133,7 @@ export default function GameScreen() {
                     <Image 
                       source={{ uri:`${BACKEND_URL}${hint.content}` }}
                       className="rounded"
-                      style={{ height: 400 }}
+                      style={{ height: SCREEN_WIDTH }}
                       resizeMode="cover"
                       accessibilityLabel='Default hint image'
                       defaultSource={require('@/assets/images/default-hint.jpg')}
@@ -136,7 +147,7 @@ export default function GameScreen() {
                         onPress={() => {setAudioSource(`${BACKEND_URL}${hint.content}`), audioPlayer.play()}}
                       >
                         {audioPlayer.playing ? (
-                          <ActivityIndicator size="small" color={isDark ? colors.light : colors.dark} />
+                          <ActivityIndicator size="small" color={isDark ? colors.secondary.lighter : colors.secondary.darker} />
                         ) : (
                           <Ionicons name="play" size={20} color={isDark ? colors.light : colors.dark} />
                         )}
@@ -156,7 +167,7 @@ export default function GameScreen() {
               </>
 
             ) : (
-              <View className='bg-gray-100 dark:bg-gray-darker p-6 flex-row justify-between items-center'>
+              <View className='bg-gray-200 dark:bg-gray-darker p-6 flex-row justify-between items-center'>
                 <Text className='text-dark dark:text-light text-2xl font-semibold'>Indice {hint.order_number}</Text>
                 <View className=''>
                   <GhostButton

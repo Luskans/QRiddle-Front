@@ -1,3 +1,4 @@
+import ConfirmationModal from '@/components/(common)/ConfirmationModal';
 import ErrorView from '@/components/(common)/ErrorView';
 import FullButton from '@/components/(common)/FullButton';
 import GhostButton from '@/components/(common)/GhostButton';
@@ -16,6 +17,7 @@ import { Link, router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import MapView, { MapPressEvent, Marker } from 'react-native-maps';
+import Toast from 'react-native-toast-message';
 
 
 export default function StepDetailScreen() {
@@ -30,6 +32,7 @@ export default function StepDetailScreen() {
     latitudeDelta: MAP_LATITUDE_DELTA,
     longitudeDelta: MAP_LONGITUDE_DELTA,
   });
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     if (data) {
@@ -65,24 +68,47 @@ export default function StepDetailScreen() {
 
     updateStepMutation.mutate({id: stepId, data}, {
       onSuccess: () => {
-        alert('Étape mise à jour avec succès !');
+        Toast.show({
+          type: 'success',
+          text2: 'Étape mise à jour !'
+        });
       },
       onError: (error: any) => {
-        alert(`Une erreur est survenue: ${error.response.data.message}`);
+        Toast.show({
+          type: 'error',
+          text1: 'Erreur',
+          text2: `${error.response.data.message}`
+        });
       },
     });
   };
 
-  const handleDelete = async () => {
+  const confirmDelete = async () => {
     deleteStepMutation.mutate(stepId), {
       onSuccess: () => {
-        alert('Étape supprimée');
+        Toast.show({
+          type: 'success',
+          text2: 'Étape supprimée.'
+        });
         router.dismiss();
       },
       onError: (error: any) => {
-        alert(`Une erreur est survenue: ${error.response.data.message}`);
+        Toast.show({
+          type: 'error',
+          text1: 'Erreur',
+          text2: `${error.response.data.message}`
+        });
       },
     };
+    setShowDeleteModal(false);
+  };
+
+  const openDeleteModal = () => {
+    setShowDeleteModal(true);
+  };
+
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
   };
 
   if (isLoading) {
@@ -129,24 +155,28 @@ export default function StepDetailScreen() {
         </View>
 
         <View className='px-6 flex-1 flex-row gap-3 items-center justify-center'>
-          <FullButton
-            onPress={handleUpdate}
-            title="Modifier"
-            border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
-            color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
-            textColor={isDark ? 'text-dark' : 'text-light'}
-            isLoading={updateStepMutation.isPending}
-            disabled={updateStepMutation.isPending}
-          />
+          <View className='flex-grow'>
+            <GhostButton
+              onPress={openDeleteModal}
+              title="Supprimer"
+              color={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+              textColor={isDark ? 'text-primary-lighter' : 'text-primary-darker'}
+              isLoading={deleteStepMutation.isPending}
+              disabled={deleteStepMutation.isPending}
+            />
+          </View>
 
-          <GhostButton
-            onPress={handleDelete}
-            title="Supprimer"
-            color={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
-            textColor={isDark ? 'text-primary-lighter' : 'text-primary-darker'}
-            isLoading={deleteStepMutation.isPending}
-            disabled={deleteStepMutation.isPending}
-          />
+          <View className='flex-grow'>
+            <FullButton
+              onPress={handleUpdate}
+              title="Modifier"
+              border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+              color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
+              textColor={isDark ? 'text-dark' : 'text-light'}
+              isLoading={updateStepMutation.isPending}
+              disabled={updateStepMutation.isPending}
+            />
+          </View>
         </View>
 
         <Separator />
@@ -164,6 +194,18 @@ export default function StepDetailScreen() {
           </TouchableOpacity>
         </Link>
       </View>
+
+      <ConfirmationModal
+        visible={showDeleteModal}
+        title="Supprimer l'étape"
+        message={`Êtes-vous sûr de vouloir supprimer l'étape ${data.order_number} ? Cette action est irréversible.`}
+        confirmText="Supprimer"
+        cancelText="Annuler"
+        onConfirm={confirmDelete}
+        onCancel={closeDeleteModal}
+        isLoading={deleteStepMutation.isPending}
+        isDanger={true}
+      />
     </SecondaryLayout>
   );
 }

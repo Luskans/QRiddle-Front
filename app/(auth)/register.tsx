@@ -10,6 +10,7 @@ import FullButton from '@/components/(common)/FullButton';
 import { useThemeStore } from '@/stores/useThemeStore';
 import colors from '@/constants/colors';
 import { useAuthStore } from '@/stores/useAuthStore';
+import Toast from 'react-native-toast-message';
 
 
 export default function RegisterScreen() {
@@ -25,7 +26,10 @@ export default function RegisterScreen() {
 
   const handleSubmit = async (values: RegisterFormData) => {
     if (!acceptedTerms) {
-      alert("Vous devez accepter les conditions d'utilisation pour créer un compte.");
+      Toast.show({
+        type: 'error',
+        text2: 'Vous devez accepter les conditions d\'utilisation pour créer un compte.'
+      });
       return;
     }
     await register(values.name, values.email, values.password, values.password_confirmation);

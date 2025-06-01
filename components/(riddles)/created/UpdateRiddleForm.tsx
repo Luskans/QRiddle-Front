@@ -9,6 +9,7 @@ import { DESCRIPTION_MAX_LENGTH, MAP_LATITUDE, MAP_LATITUDE_DELTA, MAP_LONGITUDE
 import { useUpdateRiddle } from '@/hooks/useRiddles';
 import { RiddleDetail, RiddleFormData } from '@/interfaces/riddle';
 import FullButton from '@/components/(common)/FullButton';
+import Toast from 'react-native-toast-message';
 
 
 interface FormValues {
@@ -75,9 +76,17 @@ export default function UpdateRiddleForm({ riddle }: { riddle: RiddleDetail }) {
     updateRiddleMutation.mutate({id: riddle.id.toString(), data}, {
       onSuccess: () => {
         alert('Énigme mise à jour avec succès !');
+         Toast.show({
+            type: 'success',
+            text2: 'Énigme mise à jour !'
+          });
       },
       onError: (error: any) => {
-        alert(`Une erreur est survenue: ${error.response.data.message}`);
+        Toast.show({
+          type: 'error',
+          text1: 'Erreur',
+          text2: `${error.response.data.message}`
+        });
       },
     });
   };

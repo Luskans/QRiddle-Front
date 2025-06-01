@@ -17,9 +17,7 @@ export default function RiddleDetailScreen() {
   
   useEffect(() => {
     if (isLoading) return;
-    console.log("id du createur", data?.creator.id)
-    console.log("id du user", user?.user?.id)
-    console.log("user du store", user)
+
     if (user?.id === data?.creator?.id) {
       setViewType('created');
     } else {

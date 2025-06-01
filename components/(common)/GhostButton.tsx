@@ -28,7 +28,7 @@ export default function GhostButton({
       accessibilityRole="button"
       accessibilityState={{ disabled: disabled }}
     >
-      <View className={`px-6 py-3 items-center justify-center bg-transparent border ${color} rounded-lg ${disabled ? 'opacity-50' : ''}`} >
+      <View className={`px-4 py-3 items-center justify-center bg-transparent border ${color} rounded-lg ${disabled ? 'opacity-50' : ''}`} >
         {isLoading ? (
           <ActivityIndicator color="black" />
         ) : (

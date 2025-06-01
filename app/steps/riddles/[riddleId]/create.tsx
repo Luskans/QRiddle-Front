@@ -8,6 +8,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { View, Text } from 'react-native';
 import MapView, { MapPressEvent, Marker } from 'react-native-maps';
+import Toast from 'react-native-toast-message';
 
 
 export default function StepCreateScreen() {
@@ -39,11 +40,18 @@ export default function StepCreateScreen() {
 
     createStepMutation.mutate({riddleId: riddleId, data}, {
       onSuccess: (data) => {
-        alert(`Étape ${data.order_number} ajoutée !`);
+        Toast.show({
+          type: 'success',
+          text2: `Étape ${data.order_number} ajoutée !`
+        });
         router.replace(`/steps/${data.id}`);
       },
-      onError: (error) => {
-        alert(`Une erreur est survenue: ${error.message}`);
+      onError: (error: any) => {
+        Toast.show({
+          type: 'error',
+          text1: 'Erreur',
+          text2: `${error.response.data.message}`
+        });
       },
     });
   }

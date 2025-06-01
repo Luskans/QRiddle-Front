@@ -54,7 +54,7 @@ export default function HomeScreen() {
 
         {/* ACTIVE GAME SESSION */}
         {data.activeGameSession &&
-        <View className='bg-gray-100 dark:bg-gray-darker px-6'>
+        <View className='bg-gray-200 dark:bg-gray-darker px-6'>
           <ActiveGameSessionCard activeGameSession={data.activeGameSession} />
         </View>
         }

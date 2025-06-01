@@ -19,3 +19,9 @@ export interface HintItem {
   type: string;
   content: string;
 }
+
+export interface UploadFormData {
+  uri: string;
+  fileName: string;
+  mimeType: string;
+}

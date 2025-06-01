@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createHint, deleteHint, updateHint } from '@/services/api';
-import { HintFormData } from '@/interfaces/hint';
+import { createHint, deleteHint, updateHint, uploadHintImage } from '@/services/api';
+import { HintFormData, UploadFormData } from '@/interfaces/hint';
 
 
 export function useCreateHint() {
@@ -32,6 +32,17 @@ export function useDeleteHint() {
     mutationFn: (id: string) => deleteHint(id),
     onSuccess: (stepId) => {
       queryClient.refetchQueries({ queryKey: ['step', stepId.toString()] });
+    },
+  });
+}
+
+export function useUploadHintImage() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) => uploadHintImage(id, data),
+    onSuccess: (data) => {
+      queryClient.refetchQueries({ queryKey: ['step', data.step_id.toString()] });
     },
   });
 }

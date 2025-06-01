@@ -7,6 +7,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Text, Vibration, View } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 
 export default function ScanScreen() {
@@ -25,15 +26,27 @@ export default function ScanScreen() {
     validateStepMutation.mutate({id: sessionId, qr_code: data}, {
       onSuccess: (validateStepResponse) => {
         if (validateStepResponse.game_completed) {
-          alert('Félicitation ! Énigme réussie !');
+          Toast.show({
+            type: 'success',
+            text1: 'Félicitations',
+            text2: 'Énigme réussie !'
+          });
           router.replace(`/game/${sessionId}/complete`);
         } else {
-          alert('Bravo ! Étape validée !');
+          Toast.show({
+            type: 'success',
+            text1: 'Bravo',
+            text2: 'Étape validée !'
+          });
           router.dismiss();
         }
       },
       onError: (error: any) => {
-        alert(`Une erreur est survenue: ${error.response.data.message}`);
+        Toast.show({
+          type: 'error',
+          text1: 'Erreur',
+          text2: `${error.response.data.message}`
+        });
         setTimeout(() => setIsScanning(true), 2000);
       },
     });

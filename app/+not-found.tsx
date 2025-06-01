@@ -1,9 +1,11 @@
-import { View, Text } from 'react-native';
+import ErrorView from '@/components/(common)/ErrorView';
+import SecondaryLayoutWithoutScrollView from '@/components/(layouts)/SecondaryLayoutWithoutScrollView';
 
 export default function NotFoundScreen() {
   return (
-    <View className='bg-green'>
-      <Text>Page not found</Text>
-    </View>
+    <SecondaryLayoutWithoutScrollView>
+      {/* @ts-ignore */}
+      <ErrorView error={ 'Cette page n\'existe pas...' } />
+    </SecondaryLayoutWithoutScrollView>
   );
 }

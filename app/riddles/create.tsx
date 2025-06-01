@@ -11,6 +11,7 @@ import { router } from 'expo-router';
 import { RiddleFormData } from '@/interfaces/riddle';
 import { useCreateRiddle } from '@/hooks/useRiddles';
 import FullButton from '@/components/(common)/FullButton';
+import Toast from 'react-native-toast-message';
 
 
 interface FormValues {
@@ -50,11 +51,18 @@ export default function RiddleCreateScreen() {
 
     createRiddleMutation.mutate(data, {
       onSuccess: (data) => {
-        alert('Énigme créée avec succès !');
+        Toast.show({
+          type: 'success',
+          text2: 'Énigme créée !'
+        });
         router.replace(`/riddles/${data.id}`);
       },
-      onError: (error) => {
-        alert(`Une erreur est survenue: ${error.message}`);
+      onError: (error: any) => {
+        Toast.show({
+          type: 'error',
+          text1: 'Erreur',
+          text2: `${error.response.data.message}`
+        });
       },
     });
   };

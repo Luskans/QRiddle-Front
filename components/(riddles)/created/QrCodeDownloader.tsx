@@ -6,6 +6,7 @@ import * as Sharing from 'expo-sharing';
 import colors from '@/constants/colors';
 import { useThemeStore } from '@/stores/useThemeStore';
 import { StepItem } from '@/interfaces/riddle';
+import Toast from 'react-native-toast-message';
 
 
 export default function QrCodeDownloader({ steps, riddleTitle }: {steps: StepItem[], riddleTitle: string}) {
@@ -106,12 +107,20 @@ export default function QrCodeDownloader({ steps, riddleTitle }: {steps: StepIte
         });
         
       } else {
-        alert('Le partage n\'est pas disponible sur cet appareil');
+        Toast.show({
+          type: 'error',
+          text1: 'Erreur',
+          text2: 'Le partage n\'est pas disponible sur cet appareil'
+        });
       }
 
     } catch (error) {
       console.error('Erreur lors de la génération du PDF:', error);
-      alert('Une erreur est survenue lors de la génération du PDF');
+      Toast.show({
+        type: 'error',
+        text1: 'Erreur',
+        text2: 'Une erreur est survenue lors de la génération du PDF'
+      });
 
     } finally {
       setIsLoading(false);

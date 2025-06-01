@@ -29,7 +29,7 @@ export default function SecondaryLayoutWithoutScrollView({ children }: { childre
   return (
     <View className='flex-1'>
       <StatusBar style={ isDark ? 'dark' : 'light' } />
-      <View className='flex-1 bg-white dark:bg-dark'>
+      <View className='flex-1 bg-light dark:bg-dark'>
         {children}
       </View>
     </View>

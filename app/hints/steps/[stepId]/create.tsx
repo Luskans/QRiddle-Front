@@ -10,6 +10,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Formik } from 'formik';
 import { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 
 export default function HintCreateScreen() {
@@ -24,11 +25,18 @@ export default function HintCreateScreen() {
   const handleSubmit = async (values: HintFormData) => {
     createHintMutation.mutate({stepId: stepId, data: values}, {
       onSuccess: (data) => {
-        alert(`Indice ${data.order_number} ajouté !`);
+        Toast.show({
+          type: 'success',
+          text2: `Indice ${data.order_number} ajouté !`
+        });
         router.dismiss();
       },
       onError: (error: any) => {
-        alert(`Une erreur est survenue: ${error.response.data.message}`);
+        Toast.show({
+          type: 'error',
+          text1: 'Erreur',
+          text2: `${error.response.data.message}`
+        });
       },
     });
   };

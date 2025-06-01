@@ -17,6 +17,7 @@ import moment from 'moment';
 import { getFormattedDuration } from '@/lib/getFormattedDuration';
 import FullButton from '@/components/(common)/FullButton';
 import SecondaryLayoutWithoutScrollView from '@/components/(layouts)/SecondaryLayoutWithoutScrollView';
+import Toast from 'react-native-toast-message';
 
 
 export default function CompleteScreen() {
@@ -30,11 +31,18 @@ export default function CompleteScreen() {
 
     createReviewMutation.mutate({riddleId: data.riddle_id.toString(), data: values}, {
       onSuccess: () => {
-        alert('Avis publié !');
+        Toast.show({
+          type: 'success',
+          text2: 'Avis publié !'
+        });
         router.dismissAll();
       },
       onError: (error: any) => {
-        alert(`Une erreur est survenue: ${error.response.data.message}`);
+        Toast.show({
+          type: 'error',
+          text1: 'Erreur',
+          text2: `${error.response.data.message}`
+        });
       },
     });
   };
