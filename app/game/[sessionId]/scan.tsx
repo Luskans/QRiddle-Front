@@ -31,7 +31,7 @@ export default function ScanScreen() {
             text1: 'Félicitations',
             text2: 'Énigme réussie !'
           });
-          router.replace(`/game/${sessionId}/complete`);
+          router.navigate(`/game/${sessionId}/complete`);
         } else {
           Toast.show({
             type: 'success',
@@ -42,6 +42,10 @@ export default function ScanScreen() {
         }
       },
       onError: (error: any) => {
+        console.log("dans validate", error)
+        console.log("dans validate2", error.message)
+        console.log("dans validate3", error.response)
+
         Toast.show({
           type: 'error',
           text1: 'Erreur',

@@ -19,7 +19,7 @@ export default function AuthScreen() {
           {/* LOGO */}
           <View className="items-center justify-center gap-6">
             <Image
-              source={require('@/assets/images/logo.png')}
+              source={isDark ? require('@/assets/images/logo-light.png') : require('@/assets/images/logo-dark.png')}
               className="w-40 h-40"
             />
             <Text className="text-4xl font-h  text-dark dark:text-light">

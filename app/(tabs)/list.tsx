@@ -22,7 +22,8 @@ export default function ListScreen() {
   if (isError) {
     return (
       <PrimaryLayout>
-        <ErrorView error={ error.message } />
+        {/* @ts-ignore */}
+        <ErrorView error={ error.response.data.message } />
       </PrimaryLayout>
     );
   }

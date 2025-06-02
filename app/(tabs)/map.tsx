@@ -48,7 +48,8 @@ export default function MapScreen() {
   if (isError) {
     return (
       <SecondaryLayoutWithoutScrollView>
-        <ErrorView error={ error.message } />
+        {/* @ts-ignore */}
+        <ErrorView error={ error.response.data.message } />
       </SecondaryLayoutWithoutScrollView>
     );
   }

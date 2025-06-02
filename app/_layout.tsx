@@ -32,9 +32,10 @@ export default function RootLayout() {
     'SyneMono': require('@/assets/fonts/SyneMono-Regular.ttf'),
   });
   const [assetsLoaded] = useAssets([
-    require('@/assets/images/logo.png'),
-    require('@/assets/images/background.webp'),
-    require('@/assets/images/background2.webp'),
+    require('@/assets/images/logo-light.png'),
+    require('@/assets/images/logo-dark.png'),
+    require('@/assets/images/background-light.webp'),
+    require('@/assets/images/background-dark.webp'),
     require('@/assets/images/default-user.png'),
     require('@/assets/images/default-hint.jpg'),
     require('@/assets/audios/default-hint.mp3')

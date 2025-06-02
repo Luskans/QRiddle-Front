@@ -18,6 +18,7 @@ import { getFormattedDuration } from '@/lib/getFormattedDuration';
 import FullButton from '@/components/(common)/FullButton';
 import SecondaryLayoutWithoutScrollView from '@/components/(layouts)/SecondaryLayoutWithoutScrollView';
 import Toast from 'react-native-toast-message';
+import GhostButton from '@/components/(common)/GhostButton';
 
 
 export default function CompleteScreen() {
@@ -35,7 +36,7 @@ export default function CompleteScreen() {
           type: 'success',
           text2: 'Avis publié !'
         });
-        router.dismissAll();
+        router.navigate(`/(tabs)`);
       },
       onError: (error: any) => {
         Toast.show({
@@ -85,7 +86,7 @@ export default function CompleteScreen() {
             
             <View className='gap-2'>
               <Text className='text-dark dark:text-light'>Vous êtes arrivé au bout de l'énigme en :</Text>
-              <Text className='text-secondary-darker dark:text-secondary-lighter text-center text-2xl font-semibold'>{moment(data.duration).format("HH:mm:ss")}</Text>
+              <Text className='text-secondary-darker dark:text-secondary-lighter text-center text-2xl font-semibold'>{moment.utc(data.duration * 1000).format("HH:mm:ss")}</Text>
             </View>
 
             <View className='gap-2'>
@@ -170,25 +171,34 @@ export default function CompleteScreen() {
                 </View>
 
                 {/* --- Erreurs de mutation --- */}
-                {createReviewMutation.isError && (
+                {/* {createReviewMutation.isError && (
                   <View className="mx-6 px-6 py-2 bg-red-100 rounded-md">
                     <Text className="text-red-600">
                       {createReviewMutation.error?.message || "Une erreur est survenue"}
                     </Text>
                   </View>
-                )}
+                )} */}
 
                 {/* --- Bouton de soumission --- */}
-                <View className='px-6 items-center'>
-                  <FullButton
-                    onPress={handleSubmit}
-                    title="Publier votre avis"
-                    border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
-                    color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
-                    textColor={isDark ? 'text-dark' : 'text-light'}
-                    isLoading={isSubmitting || createReviewMutation.isPending}
-                    disabled={isSubmitting || !isValid || createReviewMutation.isPending}
-                  />
+                <View className='px-6 flex-1'>
+                  {data.has_reviewed ? (
+                    <GhostButton
+                      onPress={() => router.navigate('/(tabs)')}
+                      title="Accueil"
+                      color={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+                      textColor={isDark ? 'text-primary-lighter' : 'text-primary-darker'}
+                    />
+                  ) : (
+                    <FullButton
+                      onPress={handleSubmit}
+                      title="Publier votre avis"
+                      border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
+                      color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
+                      textColor={isDark ? 'text-dark' : 'text-light'}
+                      isLoading={isSubmitting || createReviewMutation.isPending}
+                      disabled={isSubmitting || !isValid || createReviewMutation.isPending}
+                    />
+                  )}
                 </View>
               </View>
             )}

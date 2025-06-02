@@ -6,7 +6,7 @@ export const getFormattedDuration = (startTime: string, endTime: string) => {
   const end = moment(endTime);
 
   const difference = end.diff(start);
-  const formattedDuration = moment(difference).format("HH:mm:ss");
+  const formattedDuration = moment.utc(difference).format("HH:mm:ss");
 
   return formattedDuration;
 };

@@ -1,8 +1,20 @@
 import React from 'react';
-import { Stack } from 'expo-router';
+import { router, Stack } from 'expo-router';
+import { TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useThemeStore } from '@/stores/useThemeStore';
+import colors from '@/constants/colors';
 
 
 export default function GameLayout() {
+  const { isDark } = useThemeStore();
+
+  const HomeButton = () => (
+    <TouchableOpacity className='mr-10' onPress={() => router.navigate('/(tabs)')}>
+      <Ionicons name="home-sharp" size={22} color={isDark ? colors.dark : colors.light} />
+    </TouchableOpacity>
+  );
+
   return (
     <Stack
       screenOptions={{
@@ -13,7 +25,8 @@ export default function GameLayout() {
       <Stack.Screen
         name="[sessionId]"
         options={{ 
-          title: "Partie en cours"
+          title: "Partie en cours",
+          headerLeft: () => <HomeButton />
         }}
       />
       <Stack.Screen
@@ -25,7 +38,8 @@ export default function GameLayout() {
       <Stack.Screen
         name="[sessionId]/complete"
         options={{ 
-          title: 'Partie terminée'
+          title: 'Partie terminée',
+          headerLeft: () => <HomeButton />
         }}
       />
     </Stack>

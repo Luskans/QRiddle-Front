@@ -13,7 +13,7 @@ export default function ErrorView({ error }: { error: string }) {
         <Text className='text-dark dark:text-light'>{error}</Text>
 
         <GhostButton
-          onPress={() => router.dismissAll()}
+          onPress={() => router.navigate(`/(tabs)`)}
           title="Accueil"
           color={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
           textColor={isDark ? 'text-primary-lighter' : 'text-primary-darker'}

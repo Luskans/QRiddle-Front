@@ -13,7 +13,6 @@ import { View, Text, Image, TouchableOpacity, ActivityIndicator, Dimensions } fr
 import { useAudioPlayer } from 'expo-audio';
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import QRCode from 'react-native-qrcode-svg';
 import SecondaryLayoutWithoutScrollView from '@/components/(layouts)/SecondaryLayoutWithoutScrollView';
 import Toast from 'react-native-toast-message';
 import FullButton from '@/components/(common)/FullButton';
@@ -45,7 +44,6 @@ export default function GameScreen() {
       },
     });
   };
-  const qrValue = '8b3b5bd9-73fe-30f6-990d-0db52e5ed45e';
 
   if (isLoading) {
     return (
@@ -76,7 +74,7 @@ export default function GameScreen() {
     <SecondaryLayout>
       <View className='pb-10 gap-10'>
 
-        <View className='py-10 gap-6 bg-gray-200'>
+        <View className='py-10 gap-6 bg-gray-200 dark:bg-gray-darker'>
           <View className='gap-2'>
             <Text className='text-dark dark:text-light font-bold text-2xl text-center'>
               Étape
@@ -100,20 +98,6 @@ export default function GameScreen() {
             />
           </View>
         </View>
-
-        <QRCode
-          value={qrValue}
-          size={200}
-          color="black"
-          backgroundColor="white"
-          logo={require('@/assets/images/logo.png')} // Ajouter un logo au centre
-          logoSize={50}
-          logoBackgroundColor="white"
-          logoBorderRadius={10}
-          quietZone={10} // Marge autour du QR code
-          enableLinearGradient={true}
-          linearGradient={['rgb(255,0,0)', 'rgb(0,255,255)']}
-        />
 
         {data.hints && data.hints.map((hint) => (
           <View key={hint.id} className=''>

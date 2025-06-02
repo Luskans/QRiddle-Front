@@ -33,7 +33,7 @@ export default function PrimaryLayout({ children }: { children: React.ReactNode}
 
       <Image
         key={isDark ? 'dark-bg' : 'light-bg'}
-        source={isDark ? require('@/assets/images/background2.webp') : require('@/assets/images/background.webp')}
+        source={isDark ? require('@/assets/images/background-light.webp') : require('@/assets/images/background-dark.webp')}
         className='absolute top-0 left-0 right-0 w-full'
         style={{ height: HEADER_HEIGHT }}
         resizeMode="cover"

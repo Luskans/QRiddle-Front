@@ -39,9 +39,8 @@ export default function CommonView({ riddle }: { riddle: RiddleDetail }) {
   const [showAbandonModal, setShowAbandonModal] = useState(false);
 
   const confirmStartGame = async () => {  
-    console.log("nouvelle partie", data)
     if (data && data.status === 'active') {
-      router.replace(`/game/${data.id.toString()}`);
+      router.navigate(`/game/${data.id.toString()}`);
       
     } else {
       playRiddleMutation.mutate({riddleId: riddle.id.toString(), password}, {
@@ -50,7 +49,7 @@ export default function CommonView({ riddle }: { riddle: RiddleDetail }) {
             type: 'success',
             text2: `Nouvelle partie lancée !`
           });
-          router.replace(`/game/${data.id.toString()}`);
+          router.navigate(`/game/${data.id.toString()}`);
         },
         onError: (error: any) => {
           Toast.show({

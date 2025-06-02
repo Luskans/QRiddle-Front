@@ -167,13 +167,13 @@ export default function UpdateRiddleForm({ riddle }: { riddle: RiddleDetail }) {
           </View>
 
           {/* --- Erreurs de mutation --- */}
-          {updateRiddleMutation.isError && (
+          {/* {updateRiddleMutation.isError && (
             <View className="mx-6 px-6 py-2 bg-red-100 rounded-md">
               <Text className="text-red-600">
                 {updateRiddleMutation.error?.message || "Une erreur est survenue"}
               </Text>
             </View>
-          )}
+          )} */}
 
           {/* --- Bouton de soumission --- */}
           <View className='px-6 mt-4'>

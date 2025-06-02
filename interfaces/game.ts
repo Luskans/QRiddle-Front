@@ -47,7 +47,8 @@ export interface CompleteSession {
   id: number;
   riddle_id: number;
   score: number;
-  duration: string;
+  duration: number;
+  has_reviewed: boolean;
   session_steps: {
     id: number;
     game_session_id: number;

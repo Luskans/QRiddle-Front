@@ -26,7 +26,8 @@ export default function HomeScreen() {
   if (isError) {
     return (
       <PrimaryLayout>
-        <ErrorView error={ error.message } />
+        {/* @ts-ignore */}
+        <ErrorView error={ error.response.data.message } />
       </PrimaryLayout>
     );
   }
@@ -42,15 +43,6 @@ export default function HomeScreen() {
   return (
     <PrimaryLayout>
       <View className='py-20 gap-12'>
-
-        <View className='px-6'>
-          <GradientButton
-            onPress={() => {router.push(`/game/2/complete`)}}
-            title={'Scanner QR code'}
-            colors={['red', 'orange']}
-            textColor={'white'}
-          />
-        </View>
 
         {/* ACTIVE GAME SESSION */}
         {data.activeGameSession &&

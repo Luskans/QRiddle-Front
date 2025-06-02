@@ -45,6 +45,7 @@ export function useValidateStep() {
     onSuccess: (data) => {
       queryClient.refetchQueries({ queryKey: ['active-session', data.game_session.id.toString()] });
       queryClient.invalidateQueries({ queryKey: ['riddle-session', data.game_session.riddle_id.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['played-sessions'] });
       queryClient.invalidateQueries({ queryKey: ['home'] });
     },
   });
