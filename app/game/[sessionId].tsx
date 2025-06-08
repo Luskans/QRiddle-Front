@@ -72,13 +72,13 @@ export default function GameScreen() {
 
   return (
     <SecondaryLayout>
-      <View className='pb-10 gap-10'>
+      <View className='pb-10 gap-4'>
 
         <View className='py-10 gap-6 bg-gray-200 dark:bg-gray-darker'>
           <View className='gap-2'>
-            <Text className='text-dark dark:text-light font-bold text-2xl text-center'>
+            <Text className='font-h text-dark dark:text-light font-semibold text-2xl text-center'>
               Étape
-                <Text className='text-secondary-darker dark:text-secondary-lighter'> {data.step.order_number} </Text>
+                <Text className='font-h text-secondary-darker dark:text-secondary-lighter'> {data.step.order_number} </Text>
               sur {data.stepsCount}
             </Text>
 
@@ -105,7 +105,7 @@ export default function GameScreen() {
             {hint.unlocked ? (
               <>
                 <View className='px-6 gap-4 mb-10'>
-                  <Text className="text-dark dark:text-light text-2xl font-semibold">
+                  <Text className="font-h text-dark dark:text-light text-2xl font-semibold">
                     Indice {hint.order_number}
                   </Text>
 
@@ -152,7 +152,7 @@ export default function GameScreen() {
 
             ) : (
               <View className='bg-gray-200 dark:bg-gray-darker p-6 flex-row justify-between items-center'>
-                <Text className='text-dark dark:text-light text-2xl font-semibold'>Indice {hint.order_number}</Text>
+                <Text className='font-h text-dark dark:text-light text-2xl font-semibold'>Indice {hint.order_number}</Text>
                 <View className=''>
                   <GhostButton
                     onPress={() => handleUnlock(hint.order_number)}

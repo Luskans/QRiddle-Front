@@ -189,14 +189,14 @@ export default function CreatedView({ riddle }: { riddle: RiddleDetail }) {
             <View className="flex-row justify-center gap-6">
               <View className="flex-row items-center gap-1">
                 <Ionicons name="star-outline" size={18} color={isDark ? colors.secondary.lighter : colors.secondary.darker} />
-                <Text className="text-gray-400 dark:text-gray-400 text-lg">
+                <Text className="font-h text-gray-400 dark:text-gray-400 text-lg">
                   Note :
                   <Text className="font-semibold text-secondary-darker dark:text-secondary-lighter"> {riddle.averageRating || '-'}</Text>
                 </Text>
               </View>
               <View className="flex-row items-center gap-1">
                 <Ionicons name="trending-up-sharp" size={22} color={isDark ? colors.secondary.lighter : colors.secondary.darker} />
-                <Text className="text-gray-400 dark:text-gray-400 text-lg">
+                <Text className="font-h text-gray-400 dark:text-gray-400 text-lg">
                   Difficulté :
                   <Text className="font-semibold text-secondary-darker dark:text-secondary-lighter"> {riddle.averageDifficulty  || '-'}</Text>
                 </Text>

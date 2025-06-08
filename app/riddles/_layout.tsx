@@ -7,6 +7,7 @@ export default function RiddlesLayout() {
     <Stack
       screenOptions={{
         animation: 'slide_from_right',
+        headerTitleStyle: { fontFamily: 'Spectral' }
       }}
     >
       <Stack.Screen

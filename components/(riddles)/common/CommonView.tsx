@@ -108,7 +108,7 @@ export default function CommonView({ riddle }: { riddle: RiddleDetail }) {
 
         {/* GENERAL */}
         <View className="px-6 gap-8">
-          <Text className='text-dark dark:text-light font-semibold text-2xl text-center'>{riddle.title}</Text>
+          <Text className='font-h text-dark dark:text-light font-semibold text-2xl text-center'>{riddle.title}</Text>
 
           <View className="flex-row justify-center items-center gap-2">
             <View className="h-[36px] w-[36px] rounded-full">
@@ -134,17 +134,17 @@ export default function CommonView({ riddle }: { riddle: RiddleDetail }) {
           <View className='flex-row justify-between'>
             <View className='flex-row gap-1 items-center'>
               <Ionicons name="footsteps-outline" size={18} color={isDark ? colors.secondary.lighter : colors.secondary.darker} />
-              <Text className='text-dark dark:text-light text-sm'>Étapes :</Text>
+              <Text className='font-h text-dark dark:text-light text-sm'>Étapes :</Text>
               <Text className='text-secondary-darker dark:text-secondary-lighter font-semibold'>{riddle.stepsCount}</Text>
             </View>
             <View className='flex-row gap-1 items-center'>
               <Ionicons name="star-outline" size={17} color={isDark ? colors.secondary.lighter : colors.secondary.darker} />
-              <Text className='text-dark dark:text-light text-sm'>Note :</Text>
+              <Text className='font-h text-dark dark:text-light text-sm'>Note :</Text>
               <Text className='text-secondary-darker dark:text-secondary-lighter font-semibold'>{riddle.averageRating || '-'}</Text>
             </View>
             <View className='flex-row gap-1 items-center'>
               <Ionicons name="trending-up-sharp" size={22} color={isDark ? colors.secondary.lighter : colors.secondary.darker} />
-              <Text className='text-dark dark:text-light text-sm'>Difficulté :</Text>
+              <Text className='font-h text-dark dark:text-light text-sm'>Difficulté :</Text>
               <Text className='text-secondary-darker dark:text-secondary-lighter font-semibold'>{riddle.averageDifficulty || '-'}</Text>
             </View>
           </View>

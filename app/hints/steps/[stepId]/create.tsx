@@ -130,7 +130,7 @@ export default function HintCreateScreen() {
               <View className='px-6'>
                 <FullButton
                   onPress={handleSubmit}
-                  title="Créer"
+                  title="Créer l'indice"
                   border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
                   color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
                   textColor={isDark ? 'text-dark' : 'text-light'}

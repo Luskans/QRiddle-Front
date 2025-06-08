@@ -15,6 +15,7 @@ export default function TabsLayout() {
         tabBarActiveTintColor: isDark ? colors.primary.lighter : colors.primary.darker,
         tabBarInactiveTintColor: isDark ? colors.gray.three : colors.gray.four,
         headerShown: false,
+        headerTitleStyle: { fontFamily: 'Spectral' },
         tabBarStyle: {
           backgroundColor: isDark ? colors.dark : colors.light,
           shadowColor: 'transparent',

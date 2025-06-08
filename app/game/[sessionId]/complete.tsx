@@ -82,15 +82,15 @@ export default function CompleteScreen() {
         <View className='py-10 gap-10'>
 
           <View className='gap-6 px-6'>
-            <Text className='text-dark dark:text-light font-bold text-4xl text-center'>Félicitations !</Text>
+            <Text className='font-h text-dark dark:text-light font-semibold text-4xl text-center'>Félicitations !</Text>
             
             <View className='gap-2'>
-              <Text className='text-dark dark:text-light'>Vous êtes arrivé au bout de l'énigme en :</Text>
+              <Text className='text-dark dark:text-light text-center'>Vous êtes arrivés au bout de l'énigme en :</Text>
               <Text className='text-secondary-darker dark:text-secondary-lighter text-center text-2xl font-semibold'>{moment.utc(data.duration * 1000).format("HH:mm:ss")}</Text>
             </View>
 
             <View className='gap-2'>
-              <Text className='text-dark dark:text-light'>Score final :</Text>
+              <Text className='text-dark dark:text-light text-center'>Score final :</Text>
               <Text className='text-secondary-darker dark:text-secondary-lighter text-center text-2xl font-semibold'>{data.score}</Text>
             </View>
           </View>
@@ -108,7 +108,7 @@ export default function CompleteScreen() {
             ))}
           </View>
 
-          <Text className='px-6 text-dark dark:text-light font-bold text-2xl font-bold'>Laissez un avis</Text>
+          <Text className='font-h px-6 text-dark dark:text-light font-semibold text-2xl font-bold'>Laissez un avis</Text>
           
           <Formik
             initialValues={{ rating: 0, difficulty: 0, content: '' }}

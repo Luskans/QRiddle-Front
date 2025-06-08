@@ -18,7 +18,6 @@ import { useAudioPlayer } from "expo-audio";
 import colors from "@/constants/colors";
 
 
-
 export default function HintListItem({ hint }: { hint: HintItem }) {
   const { isDark } = useThemeStore();
   const SCREEN_WIDTH = Dimensions.get('window').width - 24;
@@ -249,7 +248,7 @@ export default function HintListItem({ hint }: { hint: HintItem }) {
           <View className="gap-8">
 
             {/* --- Type de contenu --- */}
-            <View className="px-6 flex-1 gap-3">
+            <View className="px-6 gap-3">
               <Text className="text-dark dark:text-light font-semibold mb-1">Type d'indice :</Text>
               <View className='flex-row'>
                 <TouchableOpacity
@@ -317,7 +316,7 @@ export default function HintListItem({ hint }: { hint: HintItem }) {
                   
                   {/* <TouchableOpacity 
                     onPress={() => pickImage(setFieldValue)}
-                    className="flex-row items-center justify-center bg-gray-100 dark:bg-gray-800 p-4 rounded-lg border border-dashed border-gray-400"
+                    className="flex-row items-center justify-center bg-gray-100 dark:bg-gray-darker p-4 rounded-lg border border-dashed border-gray-400"
                   >
                     <Ionicons 
                       name="image-outline" 

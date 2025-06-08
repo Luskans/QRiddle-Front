@@ -80,7 +80,7 @@ export default function StepCreateScreen() {
         <View className='px-6'>
           <FullButton
             onPress={handleSubmit}
-            title="Créer"
+            title="Créer l'étape"
             border={isDark ? 'border-primary-lighter' : 'border-primary-darker'}
             color={isDark ? 'bg-primary-lighter' : 'bg-primary-darker'}
             textColor={isDark ? 'text-dark' : 'text-light'}

@@ -30,6 +30,8 @@ export default function RootLayout() {
     'RubikDirt': require('@/assets/fonts/RubikDirt-Regular.ttf'),
     'Satisfy': require('@/assets/fonts/Satisfy-Regular.ttf'),
     'SyneMono': require('@/assets/fonts/SyneMono-Regular.ttf'),
+    'Cinzel': require('@/assets/fonts/Cinzel-Variable.ttf'),
+    'Spectral': require('@/assets/fonts/SpectralSC-Regular.ttf'),
   });
   const [assetsLoaded] = useAssets([
     require('@/assets/images/logo-light.png'),
@@ -58,7 +60,7 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* <ThemeProvider> */}
-          <Stack screenOptions={{ headerShown: false }} />
+          <Stack screenOptions={{ headerShown: false, headerTitleStyle: { fontFamily: 'Spectral' } }} />
           <Toast config={toastConfig} />
       {/* </ThemeProvider> */}
     </QueryClientProvider>

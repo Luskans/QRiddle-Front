@@ -139,7 +139,7 @@ export default function StepDetailScreen() {
   return (
     <SecondaryLayout>
       <View className='py-10 gap-6'>
-        <Text className='text-dark dark:text-light text-center px-6 font-semibold text-xl'>Etape {data.order_number}</Text>
+        <Text className='font-h text-dark dark:text-light text-center px-6 font-semibold text-xl'>Etape {data.order_number}</Text>
 
         <View className="h-64 overflow-hidden">
           <MapView

@@ -7,6 +7,7 @@ export default function LeaderboardsLayout() {
       screenOptions={{
         headerShadowVisible: false,
         animation: 'slide_from_right',
+        headerTitleStyle: { fontFamily: 'Spectral' }
       }}
     >
       <Stack.Screen

@@ -18,7 +18,7 @@ export default function SectionLink({ onPress, icon, title }: SectionLinkProps) 
       <TouchableOpacity className='flex-row items-center gap-3 mb-6' onPress={onPress}>
         <Ionicons name={icon} size={22} color={isDark ? colors.light : colors.dark} />
         <View className='flex-1 flex-row items-center gap-3'>
-          <Text className='dark:text-light text-2xl'>{ title }</Text>
+          <Text className='font-h dark:text-light text-2xl'>{ title }</Text>
           <Ionicons name="arrow-forward" size={24} color={isDark ? colors.light : colors.dark } />
         </View>
       </TouchableOpacity>

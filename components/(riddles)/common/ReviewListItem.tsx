@@ -59,14 +59,14 @@ export default function ReviewListItem({ review }: { review: ReviewItem }) {
       <View className="flex-row justify-end gap-6">
         <View className="flex-row items-center gap-1">
           <Ionicons name="star-outline" size={14} color={isDark ? colors.secondary.lighter : colors.secondary.darker } />
-          <Text className="text-gray-400 dark:text-gray-400 text-sm">
+          <Text className="font-h text-gray-400 dark:text-gray-400 text-sm">
             Note :
             <Text className="font-semibold text-secondary-darker dark:text-secondary-lighter"> {review.rating}</Text>
           </Text>
         </View>
         <View className="flex-row items-center gap-1">
           <Ionicons name="trending-up-sharp" size={18} color={isDark ? colors.secondary.lighter : colors.secondary.darker } />
-          <Text className="text-gray-400 dark:text-gray-400 text-sm">
+          <Text className="font-h text-gray-400 dark:text-gray-400 text-sm">
             Difficulté :
             <Text className="font-semibold text-secondary-darker dark:text-secondary-lighter"> {review.difficulty}</Text>
           </Text>

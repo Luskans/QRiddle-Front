@@ -7,7 +7,7 @@ export default function CompletedGameSessionCard({ session }: {session: RiddleSe
   
   return (
     <View className='py-10 gap-8'>
-      <Text className='text-secondary-darker dark:text-secondary-lighter text-2xl text-center font-semibold uppercase'>
+      <Text className='font-h text-secondary-darker dark:text-secondary-lighter text-2xl text-center font-semibold uppercase'>
         {session.status === 'active' && ('Partie en cours !')}
         {session.status === 'completed' && ('Énigme terminée')}
         {session.status === 'abandoned' && ('Énigme échouée')}

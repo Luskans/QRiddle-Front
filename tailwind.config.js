@@ -37,8 +37,10 @@ module.exports = {
         rubikdirt: ['RubikDirt'],
         satisfy: ['Satisfy'],
         synemono: ['SyneMono'],
-        sub: ['Synemono'],
-        h: ['RubikDirt'],
+        cinzel: ['Cinzel'],
+        spectral: ['Spectral'],
+        sub: ['Spectral'],
+        h: ['Spectral'],
       },
       fontSize: {
         'h1': ['32px', { lineHeight: '40px', fontWeight: '400' }],

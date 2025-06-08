@@ -52,10 +52,10 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
               //@ts-ignore
               <Ionicons name={icon} size={24} color={collapsed? (isDark ? colors.light : colors.dark) : (isDark ? colors.primary.lighter : colors.primary.darker)} />
             ) : null}
-            <Text className={`${collapsed ? "text-dark dark:text-light" : "text-primary-darker dark:text-primary-lighter"} text-lg font-semibold`}>{title}</Text>
+            <Text className={`${collapsed ? "text-dark dark:text-light" : "text-primary-darker dark:text-primary-lighter"} font-h text-lg font-semibold`}>{title}</Text>
           </View>
           <View className='flex-row items-center gap-2'>
-            <Text className={`${collapsed ? "text-dark dark:text-light" : "text-primary-darker dark:text-primary-lighter"} text-lg font-semibold`}>{ number }</Text>
+            <Text className={`${collapsed ? "text-dark dark:text-light" : "text-primary-darker dark:text-primary-lighter"} font-h text-lg font-semibold`}>{ number }</Text>
             <Animated.View style={{ transform: [{ rotate: rotateInterpolate }] }}>
               <Ionicons name="chevron-down" size={24} color={collapsed? (isDark ? colors.light : colors.dark) : (isDark ? colors.primary.lighter : colors.primary.darker)} />
             </Animated.View>

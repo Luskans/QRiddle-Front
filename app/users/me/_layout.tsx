@@ -7,7 +7,8 @@ export default function RootLayout() {
   return (
     <Stack
       screenOptions={{
-        animation: 'slide_from_right'
+        animation: 'slide_from_right',
+        headerTitleStyle: { fontFamily: 'Spectral' }
       }}
     >
       <Stack.Screen
